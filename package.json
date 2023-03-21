@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "migrate": "php artisan migrate:fresh --seed",
+        "passport": "php artisan passport:install",
+        "cache": "php artisan config:cache && php artisan cache:clear && php artisan config:clear && composer dump-autoload",
+        "restart": "npm run migrate && npm run passport && npm run cache",
+        "test": "php artisan test"
+    },
+    "devDependencies": {
+        "axios": "^1.1.2",
+        "laravel-vite-plugin": "^0.7.2",
+        "lodash": "^4.17.19",
+        "postcss": "^8.1.14",
+        "vite": "^4.0.0"
+    }
+}
