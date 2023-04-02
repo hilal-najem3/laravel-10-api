@@ -11,14 +11,17 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
-        <testsuite name="Feature">
+        <testsuite name="Users">
             <directory suffix="Test.php">./app/Containers/Users/Tests</directory>
         </testsuite>
-        <testsuite name="Feature">
+        <testsuite name="Auth">
             <directory suffix="Test.php">./app/Containers/Auth/Tests</directory>
         </testsuite>
-        <testsuite name="Feature">
+        <testsuite name="Common">
             <directory suffix="Test.php">./app/Containers/Common/Tests</directory>
+        </testsuite>
+        <testsuite name="Files">
+            <directory suffix="Test.php">./app/Containers/Files/Tests</directory>
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">

@@ -24,8 +24,11 @@ use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
+
+use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
+
 use App\Containers\Users\Messages\Messages;
 
 use App\Models\Permission;
@@ -465,14 +468,16 @@ class UserHelper
 
                 if($image) {
                     StoreHelper::deleteFile($image->link);
-                    $image->link = $path;
-                    $image->size = $photoSize;
-                    $image->save();
-                } else {
-                    $image = Image::create([
+                    $data = [
                         'link' => $path,
                         'size' => $photoSize
-                    ]);
+                    ];
+                    $image = ImagesHelper:: update($image, $data, 'profile');
+                } else {
+                    $image = ImagesHelper::create([
+                        'link' => $path,
+                        'size' => $photoSize
+                    ], 'profile');
                 }
     
                 $user->profile_image = $image->id;
