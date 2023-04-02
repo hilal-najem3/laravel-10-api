@@ -9,6 +9,7 @@ use App\Permissions\HasPermissionsTrait;
 use Laravel\Passport\HasApiTokens;
 use App\Containers\Auth\Notifications\ResetPasswordEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Containers\Files\Models\Image;
 
 class User extends Authenticatable
 {

@@ -13,15 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('image_types', function (Blueprint $table) {
             $table->id();
-            $table->string('link');
-            $table->bigInteger('size')->nullable();
-            $table->unsignedBigInteger('type_id')->nullable();
+            $table->string('name');
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('type_id')->references('id')->on('image_types')->onDelete('cascade');
         });
     }
 
@@ -32,9 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('images', function (Blueprint $table) {
-            $table->dropForeign(['type_id']);
-        });
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('image_types');
     }
 };

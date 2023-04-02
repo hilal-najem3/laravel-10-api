@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 
 use App\Containers\Common\Models\Data;
-use App\Models\Image;
+use App\Containers\Files\Models\Image;
 use App\Models\User;
 
 class DeleteOldData extends Command

@@ -1,6 +1,6 @@
 <?php
 
-namespace  App\Models;
+namespace  App\Containers\Files\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,5 +17,11 @@ class Image extends Model
     protected $fillable = [
         'link',
         'size',
+        'type_id'
     ];
+
+    public function type()
+    {
+        return $this->belongsTo(ImageType::class, 'type_id');
+    }
 }

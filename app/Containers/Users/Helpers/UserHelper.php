@@ -29,13 +29,13 @@ use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Users\Messages\Messages;
 
 use App\Models\Permission;
-use App\Models\Image;
+use App\Containers\Files\Models\Image;
 use App\Models\Role;
 use App\Models\User;
 
 use Carbon\Carbon;
 
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class UserHelper
 {
@@ -163,10 +163,11 @@ class UserHelper
      * on this api
      * 
      * @param User $user
-     * @return boolean | UpdateUserException
+     * @return boolean | UpdateFailedException
      */
     public static function inActivate(User $user)
     {
+        $messages = self::getMessages();
         DB::beginTransaction();
         try {
             $user->active = false;
@@ -180,10 +181,10 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+            throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
         }
 
-        throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
     }
 
      /**
@@ -192,10 +193,11 @@ class UserHelper
      * on this api
      * 
      * @param User $user
-     * @return boolean | UpdateUserException
+     * @return boolean | UpdateFailedException
      */
     public static function activate(User $user)
     {
+        $messages = self::getMessages();
         DB::beginTransaction();
         try {
             $user->active = true;
@@ -206,10 +208,10 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+            throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
         }
 
-        throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
     }
 
     /**
