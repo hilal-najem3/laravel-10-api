@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Helpers\Database\PermissionsHelper;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class PermissionsTableSeeder extends Seeder
 {
@@ -15,6 +17,12 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        PermissionsHelper::addPermissions();
+        DB::beginTransaction();
+        try {
+            PermissionsHelper::addPermissions();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
     }
 }

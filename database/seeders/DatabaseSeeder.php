@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            RegionTypesAndRegionsTablesSeeder::class,
             ImageTypesTableSeeder::class,
             DataTypesTableSeeder::class,
             RolesTableSeeder::class,

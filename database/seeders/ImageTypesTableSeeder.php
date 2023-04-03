@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Containers\Files\Models\ImageType;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class ImageTypesTableSeeder extends Seeder
 {
@@ -21,8 +23,14 @@ class ImageTypesTableSeeder extends Seeder
             ['name' => 'cover'],
             ['name' => 'general'],
         ];
-        foreach($types as $t) {
-            ImageType::create($t);
+        DB::beginTransaction();
+        try {
+            foreach($types as $t) {
+                ImageType::create($t);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
         }
     }
 }

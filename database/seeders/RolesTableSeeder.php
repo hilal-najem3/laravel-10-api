@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class RolesTableSeeder extends Seeder
 {
@@ -32,8 +34,14 @@ class RolesTableSeeder extends Seeder
                 'description' => 'Has access to permissions that the super admin or admin assigns to him'
             ]
         ];
-        foreach($roles as $role) {
-            Role::create($role);
+        DB::beginTransaction();
+        try {
+            foreach($roles as $role) {
+                Role::create($role);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
         }
     }
 }
