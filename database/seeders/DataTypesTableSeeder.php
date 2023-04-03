@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Containers\Common\Models\DataType;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class DataTypesTableSeeder extends Seeder
 {
@@ -42,8 +44,14 @@ class DataTypesTableSeeder extends Seeder
                 'description' => 'This type represents any JSON type data.'
             ]
         ];
-        foreach($types as $type) {
-            DataType::create($type);
+        DB::beginTransaction();
+        try {
+            foreach($types as $type) {
+                DataType::create($type);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
         }
     }
 }

@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             DataTypesTableSeeder::class,
             RolesTableSeeder::class,
             PermissionsTableSeeder::class,
-            UsersTableSeeder::class
+            UsersTableSeeder::class,
+            ContactTypesTableSeeder::class
         ]);
     }
 }

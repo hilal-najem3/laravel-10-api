@@ -10,6 +10,8 @@ use Laravel\Passport\HasApiTokens;
 use App\Containers\Auth\Notifications\ResetPasswordEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Containers\Files\Models\Image;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use App\Containers\Common\Models\Contact;
 
 class User extends Authenticatable
 {
@@ -56,6 +58,11 @@ class User extends Authenticatable
     public function profileImage()
     {
         return $this->belongsTo(Image::class, 'profile_image');
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Contact::class, 'taggable');
     }
 
     public function sendPasswordResetNotification($token)
