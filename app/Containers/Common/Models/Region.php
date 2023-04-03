@@ -28,7 +28,7 @@ class Region extends Model
         return $this->belongsTo(RegionType::class, 'type_id');
     }
 
-    public function subRegions()
+    public function states()
     {
         return $this->hasMany(Region::class, 'region_id');
     }

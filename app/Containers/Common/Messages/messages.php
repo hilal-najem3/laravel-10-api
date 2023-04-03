@@ -9,6 +9,10 @@ trait Messages
         return [
             'DATA' => [
                 'EXCEPTION' => 'Data'
+            ],
+            "REGIONS" => [
+                "ALL" => 'Countries and region types loaded successfully',
+                "ALL_FAILED" => 'Countries and region types load failed'
             ]
         ];
     }
