@@ -11,7 +11,7 @@ use Exception;
 class RegionsHelper
 {
     /**
-     * get all countries
+     * get all countries and regions
      * 
      * @return Region[] $regions
      */

@@ -10,5 +10,5 @@ Route::group([
     'middleware' => ['auth:api']
 ], function ()
 {
-    Route::get('regions/all', [RegionsController::class, 'all'])->name('get.allRegions&Types');
+    Route::get('regions', [RegionsController::class, 'all'])->name('get.allRegions&Types');
 });
