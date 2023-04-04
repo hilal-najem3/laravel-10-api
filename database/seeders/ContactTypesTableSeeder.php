@@ -20,8 +20,11 @@ class ContactTypesTableSeeder extends Seeder
         $types = [
             ['name' => 'email'],
             ['name' => 'phone'],
+            ['name' => 'fax'],
             ['name' => 'facebook'],
-            ['name' => 'instagram']
+            ['name' => 'instagram'],
+            ['name' => 'twitter'],
+            ['name' => 'linkedin'],
         ];
         DB::beginTransaction();
         try {

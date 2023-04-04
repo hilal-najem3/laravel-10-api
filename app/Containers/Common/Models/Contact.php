@@ -15,9 +15,7 @@ class Contact extends Model
      */
     protected $fillable = [
         'value',
-        'type_id',
-        'taggable_id',
-        'taggable_type'
+        'type_id'
     ];
 
     public function type()
@@ -25,8 +23,8 @@ class Contact extends Model
         return $this->belongsTo(ContactType::class, 'type_id');
     }
 
-    public function users(): MorphToMany
+    public function users()
     {
-        return $this->morphToMany(User::class, 'taggable');
+        return $this->belongsToMany(User::class, 'contacts_users');
     }
 }

@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('value');
             $table->unsignedBigInteger('type_id');
-            $table->unsignedBigInteger('taggable_id');
-            $table->string('taggable_type');
             $table->softDeletes();
             $table->timestamps();
 

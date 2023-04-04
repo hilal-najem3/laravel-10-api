@@ -60,9 +60,9 @@ class User extends Authenticatable
         return $this->belongsTo(Image::class, 'profile_image');
     }
 
-    public function tags(): MorphToMany
+    public function contactTags()
     {
-        return $this->morphToMany(Contact::class, 'taggable');
+        return $this->belongsToMany(Contact::class, 'contacts_users');
     }
 
     public function sendPasswordResetNotification($token)
