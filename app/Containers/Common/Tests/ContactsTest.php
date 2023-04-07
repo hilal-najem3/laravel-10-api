@@ -111,8 +111,8 @@ class ContactsTest extends TestCase
         $targetTag = 'users';
         $result = Helper::createContact($data, $targetTag, $userId);
 
-        $lastInsertId = Contact::orderBy('created_at', 'desc')->first()->id;
-        $contact = Helper::id($lastInsertId);
+        $contactId = $user->contact()->get()->first()->id;
+        $contact = Helper::id($contactId);
 
         $this->assertEquals($contact, $result);
     }

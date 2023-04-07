@@ -28,11 +28,13 @@ use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
+use App\Containers\Common\Helpers\ContactHelper;
 
 use App\Containers\Users\Messages\Messages;
 
 use App\Models\Permission;
 use App\Containers\Files\Models\Image;
+use App\Containers\Common\Models\ContactUser;
 use App\Models\Role;
 use App\Models\User;
 
@@ -116,7 +118,7 @@ class UserHelper
                 throw new NotFoundException('User');
             }
 
-            $user = $user->load(['roles', 'profileImage']);
+            $user = $user->load(['roles', 'profileImage', 'contact']);
 
             if(isset($user->profileImage)) {
                 $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
@@ -141,7 +143,7 @@ class UserHelper
     {
         try {
             $messages = self::getMessages();
-            $user = User::with(['roles', 'permissions', 'profileImage'])->where('id', $id)->first();
+            $user = User::with(['roles', 'permissions', 'profileImage', 'contact'])->where('id', $id)->first();
 
             if(!$user) {
                 throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
@@ -298,7 +300,12 @@ class UserHelper
             $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
-            $users = User::where('active', false)->with(['roles', 'permissions', 'profileImage'])
+            $users = User::where('active', false)->with([
+                'roles',
+                'permissions',
+                'profileImage',
+                'contact'
+                ])
             ->get()->each(function (User $user) {
                 if($user->profileImage) {
                     $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
@@ -705,6 +712,13 @@ class UserHelper
                 // So we are fully deleting all data related to him
                 $user->roles()->detach();
                 $user->permissions()->detach();
+
+                $contactData = $user->contact()->get();
+                foreach($contactData as $contact) {
+                    // We are deleting the contact this way to make sure that
+                    // we can still restore it later and attached to this user
+                    $contact->delete();
+                }
     
                 if($user->profile_image) {
                     $image = $user->profileImage()->first();
@@ -732,6 +746,38 @@ class UserHelper
             throw new DeleteFailedException('User');
         }
         throw new DeleteFailedException('User');
+    }
+
+    /**
+     * Delete user from database
+     * and all his related data if light delete is false
+     * Deactivate and soft delete user if light delete is true
+     * 
+     * @param User $user
+     * @return boolean | UpdateFailedException
+     */
+    public static function restoreUser(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->restore();
+
+            $user = self::id($user->id);
+            $user->active = true;
+            $user->save();
+
+            $contactsUser = ContactUser::where('user_id', $user->id)->get();
+            foreach ($contactsUser as $contactUser) {
+                ContactHelper::restoreContact($contactUser->contact_id);
+            }
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new UpdateFailedException('User');
+        }
+        throw new UpdateFailedException('User');
     }
 
     public static function trimUserData(array $data)

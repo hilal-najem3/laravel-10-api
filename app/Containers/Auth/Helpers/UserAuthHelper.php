@@ -72,11 +72,7 @@ class UserAuthHelper
         $user = User::onlyTrashed('email', $email)->first();
 
         if($user != null && $user->can_restore) {
-            // User is not deleted yet
-            $user->restore();
-            $user = UserHelper::id($user->id);
-            $user->active = true;
-            $user->save();
+            UserHelper::restoreUser($user);
         }
     }
 }

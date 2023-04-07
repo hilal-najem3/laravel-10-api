@@ -2,6 +2,9 @@
 
 namespace  App\Containers\Auth\Tests;
 
+
+use App\Containers\Common\Helpers\ContactHelper;
+use App\Containers\Common\Models\ContactType;
 use Tests\TestDatabaseTrait;
 use Tests\TestCase;
 use App\Containers\Users\Helpers\UserHelper;
@@ -463,6 +466,38 @@ class UserHelperTest extends TestCase
         $this->assertEquals($checkUser->active, false);
         $this->assertEquals($user->roles()->count(), 0);
         $this->assertEquals($user->permissions()->count(), 0);
+    }
+
+    /**
+     * Test restore user successful.
+     *
+     * @return void
+     */
+    public function test_restore_user_successful()
+    {
+        // create user
+        $user = $this->createUser()['user'];
+
+        // create contact
+        $type = ContactType::where('name', 'email')->first();
+        $email = 'email@example.com';
+        $data = [
+            'value' => $email,
+            'type_id' => $type->id
+        ];
+        $userId = $user->id;
+        $targetTag = 'users';
+        $contact = ContactHelper::createContact($data, $targetTag, $userId);
+
+        // delete user
+        $delete = UserHelper::deleteUser($user);
+        $this->assertEquals($delete, true);
+
+        $result = UserHelper::restoreUser($user);
+        $this->assertEquals($result, true);
+
+        $userContactData = $user->contact()->get()->first();
+        $this->assertEquals($userContactData->id, $contact->id);
     }
 
     private function getUserData()

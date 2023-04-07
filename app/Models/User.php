@@ -60,7 +60,7 @@ class User extends Authenticatable
         return $this->belongsTo(Image::class, 'profile_image');
     }
 
-    public function contactTags()
+    public function contact()
     {
         return $this->belongsToMany(Contact::class, 'contacts_users');
     }
