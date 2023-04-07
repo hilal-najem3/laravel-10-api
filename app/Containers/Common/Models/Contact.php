@@ -2,12 +2,14 @@
 
 namespace App\Containers\Common\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
 class Contact extends Model
 {
+    use SoftDeletes;
+    
     /**
      * The attributes that are mass assignable.
      *
