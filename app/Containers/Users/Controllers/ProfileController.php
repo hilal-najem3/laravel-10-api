@@ -16,8 +16,8 @@ use App\Containers\Users\Requests\UpdateUserRequest;
 use App\Containers\Users\Helpers\UserHelper;
 use App\Containers\Users\Messages\Messages;
 
+use Illuminate\Support\Facades\Auth;
 use Exception;
-use Auth;
 
 class ProfileController extends Controller
 {

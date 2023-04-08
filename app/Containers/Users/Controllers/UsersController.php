@@ -5,11 +5,13 @@ namespace App\Containers\Users\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Helpers\Database\PermissionsHelper;
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
 
 use App\Containers\Users\Helpers\CrossAuthorizationHelper;
+
+use App\Containers\Users\Requests\UpdateUserContactDataRequest;
+use App\Containers\Users\Requests\DeleteUserContactDataRequest;
 use App\Containers\Users\Validators\UsersValidators;
 use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Requests\CreateUserRequest;
@@ -17,12 +19,15 @@ use App\Containers\Users\Requests\UpdateUserRequest;
 use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Helpers\UserHelper;
 
+use App\Containers\Common\Helpers\ContactHelper;
+
 use Exception;
-use Auth;
+
+use App\Containers\Common\Traits\PermissionControllersTrait;
 
 class UsersController extends Controller
 {
-    use ResponseHelper, Messages, UsersValidators;
+    use ResponseHelper, Messages, UsersValidators, PermissionControllersTrait;
 
     protected $messages = array();
 
@@ -39,22 +44,16 @@ class UsersController extends Controller
      */
     public function get(PaginationRequest $request)
     {
-        if (!Auth::user()->allowedTo('get-users')) {
-            return $this->return_response(
-                $this->not_allowed,
-                [],
-                $this->messages['USERS']['GET_ERROR']
-            );
-        }
+        $this->messages = $this->messages();
 
         try {
+            $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
+
             $data = UserHelper::getAll($request->get('pagination'));
-            
             $info = [
                 'meta' => $this->metaData($data),
                 'users' => $data->data
             ];
-
             return $this->return_response(
                 $this->success,
                 $info,
@@ -84,15 +83,10 @@ class UsersController extends Controller
      */
     public function id(int $id)
     {
-        if (!Auth::user()->allowedTo('get-users')) {
-            return $this->return_response(
-                $this->not_allowed,
-                [],
-                $this->messages['USERS']['GET_ID_ERROR']
-            );
-        }
+        $this->messages = $this->messages();
 
         try {
+            $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
             $user = UserHelper::full($id);
             
             $info = [
@@ -130,11 +124,8 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('create-users')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['CREATE_USER_NOT_ALLOWED']);
-        }
-
         try {
+            $this->allowedAction(['create-users'], $this->messages['USERS']['CREATE_USER_NOT_ALLOWED']);
             $data = $request->all();
             $user = UserHelper::create($data);
 
@@ -170,15 +161,113 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('update-users')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+        try {
+            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+            $data = $request->all();
+            $user = UserHelper::id($id);
+
+            $this->crossAuthorization([$id]);
+
+            $user = UserHelper::update($user, $data);
+
+            return $this->return_response(
+                $this->success,
+                ['user' => $user],
+                $this->messages['USERS']['UPDATE_USER_SUCCESS']
+            );
+
+        } catch (Exception $e) {
+            return $this->return_response(
+                $this->bad_request,
+                [],
+                $this->messages['USERS']['UPDATE_USER_FAILED'],
+                $this->exception_message($e)
+            );
         }
 
-        try {
-            $data = $request->all();
+        return $this->return_response(
+            $this->bad_request,
+            [],
+            $this->messages['USERS']['UPDATE_USER_FAILED']
+        );
+    }
 
+    /**
+     * Update a user contact data
+     * 
+     * @param UpdateUserContactDataRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateContactData(UpdateUserContactDataRequest $request, int $id)
+    {
+        $this->messages = $this->messages();
+
+
+        try {
+            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+
+            $data = $request->all();
             $user = UserHelper::id($id);
-            $user = UserHelper::update($user, $data);
+
+            $this->crossAuthorization([$id]);
+
+            foreach($data['contact'] as $contactData) {
+                $data = [
+                    'type_id' => $contactData['type_id'],
+                    'value' => trim($contactData['value']),
+                ];
+
+                if(isset($contactData['id'])) {
+                    // update the contact
+                    $contact = ContactHelper::id($contactData['id']);
+                    ContactHelper::updateContact($contact, $data, 'users', $user->id);
+                } else {
+                    // create a new contact
+                    ContactHelper::createContact($data, 'users', $user->id);
+                }
+            }
+
+            $user = UserHelper::full($user->id);
+            return $this->return_response(
+                $this->success,
+                ['user' => $user],
+                $this->messages['USERS']['UPDATE_USER_SUCCESS']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                $this->bad_request,
+                [],
+                $this->messages['USERS']['UPDATE_USER_FAILED'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            $this->bad_request,
+            [],
+            $this->messages['USERS']['UPDATE_USER_FAILED']
+        );
+    }
+
+    /**
+     * Update a user contact data
+     * 
+     * @param DeleteUserContactDataRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteContactData(DeleteUserContactDataRequest $request, int $id)
+    {
+        $this->messages = $this->messages();
+
+        try {
+            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+
+            $data = $request->all();
+            $user = UserHelper::id($id);
+
+            $this->crossAuthorization([$id]);
 
             return $this->return_response(
                 $this->success,
@@ -212,16 +301,14 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('attach-permissions')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
-        }
-
         try {
+            $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+
             $data = $request->all();
-
             $this->permissions_user($data)->validate();
-
             $user = UserHelper::id($data['user_id']);
+
+            $this->crossAuthorization([$data['user_id']]);
 
             foreach($data['permissions'] as $permissionId) {
                 UserHelper::attachPermission($user, $permissionId);
@@ -259,16 +346,15 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('attach-permissions')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
-        }
 
         try {
+            $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+
             $data = $request->all();
-
             $this->permissions_user($data)->validate();
-
             $user = UserHelper::id($data['user_id']);
+
+            $this->crossAuthorization([$data['user_id']]);
 
             foreach($data['permissions'] as $permissionId) {
                 UserHelper::detachPermission($user, $permissionId);
@@ -306,31 +392,24 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('attach-roles')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
-        }
-
         try {
+            $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+
             $data = $request->all();
-
             $this->roles_user($data)->validate();
-
             $user = UserHelper::id($data['user_id']);
 
-            // Check if current authenticated user is allowed to to update roles
-            $allowedToUpdateRoles = UserHelper::authorizedToUpdateUserRoles($user);
+            $this->crossAuthorization([$data['user_id']]);
 
-            if($allowedToUpdateRoles) {
-                foreach($data['roles'] as $roleId) {
-                    UserHelper::attachRole($user, $roleId);
-                }
-    
-                return $this->return_response(
-                    $this->success,
-                    [],
-                    $this->messages['USERS']['ATTACH_ROLES']
-                );
+            foreach($data['roles'] as $roleId) {
+                UserHelper::attachRole($user, $roleId);
             }
+
+            return $this->return_response(
+                $this->success,
+                [],
+                $this->messages['USERS']['ATTACH_ROLES']
+            );
         } catch (Exception $e) {
             return $this->return_response(
                 $this->bad_request,
@@ -358,31 +437,25 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('attach-roles')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
-        }
 
         try {
+            $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+
             $data = $request->all();
-
             $this->roles_user($data)->validate();
-
             $user = UserHelper::id($data['user_id']);
 
-            // Check if current authenticated user is allowed to to update roles
-            $allowedToUpdateRoles = UserHelper::authorizedToUpdateUserRoles($user);
+            $this->crossAuthorization([$data['user_id']]);
 
-            if($allowedToUpdateRoles) {
-                foreach($data['roles'] as $roleId) {
-                    UserHelper::detachRole($user, $roleId);
-                }
-
-                return $this->return_response(
-                    $this->success,
-                    [],
-                    $this->messages['USERS']['DETACH_ROLES']
-                );
+            foreach($data['roles'] as $roleId) {
+                UserHelper::detachRole($user, $roleId);
             }
+
+            return $this->return_response(
+                $this->success,
+                [],
+                $this->messages['USERS']['DETACH_ROLES']
+            );
         } catch (Exception $e) {
             return $this->return_response(
                 $this->bad_request,
@@ -412,19 +485,12 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('activate-user')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
-        }
 
         try {
+            $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
-
-            $user = auth()->user();
-            $crossAuth = CrossAuthorizationHelper::crossAuthorized($user, $ids);
-
-            if(!$crossAuth) {
-                return $this->return_response(405, [], $this->messages['USERS']['CROSS_AUTH_ERROR']);
-            }
+            
+            $this->crossAuthorization($ids);
 
             foreach($ids as $id) {
                 UserHelper::inActivate(UserHelper::id($id));
@@ -459,19 +525,11 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('activate-user')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
-        }
-
         try {
+            $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
-
-            $user = auth()->user();
-            $crossAuth = CrossAuthorizationHelper::crossAuthorized($user, $ids);
-
-            if(!$crossAuth) {
-                return $this->return_response(405, [], $this->messages['USERS']['CROSS_AUTH_ERROR']);
-            }
+            
+            $this->crossAuthorization($ids);
 
             foreach($ids as $id) {
                 UserHelper::activate(UserHelper::id($id));
@@ -510,19 +568,11 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        if (!Auth::user()->allowedTo('delete-user')) {
-            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
-        }
-
         try {
+            $this->allowedAction(['delete-user'], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
-
-            $user = auth()->user();
-            $crossAuth = CrossAuthorizationHelper::crossAuthorized($user, $ids);
-
-            if(!$crossAuth) {
-                return $this->return_response(405, [], $this->messages['USERS']['CROSS_AUTH_ERROR']);
-            }
+            
+            $this->crossAuthorization($ids);
 
             foreach($ids as $id) {
                 UserHelper::deleteUser(UserHelper::id($id));
@@ -554,15 +604,9 @@ class UsersController extends Controller
      */
     public function getDeletedUsers(PaginationRequest $request)
     {
-        if (!Auth::user()->allowedTo('get-deleted-users')) {
-            return $this->return_response(
-                $this->not_allowed,
-                [],
-                $this->messages['USERS']['GET_ERROR']
-            );
-        }
 
         try {
+            $this->allowedAction(['get-deleted-users'], $this->messages['USERS']['GET_ERROR']);
             $data = UserHelper::getDeleted($request->get('pagination'));
             
             $info = [
@@ -599,15 +643,8 @@ class UsersController extends Controller
      */
     public function getInActiveUsers(PaginationRequest $request)
     {
-        if (!Auth::user()->allowedTo('get-inactive-users')) {
-            return $this->return_response(
-                $this->not_allowed,
-                [],
-                $this->messages['USERS']['GET_ERROR']
-            );
-        }
-
         try {
+            $this->allowedAction(['get-inactive-users'], $this->messages['USERS']['GET_ERROR']);
             $data = UserHelper::getInActivated($request->get('pagination'));
             
             $info = [

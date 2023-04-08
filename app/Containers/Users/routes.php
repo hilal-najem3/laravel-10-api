@@ -28,10 +28,12 @@ Route::group([
     ], function ()
     {
         // Users
-        Route::get('/', [UsersController::class, 'get'])->name('users.get');
-        Route::get('/{id}', [UsersController::class, 'id'])->name('users.get.id');
-        Route::post('/', [UsersController::class, 'create'])->name('users.create');
-        Route::put('/{id}', [UsersController::class, 'update'])->name('users.update.id');
+        Route::get('get/', [UsersController::class, 'get'])->name('users.get');
+        Route::get('get/{id}', [UsersController::class, 'id'])->name('users.get.id');
+        Route::post('create/', [UsersController::class, 'create'])->name('users.create');
+        Route::put('update/{id}', [UsersController::class, 'update'])->name('users.update.id');
+        Route::put('contacts/{id}', [UsersController::class, 'updateContactData'])->name('users.update.contact');
+        Route::delete('contacts/{id}', [UsersController::class, 'deleteContactData'])->name('users.delete.contacts');
 
         // Add / Remove permissions to user
         Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])

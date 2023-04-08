@@ -23,6 +23,11 @@ class Permissions
                 'description' => 'Update users with full data'
             ],
             [
+                'name' => 'Attach Roles',
+                'slug' => 'attach-roles',
+                'description' => 'Add and remove roles for user'
+            ],
+            [
                 'name' => 'Attach Permissions',
                 'slug' => 'attach-permissions',
                 'description' => 'Add and remove permissions for user'

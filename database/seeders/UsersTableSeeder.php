@@ -36,7 +36,6 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]);
             $admin->roles()->attach($super_admin_role);
-            $admin->permissions()->attach($get_users);
 
             $admin = User::create([
                 'first_name' => 'Normal',

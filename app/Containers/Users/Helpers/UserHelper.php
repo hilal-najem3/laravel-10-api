@@ -515,49 +515,6 @@ class UserHelper
     }
 
     /**
-     * This function receives a user that should have his roles updated
-     * so this function checks if the current authenticated user is authorized
-     * to update that.
-     * and returns true if allowed or throws an exception if not.
-     * 
-     * @param User $userToBeUpdated
-     * @return boolean | NotAllowedException
-     */
-    public static function authorizedToUpdateUserRoles(User $userToBeUpdated)
-    {
-        try {
-            $userDoingTheUpdate = Auth::user();
-
-            if(!$userToBeUpdated || $userToBeUpdated == null || !$userDoingTheUpdate || $userDoingTheUpdate == null) {
-                throw new NotFoundException('User');
-            }
-            
-            $rolesOfUserDoingTheUpdate = $userDoingTheUpdate->roles()->get();
-            $highestRoleOfUserDoingTheUpdate = UserRolesHelper::getHighestRole($rolesOfUserDoingTheUpdate);
-
-            $rolesOfUserToBeUpdated = $userToBeUpdated->roles()->get();
-            $highestRoleOfUserToBeUpdated = UserRolesHelper::getHighestRole($rolesOfUserToBeUpdated);
-
-            if($highestRoleOfUserDoingTheUpdate->id >= $highestRoleOfUserToBeUpdated->id) {
-                // The user doing the update has a role with lower or equal priority to the user being updated
-                // So he is not allowed to update his roles,
-                throw new NotAllowedException('roles');
-            }
-
-            return true;
-        } catch (Exception $e) {
-            Log::error('Authorization failed on UserHelper::authorizedToUpdateUserRoles');
-            if($e->getMessage() != null) {
-                // We have a normal exception
-                throw new NotAllowedException('roles');
-            }
-            throw $e;
-        }
-
-        throw new NotAllowedException('roles');
-    }
-
-    /**
      * update user by attach permission
      * 
      * @param  User $user
