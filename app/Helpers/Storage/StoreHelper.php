@@ -114,8 +114,8 @@ class StoreHelper
         $current_timestamp = Carbon::now()->timestamp;
 
         $fileName = $current_timestamp . '_';
-        
-        $fileName .= $fileOriginalName ? $fileOriginalName : Str::random(10);
+
+        $fileName .= $fileOriginalName ? self::removeSpaces($fileOriginalName) : Str::random(10);
         
         return $fileName;
     }
@@ -151,5 +151,11 @@ class StoreHelper
         }
 
         return $type;
+    }
+
+    private static function removeSpaces($string)
+    {
+        $string = trim(preg_replace('/\s+/', '', $string));
+        return $string;
     }
 }
