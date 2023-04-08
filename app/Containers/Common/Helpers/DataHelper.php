@@ -19,13 +19,9 @@ use Illuminate\Support\Facades\Log;
 
 class DataHelper
 {
-    use Messages;
-
     public static function getMessages()
     {
-        $dataHelper = new DataHelper();
-        $messages = $dataHelper->messages();
-        return $messages;
+        return MessagesHelper::messages();
     }
 
     /**

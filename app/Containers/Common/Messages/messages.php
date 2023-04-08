@@ -2,9 +2,9 @@
 
 namespace App\Containers\Common\Messages;
 
-trait Messages
+class Messages
 {
-    public function messages()
+    public static function messages()
     {
         return [
             'DATA' => [

@@ -2,14 +2,12 @@
 
 namespace App\Exceptions\Common;
 
+use App\Containers\Common\Helpers\MessagesHelper;
 use App\Exceptions\ApplicationException;
 use Illuminate\Http\Response;
-use App\Messages\ExceptionMessages;
 
 class UpdateFailedException extends ApplicationException
 {
-    use ExceptionMessages;
-
     protected $messages = array();
     protected $name = '';
     protected $message = '';
@@ -17,7 +15,7 @@ class UpdateFailedException extends ApplicationException
     public function __construct($name = '')
     {
         $this->name = $name;
-        $this->messages = $this->messages();
+        $this->messages = MessagesHelper::messages();
         $this->message = $this->name == '' ? '' : $this->name . ' ';
         $this->message .= $this->messages['UPDATE_FAILED'];
     }

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
 
-use App\Containers\Users\Helpers\CrossAuthorizationHelper;
+use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
@@ -16,7 +16,6 @@ use App\Containers\Users\Validators\UsersValidators;
 use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Requests\CreateUserRequest;
 use App\Containers\Users\Requests\UpdateUserRequest;
-use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Helpers\UserHelper;
 
 use App\Containers\Common\Helpers\ContactHelper;
@@ -27,13 +26,13 @@ use App\Containers\Common\Traits\PermissionControllersTrait;
 
 class UsersController extends Controller
 {
-    use ResponseHelper, Messages, UsersValidators, PermissionControllersTrait;
+    use ResponseHelper, UsersValidators, PermissionControllersTrait;
 
     protected $messages = array();
 
     public function __construct()
     {
-        $this->messages = $this->messages();
+        $this->messages = MessagesHelper::messages();;
     }
 
     /**

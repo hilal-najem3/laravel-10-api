@@ -11,13 +11,11 @@ use App\Helpers\ConstantsHelper;
 
 use App\Helpers\Response\CollectionsHelper;
 use App\Helpers\Storage\StoreHelper;
-use App\Helpers\Storage\LocalStore;
 
 use App\Exceptions\Common\NotFoundException;
 use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
-use App\Exceptions\Common\NotAllowedException;
 use Exception;
 
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
@@ -26,11 +24,9 @@ use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 
 use App\Containers\Files\Helpers\ImagesHelper;
-use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Common\Helpers\ContactHelper;
-
-use App\Containers\Users\Messages\Messages;
+use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Models\Permission;
 use App\Containers\Files\Models\Image;
@@ -44,13 +40,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UserHelper
 {
-    use Messages;
-
     public static function getMessages()
     {
-        $helper = new UserHelper();
-        $messages = $helper->messages();
-        return $messages;
+        return MessagesHelper::messages();
     }
 
     /**

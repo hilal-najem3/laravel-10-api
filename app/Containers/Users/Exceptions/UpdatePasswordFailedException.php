@@ -4,11 +4,16 @@ namespace App\Containers\Users\Exceptions;
 
 use App\Exceptions\ApplicationException;
 use Illuminate\Http\Response;
-use App\Containers\Users\Messages\Messages;
+use App\Containers\Common\Helpers\MessagesHelper;
 
 class UpdatePasswordFailedException extends ApplicationException
 {
-    use Messages;
+    protected $messages = array();
+
+    public function __construct()
+    {
+        $this->messages = MessagesHelper::messages();
+    }
 
     public function status(): int
     {
@@ -17,11 +22,11 @@ class UpdatePasswordFailedException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages()['PROFILE']['PASSWORD_ERROR']);
+        return trans($this->messages['PROFILE']['PASSWORD_ERROR']);
     }
 
     public function error(): string
     {
-        return trans($this->messages()['PROFILE']['PASSWORD_ERROR']);
+        return trans($this->messages['PROFILE']['PASSWORD_ERROR']);
     }
 }

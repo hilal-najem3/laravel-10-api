@@ -389,7 +389,7 @@ class DataHelperTest extends TestCase
 
         $value = ['random_key' => 'random_value'];
         $typeId = 4512;
-        $data = $this->formatData($value, $typeId);
+        $result = $this->formatData($value, $typeId);
 
         $this->assertException($result, 'NotFoundException');
     }
@@ -405,7 +405,7 @@ class DataHelperTest extends TestCase
 
         $value = null;
         $typeId = 1;
-        $data = $this->formatData($value, $typeId);
+        $result = $this->formatData($value, $typeId);
 
         $this->assertException($result, 'ArgumentNullException');
     }

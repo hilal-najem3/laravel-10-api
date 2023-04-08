@@ -8,19 +8,19 @@ use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Common\Helpers\ContactHelper as Helper;
 
-use App\Containers\Common\Messages\Messages;
+use App\Containers\Common\Helpers\MessagesHelper;
 
 use Exception;
 
 class ContactsController extends Controller
 {
-    use ResponseHelper, Messages;
+    use ResponseHelper;
 
     protected $messages = array();
 
     public function __construct()
     {
-        $this->messages = $this->messages();
+        $this->messages = MessagesHelper::messages();
     }
 
     public function contactTypes()

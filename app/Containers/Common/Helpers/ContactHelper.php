@@ -11,7 +11,7 @@ use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
-use App\Containers\Common\Messages\Messages;
+use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Containers\Common\Models\ContactType;
 use App\Containers\Common\Models\Contact;
@@ -20,13 +20,9 @@ use Illuminate\Support\Facades\DB;
 
 class ContactHelper
 {
-    use Messages;
-
     public static function getMessages()
     {
-        $dataHelper = new DataHelper();
-        $messages = $dataHelper->messages();
-        return $messages;
+        return MessagesHelper::messages();
     }
 
     /**

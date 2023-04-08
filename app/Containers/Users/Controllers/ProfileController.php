@@ -6,28 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Helpers\Response\ResponseHelper;
-use App\Helpers\Storage\StoreHelper;
+
+use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Containers\Auth\Helpers\UserAuthHelper;
-
 use App\Containers\Users\Requests\UpdateUserPasswordRequest;
 use App\Containers\Users\Requests\UpdateUserPhotoRequest;
 use App\Containers\Users\Requests\UpdateUserRequest;
 use App\Containers\Users\Helpers\UserHelper;
-use App\Containers\Users\Messages\Messages;
 
 use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class ProfileController extends Controller
 {
-    use ResponseHelper, Messages;
+    use ResponseHelper;
 
     protected $messages = array();
 
     public function __construct()
     {
-        $this->messages = $this->messages();
+        $this->messages = MessagesHelper::messages();
     }
 
     /**

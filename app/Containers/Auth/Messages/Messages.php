@@ -2,9 +2,9 @@
 
 namespace App\Containers\Auth\Messages;
 
-trait Messages
+class Messages
 {
-    public function messages()
+    public static function messages()
     {
         return [
             'LOGIN_SUCCESS' => 'User was successfully logged in',

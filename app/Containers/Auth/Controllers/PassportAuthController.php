@@ -8,7 +8,7 @@ use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use App\Containers\Auth\Messages\Messages;
+use App\Containers\Common\Helpers\MessagesHelper;
 use App\Containers\Auth\Requests\LoginUserRequest;
 use App\Containers\Auth\Requests\ForgotPasswordRequest;
 use App\Containers\Auth\Requests\ResetPasswordPasswordRequest;
@@ -16,13 +16,13 @@ use Exception;
 
 class PassportAuthController extends Controller
 {
-    use ResponseHelper, Messages;
+    use ResponseHelper;
 
     protected $messages = array();
 
     public function __construct()
     {
-        $this->messages = $this->messages();
+        $this->messages = MessagesHelper::messages();
     }
     
     /**
