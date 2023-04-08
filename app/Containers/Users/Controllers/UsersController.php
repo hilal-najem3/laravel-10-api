@@ -43,8 +43,6 @@ class UsersController extends Controller
      */
     public function get(PaginationRequest $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
 
@@ -82,8 +80,6 @@ class UsersController extends Controller
      */
     public function id(int $id)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
             $user = UserHelper::full($id);
@@ -121,8 +117,6 @@ class UsersController extends Controller
      */
     public function create(CreateUserRequest $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['create-users'], $this->messages['USERS']['CREATE_USER_NOT_ALLOWED']);
             $data = $request->all();
@@ -158,8 +152,6 @@ class UsersController extends Controller
      */
     public function update(UpdateUserRequest $request, int $id)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
             $data = $request->all();
@@ -200,9 +192,6 @@ class UsersController extends Controller
      */
     public function updateContactData(UpdateUserContactDataRequest $request, int $id)
     {
-        $this->messages = $this->messages();
-
-
         try {
             $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
 
@@ -258,8 +247,6 @@ class UsersController extends Controller
      */
     public function deleteContactData(DeleteUserContactDataRequest $request, int $id)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
 
@@ -298,8 +285,6 @@ class UsersController extends Controller
      */
     public function addPermissionsToUser(Request $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
 
@@ -343,9 +328,6 @@ class UsersController extends Controller
      */
     public function removePermissionsToUser(Request $request)
     {
-        $this->messages = $this->messages();
-
-
         try {
             $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
 
@@ -389,8 +371,6 @@ class UsersController extends Controller
      */
     public function addRolesToUser(Request $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
 
@@ -434,9 +414,6 @@ class UsersController extends Controller
      */
     public function removeRolesToUser(Request $request)
     {
-        $this->messages = $this->messages();
-
-
         try {
             $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
 
@@ -482,9 +459,6 @@ class UsersController extends Controller
      */
     public function deactivateUsers(UserArraysRequest $request)
     {
-        $this->messages = $this->messages();
-
-
         try {
             $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
@@ -522,8 +496,6 @@ class UsersController extends Controller
      */
     public function activateUsers(UserArraysRequest $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
@@ -565,8 +537,6 @@ class UsersController extends Controller
      */
     public function deleteUsers(UserArraysRequest $request)
     {
-        $this->messages = $this->messages();
-
         try {
             $this->allowedAction(['delete-user'], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
             $ids = $request->get('user_ids');
@@ -603,7 +573,6 @@ class UsersController extends Controller
      */
     public function getDeletedUsers(PaginationRequest $request)
     {
-
         try {
             $this->allowedAction(['get-deleted-users'], $this->messages['USERS']['GET_ERROR']);
             $data = UserHelper::getDeleted($request->get('pagination'));
