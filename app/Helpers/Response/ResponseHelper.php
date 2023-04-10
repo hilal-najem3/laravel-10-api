@@ -2,6 +2,7 @@
 
 namespace App\Helpers\Response;
 
+use App\Containers\Common\Helpers\MessagesHelper;
 use App\Helpers\Response\ResponseJsonErrorReturn;
 use Exception;
 
@@ -22,16 +23,54 @@ trait ResponseHelper
     /**
      * This function fills the response that should be sent to the user
      * then returns a response for it.
+     * This is used for success returns only
+     * used as a minified version of return_response() function
      * 
-     * @param  int         $status  status of the error
+     * @param  string|null $messageKey response error message key
      * @param  mixed       $data  data returned
-     * @param  string|null $message response error message
-     * @param  string $error   Exception message
      * 
      * @return \Illuminate\Http\Response
      */
-    public function return_response(int $status, mixed $data, string $message = null, string $error = null)
+    public function response(string $messageKey = null, mixed $data = null)
     {
+        return $this->return_response($this->success, $data, $messageKey);
+    }
+
+    /**
+     * This function fills the response that should be sent to the user
+     * then returns a response for it.
+     * This is used for error returns only
+     * used as a minified version of return_response() function
+     * 
+     * @param  int         $status  status of the error
+     * @param  string|null $messageKey response error message key
+     * @param  Exception $e   Exception
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function errorResponse(int $status, string $messageKey = null, Exception $exception = null)
+    {
+        return $this->return_response($status, null, $messageKey, $exception);
+    }
+
+    /**
+     * This function fills the response that should be sent to the user
+     * then returns a response for it.
+     * 
+     * @param  int         $status  status of the error
+     * @param  mixed       $data  data returned
+     * @param  string|null $messageKey response error message key
+     * @param  Exception $e   Exception
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function return_response(int $status, mixed $data, string $messageKey = null, Exception $exception = null)
+    {
+        $messages = MessagesHelper::messages();
+        $message = $messages[$messageKey] ? $messages[$messageKey] : '';
+
+        $error = $exception ? $this->exception_message($exception) : '';
+
         if($status != 200) {
             return ResponseJsonErrorReturn::returnErrorResponse($status, $message, $error);
         }
@@ -63,7 +102,7 @@ trait ResponseHelper
                 // We have a normal exception
                 return $e->error();
             }
-        } catch (Exception $execption) {
+        } catch (Exception $exception) {
             return $e->getMessage();
         }
         return $e->getMessage();

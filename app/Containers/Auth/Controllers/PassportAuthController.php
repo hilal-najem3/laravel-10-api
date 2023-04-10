@@ -8,7 +8,6 @@ use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use App\Containers\Common\Helpers\MessagesHelper;
 use App\Containers\Auth\Requests\LoginUserRequest;
 use App\Containers\Auth\Requests\ForgotPasswordRequest;
 use App\Containers\Auth\Requests\ResetPasswordPasswordRequest;
@@ -20,11 +19,6 @@ class PassportAuthController extends Controller
 
     protected $messages = array();
 
-    public function __construct()
-    {
-        $this->messages = MessagesHelper::messages();
-    }
-    
     /**
      * Login user
      * 
@@ -39,19 +33,18 @@ class PassportAuthController extends Controller
             $info = UserAuthHelper::login($user_data);
             
             if($info == null) {
-                return $this->return_response($this->not_found, [], $this->messages['LOGIN_FAILED']);
+                return $this->return_response($this->not_found, [], 'LOGIN_FAILED');
             }
         
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['LOGIN_SUCCESS']
+            return $this->response(
+               'LOGIN_SUCCESS',
+               $info
             );
         } catch (Exception $e) {
-            return $this->return_response($this->bad_request, [], $this->messages['LOGIN_FAILED'], $e->getMessage());
+            return $this->return_response($this->bad_request, [], 'LOGIN_FAILED', $e);
         }
 
-        return $this->return_response($this->bad_request, [], $this->messages['LOGIN_FAILED']);
+        return $this->return_response($this->bad_request, [], 'LOGIN_FAILED');
     }
 
     /**
@@ -66,17 +59,15 @@ class PassportAuthController extends Controller
             $revoked = UserAuthHelper::logout($request->user());
             
             if($revoked) {
-                return $this->return_response(
-                    $this->success,
-                    [],
-                    $this->messages['LOGOUT_SUCCESS']
+                return $this->response(
+                    'LOGOUT_SUCCESS'
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response($this->bad_request, [], $this->messages['LOGOUT_FAILED'], $e->getMessage());
+            return $this->errorResponse($this->bad_request, 'LOGOUT_FAILED', $e);
         }
 
-        return $this->return_response($this->bad_request, [], $this->messages['LOGOUT_FAILED']);
+        return $this->errorResponse($this->bad_request, 'LOGOUT_FAILED');
     }
 
     /**
@@ -92,15 +83,15 @@ class PassportAuthController extends Controller
 
         $response = Password::sendResetLink($data);
         
-        $message = $response == Password::RESET_LINK_SENT ? 
-        $this->messages['FORGOT_EMAIL_SUCCESS'] : $this->messages['FORGOT_EMAIL_FAIL'];
+        $messageKey = $response == Password::RESET_LINK_SENT ? 
+        'FORGOT_EMAIL_SUCCESS' : 'FORGOT_EMAIL_FAIL';
 
         $status = $response == Password::RESET_LINK_SENT ? $this->success : $this->bad_request;
 
         return $this->return_response(
             $status,
             [],
-            $message
+            $messageKey
         );
     }
 
@@ -120,49 +111,34 @@ class PassportAuthController extends Controller
             $user->save();
         });
 
-        $message = $this->messages['RESET_PASSWORD_FAIL'];
+        $messageKey = 'RESET_PASSWORD_FAIL';
+        $status = $this->bad_request;
 
         switch($reset_password_status) {
             case Password::INVALID_TOKEN: {
-                return $this->return_response(
-                    $this->unauthorized,
-                    [],
-                    $message
-                );
+                $status = $this->unauthorized;
                 break;
             }
             case Password::INVALID_USER: {
-                return $this->return_response(
-                    $this->bad_request,
-                    [],
-                    $message
-                );
+                $status = $this->bad_request;
                 break;
             }
 
             case Password::PASSWORD_RESET: {
-                $message = $this->messages['RESET_PASSWORD_SUCCESS'];
-                return $this->return_response(
-                    $this->success,
-                    [],
-                    $message
-                );
+                $message = 'RESET_PASSWORD_SUCCESS';
+                $status = $this->success;
                 break;
             }
             default: {
-                return $this->return_response(
-                    $this->bad_request,
-                    [],
-                    $message
-                );
+                $status = $this->bad_request;
                 break;
             }
         }
 
         return $this->return_response(
-            $this->bad_request,
+            $status,
             [],
-            $message
+            $messageKey
         );
     }
 }
