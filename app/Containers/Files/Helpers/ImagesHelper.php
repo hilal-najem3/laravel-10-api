@@ -26,7 +26,7 @@ class ImagesHelper
 
             return $types;
         } catch (Exception $e) {
-            throw new NotFoundException('Image types');
+            throw new NotFoundException('FILES.IMAGE_TYPES');
         }
     }
 
@@ -42,7 +42,7 @@ class ImagesHelper
             $type = ImageType::where('name', $typeName)->first();
 
             if($type == null) {
-                throw new NotFoundException('Image type');
+                throw new NotFoundException('FILES.IMAGE_TYPE');
             }
 
             return $type->id;
@@ -67,7 +67,7 @@ class ImagesHelper
             $image = Image::find($id);
 
             if($image == null) {
-                throw new NotFoundException('Image');
+                throw new NotFoundException('FILES.IMAGE');
             }
 
             if(!$raw) {
@@ -128,7 +128,7 @@ class ImagesHelper
             $image = Image::find($id);
 
             if($image == null) {
-                throw new UpdateFailedException('Image');
+                throw new UpdateFailedException('FILES.IMAGE');
             }
 
             $image->link = $data['link'];
@@ -162,7 +162,7 @@ class ImagesHelper
         DB::beginTransaction();
         try {
             if($image == null) {
-                throw new UpdateFailedException('Image');
+                throw new UpdateFailedException('FILES.IMAGE');
             }
 
             if($typeName != null) {
@@ -202,7 +202,7 @@ class ImagesHelper
             $image = Image::find($id);
 
             if($image == null) {
-                throw new DeleteFailedException('Image');
+                throw new DeleteFailedException('FILES.IMAGE');
             }
 
             if($deleteFile) {
