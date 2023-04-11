@@ -26,7 +26,6 @@ use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Common\Helpers\ContactHelper;
-use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Models\Permission;
 use App\Containers\Files\Models\Image;
@@ -40,11 +39,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserHelper
 {
-    public static function getMessages()
-    {
-        return MessagesHelper::messages();
-    }
-
     /**
      * get user base info (only from users table)
      * by id
@@ -55,20 +49,19 @@ class UserHelper
     public static function id(int $id)
     {
         try {
-            $messages = self::getMessages();
             $user = User::find($id);
 
             if(!$user) {
-                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+                throw new NotFoundException('PROFILE.EXCEPTION');
             }
 
             return $user;
         } catch (Exception $e) {
             Log::error('User not found - UserHelper::id(' . $id . ')');
-            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+            throw new NotFoundException('PROFILE.EXCEPTION');
         }
 
-        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+        throw new NotFoundException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -80,20 +73,19 @@ class UserHelper
     public static function email(string $email)
     {
         try {
-            $messages = self::getMessages();
             $user = User::where('email', $email)->first();
 
             if(!$user) {
-                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+                throw new NotFoundException('PROFILE.EXCEPTION');
             }
 
             return $user;
         } catch (Exception $e) {
             Log::error('User not found - UserHelper::email(' . $email . ')');
-            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+            throw new NotFoundException('PROFILE.EXCEPTION');
         }
 
-        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+        throw new NotFoundException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -134,11 +126,10 @@ class UserHelper
     public static function full(int $id)
     {
         try {
-            $messages = self::getMessages();
             $user = User::with(['roles', 'permissions', 'profileImage', 'contact'])->where('id', $id)->first();
 
             if(!$user) {
-                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+                throw new NotFoundException('PROFILE.EXCEPTION');
             }
 
             if($user->profileImage) {
@@ -148,10 +139,10 @@ class UserHelper
             return $user;
         } catch (Exception $e) {
             Log::error('User not found - UserHelper::id(' . $id . ')');
-            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+            throw new NotFoundException('PROFILE.EXCEPTION');
         }
 
-        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+        throw new NotFoundException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -164,7 +155,6 @@ class UserHelper
      */
     public static function inActivate(User $user)
     {
-        $messages = self::getMessages();
         DB::beginTransaction();
         try {
             $user->active = false;
@@ -178,10 +168,10 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+            throw new UpdateFailedException('PROFILE.EXCEPTION');
         }
 
-        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
     }
 
      /**
@@ -194,7 +184,6 @@ class UserHelper
      */
     public static function activate(User $user)
     {
-        $messages = self::getMessages();
         DB::beginTransaction();
         try {
             $user->active = true;
@@ -205,10 +194,10 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+            throw new UpdateFailedException('PROFILE.EXCEPTION');
         }
 
-        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -220,7 +209,6 @@ class UserHelper
     public static function getAll(int $paginationCount = null)
     {
         try {
-            $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::with(['roles', 'permissions', 'profileImage'])
@@ -255,7 +243,6 @@ class UserHelper
     public static function getDeleted(int $paginationCount = null)
     {
         try {
-            $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::onlyTrashed()->with(['roles', 'permissions', 'profileImage'])
@@ -289,7 +276,6 @@ class UserHelper
     public static function getInActivated(int $paginationCount = null)
     {
         try {
-            $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::where('active', false)->with([
@@ -329,7 +315,6 @@ class UserHelper
     {
         DB::beginTransaction();
         try {
-            $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
             $data['password'] = Hash::make($data['password']);
             if(isset($data['dob']) && $data['dob'] != '') {
@@ -344,11 +329,11 @@ class UserHelper
         } catch (Exception $e) {
             Log::error('User create failed on UserHelper::create() with data: ' . json_encode($data));
             DB::rollback();
-            throw new CreateFailedException($messages['PROFILE']['EXCEPTION']);
+            throw new CreateFailedException('PROFILE.EXCEPTION');
         }
 
         DB::rollback();
-        throw new CreateFailedException($messages['PROFILE']['EXCEPTION']);
+        throw new CreateFailedException('PROFILE.EXCEPTION');
     }
     
     /**
@@ -362,7 +347,6 @@ class UserHelper
     {
         DB::beginTransaction();
         try {
-            $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
             if(isset($data['dob']) && $data['dob'] != '') {
                 $data['dob'] = new Carbon($data['dob']);
@@ -391,13 +375,13 @@ class UserHelper
 
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+                throw new UpdateFailedException('PROFILE.EXCEPTION');
             }
             throw $e;
         }
 
         DB::rollback();
-        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -412,7 +396,6 @@ class UserHelper
         DB::beginTransaction();
 
         try {
-            $messages = self::getMessages();
             $data = UserHelper::trimPasswords($data);
 
             if(!Hash::check($data['old_password'], $user->password)) {
@@ -456,8 +439,6 @@ class UserHelper
     {
         DB::beginTransaction();
         try {
-            $messages = self::getMessages();
-
             $subPath = 'uploads/images/users/' . $user->id;
 
             $image = $user->profileImage()->first();
@@ -498,12 +479,12 @@ class UserHelper
             DB::rollback();
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+                throw new UpdateFailedException('PROFILE.EXCEPTION');
             }
             throw $e;
         }
 
-        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
     }
 
     /**
@@ -518,7 +499,6 @@ class UserHelper
         DB::beginTransaction();
 
         try {
-            $messages = self::getMessages();
             $permission = Permission::find($permissionId);
 
             if(!$permission) {
@@ -553,7 +533,6 @@ class UserHelper
         DB::beginTransaction();
 
         try {
-            $messages = self::getMessages();
             $permission = Permission::find($permissionId);
 
             if(!$permission) {
@@ -587,7 +566,6 @@ class UserHelper
         DB::beginTransaction();
 
         try {
-            $messages = self::getMessages();
             $role = Role::find($roleId);
 
             if(!$role) {
@@ -621,7 +599,6 @@ class UserHelper
         DB::beginTransaction();
 
         try {
-            $messages = self::getMessages();
             $role = Role::find($roleId);
 
             if(!$role) {
