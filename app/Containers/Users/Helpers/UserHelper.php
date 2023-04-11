@@ -28,11 +28,11 @@ use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Common\Helpers\ContactHelper;
 
-use App\Models\Permission;
+use App\Containers\Permissions\Models\Permission;
 use App\Containers\Files\Models\Image;
 use App\Containers\Common\Models\ContactUser;
 use App\Containers\Common\Models\Contact;
-use App\Models\Role;
+use App\Containers\Roles\Models\Role;
 use App\Models\User;
 
 use Carbon\Carbon;
@@ -348,6 +348,7 @@ class UserHelper
     public static function update(User $user, array $data)
     {
         DB::beginTransaction();
+        $activeException = '';
         try {
             $data = UserHelper::trimUserData($data);
             if(isset($data['dob']) && $data['dob'] != '') {
@@ -359,6 +360,7 @@ class UserHelper
             if($user->email != $data['email']) {
                 $emailCount = User::where('email',  $data['email'])->count();
                 if($emailCount) {
+                    $activeException = 'DuplicateEmailException';
                     // New Email exists
                     throw new DuplicateEmailException();
                 }
@@ -374,12 +376,16 @@ class UserHelper
         } catch (Exception $e) {
             Log::error('User data updated failed - UserHelper::update()');
             DB::rollback();
-
-            if($e->getMessage() != null) {
-                // We have a normal exception
-                throw new UpdateFailedException('PROFILE.EXCEPTION');
+            switch($activeException) {
+                case 'DuplicateEmailException': {
+                    throw new DuplicateEmailException();
+                    break;
+                }
+                default: {
+                    throw new UpdateFailedException('PROFILE.EXCEPTION');
+                    break;
+                }
             }
-            throw $e;
         }
 
         DB::rollback();
@@ -396,15 +402,18 @@ class UserHelper
     public static function updatePassword(User $user, array $data)
     {
         DB::beginTransaction();
+        $activeException = '';
 
         try {
             $data = UserHelper::trimPasswords($data);
 
             if(!Hash::check($data['old_password'], $user->password)) {
+                $activeException = 'OldPasswordException';
                 throw new OldPasswordException();
             }
 
             if(Hash::check($data['password'], $user->password)) {
+                $activeException = 'SameOldPasswordException';
                 throw new SameOldPasswordException();
             }
 
@@ -415,17 +424,25 @@ class UserHelper
             DB::commit();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Update password failed - UserHelper::updatePassword');
             DB::rollback();
-            if($e->getMessage() != null) {
-                // We have a normal exception
-                throw new UpdatePasswordFailedException();
+            switch($activeException) {
+                case 'OldPasswordException': {
+                    throw new OldPasswordException();
+                    break;
+                }
+                case 'SameOldPasswordException': {
+                    throw new SameOldPasswordException();
+                    break;
+                }
+                default: {
+                    throw new UpdatePasswordFailedException();
+                    break;
+                }
             }
-            throw $e;
         }
 
-        DB::rollback();
         throw new UpdatePasswordFailedException();
     }
 

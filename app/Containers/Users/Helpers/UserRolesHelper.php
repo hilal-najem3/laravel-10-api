@@ -2,7 +2,7 @@
 
 namespace App\Containers\Users\Helpers;
 
-use App\Models\Role;
+use App\Containers\Roles\Models\Role;
 
 class UserRolesHelper
 {

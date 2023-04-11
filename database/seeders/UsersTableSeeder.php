@@ -6,8 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Role;
-use App\Models\Permission;
+use App\Containers\Roles\Models\Role;
+use App\Containers\Permissions\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use Exception;
 

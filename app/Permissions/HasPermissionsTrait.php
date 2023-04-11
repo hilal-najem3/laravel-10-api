@@ -4,8 +4,8 @@ namespace App\Permissions;
 
 use App\Helpers\Database\PermissionsHelper;
 
-use App\Models\Permission;
-use App\Models\Role;
+use App\Containers\Permissions\Models\Permission;
+use App\Containers\Roles\Models\Role;
 
 trait HasPermissionsTrait 
 {

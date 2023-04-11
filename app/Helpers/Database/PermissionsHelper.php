@@ -5,7 +5,7 @@ namespace App\Helpers\Database;
 use App\Containers\Users\Permissions\Permissions as UserPermissions;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\Permission;
+use App\Containers\Permissions\Models\Permission;
 
 use Exception;
 

@@ -21,8 +21,8 @@ use App\Helpers\ConstantsHelper;
 use App\Helpers\Response\CollectionsHelper;
 use App\Helpers\Storage\StoreHelper;
 use App\Models\User;
-use App\Models\Role;
-use App\Models\Permission;
+use App\Containers\Roles\Models\Role;
+use App\Containers\Permissions\Models\Permission;
 use Illuminate\Http\Testing\File;
 use Auth;
 
@@ -289,8 +289,6 @@ class UserHelperTest extends TestCase
      */
     public function test_helper_update_email_fail()
     {
-        $this->setUp();
-
         $userData = $this->getUserData();
         $user1 = UserHelper::create($userData);
 
@@ -312,8 +310,6 @@ class UserHelperTest extends TestCase
      */
     public function test_helper_update_general_fail()
     {
-        $this->setUp();
-
         $userData = $this->getUserData();
         $user = UserHelper::create($userData);
         
@@ -332,8 +328,6 @@ class UserHelperTest extends TestCase
      */
     public function test_helper_update_password_successful()
     {
-        $this->setUp();
-
         $userData = $this->getUserData();
         $user = UserHelper::create($userData);
         
@@ -353,8 +347,6 @@ class UserHelperTest extends TestCase
      */
     public function test_helper_update_password_fail_same_old_password()
     {
-        $this->setUp();
-
         $userData = $this->getUserData();
         $user = UserHelper::create($userData);
         
@@ -367,7 +359,7 @@ class UserHelperTest extends TestCase
 
         $updated = UserHelper::updatePassword($user, $data);
 
-        $this->assertException($result, 'SameOldPasswordException');
+        $this->assertException($updated, 'SameOldPasswordException');
     }
 
     /**
@@ -377,8 +369,6 @@ class UserHelperTest extends TestCase
      */
     public function test_helper_update_password_fail_wrong_old_password()
     {
-        $this->setUp();
-
         $userData = $this->getUserData();
         $user = UserHelper::create($userData);
         
@@ -391,7 +381,7 @@ class UserHelperTest extends TestCase
 
         $updated = UserHelper::updatePassword($user, $data);
 
-        $this->assertException($result, 'OldPasswordException');
+        $this->assertException($updated, 'OldPasswordException');
     }
 
     /**
