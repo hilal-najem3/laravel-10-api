@@ -8,11 +8,11 @@ use App\Containers\Common\Helpers\MessagesHelper;
 
 class UpdatePasswordFailedException extends ApplicationException
 {
-    protected $messages = array();
+    protected $message = '';
 
     public function __construct()
     {
-        $this->messages = MessagesHelper::messages();
+        $this->message = MessagesHelper::processMessageKey('PROFILE.PASSWORD_ERROR');
     }
 
     public function status(): int
@@ -22,11 +22,11 @@ class UpdatePasswordFailedException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages['PROFILE']['PASSWORD_ERROR']);
+        return trans($this->message);
     }
 
     public function error(): string
     {
-        return trans($this->messages['PROFILE']['PASSWORD_ERROR']);
+        return trans($this->message);
     }
 }

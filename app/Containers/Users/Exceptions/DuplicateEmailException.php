@@ -8,11 +8,11 @@ use App\Containers\Common\Helpers\MessagesHelper;
 
 class DuplicateEmailException extends ApplicationException
 {
-    protected $messages = array();
+    protected $message = '';
 
     public function __construct()
     {
-        $this->messages = MessagesHelper::messages();
+        $this->message = MessagesHelper::processMessageKey('EMAIL_EXISTS');
     }
 
     public function status(): int
@@ -22,11 +22,11 @@ class DuplicateEmailException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages['EMAIL_EXISTS']);
+        return trans($this->message);
     }
 
     public function error(): string
     {
-        return trans($this->messages['EMAIL_EXISTS']);
+        return trans($this->message);
     }
 }

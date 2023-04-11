@@ -8,11 +8,11 @@ use App\Containers\Common\Helpers\MessagesHelper;
 
 class OldPasswordException extends ApplicationException
 {
-    protected $messages = array();
+    protected $message = '';
 
     public function __construct()
     {
-        $this->messages = MessagesHelper::messages();
+        $this->message = MessagesHelper::processMessageKey('PROFILE.OLD_PASSWORD_ERROR');
     }
 
     public function status(): int
@@ -22,11 +22,11 @@ class OldPasswordException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages['PROFILE']['OLD_PASSWORD_ERROR']);
+        return trans($this->message);
     }
 
     public function error(): string
     {
-        return trans($this->messages['PROFILE']['OLD_PASSWORD_ERROR']);
+        return trans($this->message);
     }
 }

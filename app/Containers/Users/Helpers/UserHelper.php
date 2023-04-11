@@ -534,7 +534,7 @@ class UserHelper
             $permission = Permission::find($permissionId);
 
             if(!$permission) {
-                throw new NotFoundException('Permission');
+                throw new NotFoundException('PERMISSION');
             }
 
             $user->permissions()->attach($permission);
@@ -568,7 +568,7 @@ class UserHelper
             $permission = Permission::find($permissionId);
 
             if(!$permission) {
-                throw new NotFoundException('Permission');
+                throw new NotFoundException('PERMISSION');
             }
 
             $user->permissions()->detach($permission);
@@ -601,7 +601,7 @@ class UserHelper
             $role = Role::find($roleId);
 
             if(!$role) {
-                throw new NotFoundException('Role');
+                throw new NotFoundException('ROLE');
             }
 
             $user->roles()->attach($role);
@@ -634,7 +634,7 @@ class UserHelper
             $role = Role::find($roleId);
 
             if(!$role) {
-                throw new NotFoundException('Role');
+                throw new NotFoundException('ROLE');
             }
 
             $user->roles()->detach($role);
@@ -701,9 +701,9 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollback();
-            throw new DeleteFailedException('User');
+            throw new DeleteFailedException('USERS.USER');
         }
-        throw new DeleteFailedException('User');
+        throw new DeleteFailedException('USERS.USER');
     }
 
     /**
@@ -733,9 +733,9 @@ class UserHelper
             return true;
         } catch (Exception $e) {
             DB::rollback();
-            throw new UpdateFailedException('User');
+            throw new UpdateFailedException('USERS.USER');
         }
-        throw new UpdateFailedException('User');
+        throw new UpdateFailedException('USERS.USER');
     }
 
     public static function trimUserData(array $data)
