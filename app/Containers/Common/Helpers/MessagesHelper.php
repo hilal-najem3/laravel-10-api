@@ -31,6 +31,12 @@ class MessagesHelper
         return $messages;
     }
 
+    /**
+     * This function gets a message key and returns its value
+     * 
+     * @param string $key
+     * @return string $output
+     */
     public static function processMessageKey(string $key)
     {
         $output = '';
@@ -44,6 +50,14 @@ class MessagesHelper
         return $output;
     }
 
+    /**
+     * This function returns the final array in messages according
+     * to keys array that are a exploded with dot in between
+     * 
+     * @param array $keysArray
+     * @param array $messages
+     * @return array $output
+     */
     public static function getMessagesFinalArray($keysArray, $messages)
     {
         $output = $messages;

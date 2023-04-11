@@ -8,6 +8,7 @@ class Messages
     {
         return [
             'DATA' => [
+                'DATA' => 'Data',
                 'EXCEPTION' => 'Data'
             ],
             'REGIONS' => [

@@ -5,7 +5,6 @@ namespace App\Containers\Common\Helpers;
 use App\Containers\Common\Models\Region;
 use App\Containers\Common\Models\RegionType;
 
-
 use Exception;
 
 class RegionsHelper

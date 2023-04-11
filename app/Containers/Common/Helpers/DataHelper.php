@@ -9,8 +9,6 @@ use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
-use App\Containers\Common\Messages\Messages;
-
 use App\Containers\Common\Models\DataType;
 use App\Containers\Common\Models\Data;
 
@@ -19,11 +17,6 @@ use Illuminate\Support\Facades\Log;
 
 class DataHelper
 {
-    public static function getMessages()
-    {
-        return MessagesHelper::messages();
-    }
-
     /**
      * get a data object by id
      * 
@@ -34,7 +27,7 @@ class DataHelper
     {
         $data = Data::find($id);
         if(!$data) {
-            throw new NotFoundException('Data');
+            throw new NotFoundException('DATA.DATA');
         }
         return $data;
     }
@@ -49,7 +42,7 @@ class DataHelper
     {
         $data = Data::where('key', $key)->first();;
         if(!$data) {
-            throw new NotFoundException('Data');
+            throw new NotFoundException('DATA.DATA');
         }
         return $data;
     }
@@ -62,8 +55,6 @@ class DataHelper
      */
     public static function create(array $data)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data['value'] = self::stringifyValue($data['value'], $data['type_id']);
@@ -75,11 +66,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Create data failed - DataHelper::create');
-            throw new  CreateFailedException($messages['DATA']['EXCEPTION']);
+            throw new  CreateFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Create data failed - DataHelper::create');
-        throw new  CreateFailedException($messages['DATA']['EXCEPTION']);
+        throw new  CreateFailedException('DATA.EXCEPTION');
     }
 
     /**
@@ -91,8 +82,6 @@ class DataHelper
      */
     public static function update(Data $updateData, array $data)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data['value'] = self::stringifyValue($data['value'], $data['type_id']);
@@ -110,11 +99,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Update data failed - DataHelper::update');
-            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+            throw new  UpdateFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Update data failed - DataHelper::update');
-        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        throw new  UpdateFailedException('DATA.EXCEPTION');
     }
 
     /**
@@ -125,8 +114,6 @@ class DataHelper
      */
     public static function delete(int $id)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data = self::id($id);
@@ -138,11 +125,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Delete data failed - DataHelper::delete');
-            throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+            throw new  DeleteFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Delete data failed - DataHelper::delete');
-        throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+        throw new  DeleteFailedException('DATA.EXCEPTION');
     }
 
     /**
@@ -153,8 +140,6 @@ class DataHelper
      */
     public static function deleteByKey(string $key)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data = self::key($key);
@@ -166,11 +151,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Delete data failed - DataHelper::deleteByKey');
-            throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+            throw new  DeleteFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Delete data failed - DataHelper::deleteByKey');
-        throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+        throw new  DeleteFailedException('DATA.EXCEPTION');
     }
 
     /**
@@ -181,13 +166,11 @@ class DataHelper
      */
     public static function restore(int $id)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data = Data::onlyTrashed()->where('id', $id)->first();
             if(!$data) {
-                throw new NotFoundException($messages['DATA']['EXCEPTION']);
+                throw new NotFoundException('DATA.EXCEPTION');
             }
 
             $data->restore();
@@ -198,11 +181,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Restore data failed - DataHelper::restore');
-            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+            throw new  UpdateFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Restore data failed - DataHelper::restore');
-        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        throw new  UpdateFailedException('DATA.EXCEPTION');
     }
 
     /**
@@ -213,13 +196,11 @@ class DataHelper
      */
     public static function restoreByKey(string $key)
     {
-        $messages = self::getMessages();
-
         DB::beginTransaction();
         try {
             $data = Data::onlyTrashed()->where('key', $key)->first();
             if(!$data) {
-                throw new NotFoundException($messages['DATA']['EXCEPTION']);
+                throw new NotFoundException('DATA.EXCEPTION');
             }
             
             $data->restore();
@@ -230,11 +211,11 @@ class DataHelper
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Restore data failed - DataHelper::restoreByKey');
-            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+            throw new  UpdateFailedException('DATA.EXCEPTION');
         }
 
         Log::error('Restore data failed - DataHelper::restoreByKey');
-        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        throw new  UpdateFailedException('DATA.EXCEPTION');
     }
 
     /**
