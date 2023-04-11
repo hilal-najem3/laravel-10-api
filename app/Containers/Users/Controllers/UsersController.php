@@ -29,6 +29,40 @@ class UsersController extends Controller
     use ResponseHelper, UsersValidators, PermissionControllersTrait;
 
     /**
+     * Checks if user exists by id
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function exists(int $id)
+    {
+        try {
+            UserHelper::id($id);
+            return $this->response('USERS.EXISTS');
+        } catch (Exception $e) {
+            return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS', $e);
+        }
+        return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS');
+    }
+
+    /**
+     * Checks if user exists by email
+     * 
+     * @param string $email
+     * @return \Illuminate\Http\Response
+     */
+    public function existsEmail(string $email)
+    {
+        try {
+            UserHelper::email($email);
+            return $this->response('USERS.EXISTS');
+        } catch (Exception $e) {
+            return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS', $e);
+        }
+        return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS');
+    }
+
+    /**
      * Get all users
      * 
      * @param PaginationRequest $request

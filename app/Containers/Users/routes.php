@@ -37,6 +37,9 @@ Route::group([
         Route::put('contacts/{id}', [UsersController::class, 'updateContactData'])->name('users.update.contact');
         Route::delete('contacts/{id}', [UsersController::class, 'deleteContactData'])->name('users.delete.contacts');
 
+        Route::get('exists/{id}', [UsersController::class, 'exists'])->name('users.exists.id');
+        Route::get('existsEmail/{email}', [UsersController::class, 'existsEmail'])->name('users.exists.email');
+
         // Add / Remove permissions to user
         Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])
         ->name('users.addPermissionsToUser');
