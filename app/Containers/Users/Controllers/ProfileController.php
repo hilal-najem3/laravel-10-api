@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 use App\Helpers\Response\ResponseHelper;
 
-use App\Containers\Common\Helpers\MessagesHelper;
-
 use App\Containers\Auth\Helpers\UserAuthHelper;
 use App\Containers\Users\Requests\UpdateUserPasswordRequest;
 use App\Containers\Users\Requests\UpdateUserPhotoRequest;
@@ -22,13 +20,6 @@ class ProfileController extends Controller
 {
     use ResponseHelper;
 
-    protected $messages = array();
-
-    public function __construct()
-    {
-        $this->messages = MessagesHelper::messages();
-    }
-
     /**
      * Get logged in user profile
      * 
@@ -41,24 +32,12 @@ class ProfileController extends Controller
                 'user' => UserHelper::profile()
             ];
 
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['PROFILE']['GET']
-            );
+            return $this->response('PROFILE.GET', $info);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['PROFILE']['GET_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'PROFILE.GET_ERROR', $e);
         }
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['PROFILE']['GET_ERROR']
-        );
+        
+        return $this->errorResponse($this->bad_request, 'PROFILE.GET_ERROR');
     }
 
     /**
@@ -79,25 +58,15 @@ class ProfileController extends Controller
                 'user' => UserHelper::profile()
             ];
 
-            return $this->return_response(
-                $this->success,
-                $data,
-                $this->messages['PROFILE']['UPDATE_SUCCESS']
+            return $this->response(
+                'PROFILE.UPDATE_SUCCESS',
+                $data
             );
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['PROFILE']['UPDATE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR', $e);
         }
 
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['PROFILE']['UPDATE_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR');
     }
 
     /**
@@ -117,28 +86,15 @@ class ProfileController extends Controller
             $token = UserAuthHelper::logoutFromAllAndRefreshToken($user);
 
             if($updated) {
-                return $this->return_response(
-                    $this->success,
-                    [
-                        'token' => $token
-                    ],
-                    $this->messages['PROFILE']['PASSWORD']
+                return $this->response(
+                    'PROFILE.PASSWORD',
+                    [ 'token' => $token ]
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['PROFILE']['PASSWORD_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'PROFILE.PASSWORD_ERROR', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['PROFILE']['PASSWORD_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'PROFILE.PASSWORD_ERROR');
     }
 
     /**
@@ -150,10 +106,7 @@ class ProfileController extends Controller
     public function updatePhoto(UpdateUserPhotoRequest $request)
     {
         try {
-            $data = $request->all();
-
             $user = Auth::user();
-
             $photo = $request->file('photo');
 
             if($photo == null) {
@@ -162,25 +115,14 @@ class ProfileController extends Controller
                 $image = UserHelper::updateProfilePhoto($user, $photo, $request->file('photo')->getSize());
             }
 
-            return $this->return_response(
-                $this->success,
-                ['user' => UserHelper::profile()],
-                $this->messages['PROFILE']['UPDATE_SUCCESS']
+            return $this->response(
+                'PROFILE.UPDATE_SUCCESS',
+                ['user' => UserHelper::profile()]
             );
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['PROFILE']['UPDATE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['PROFILE']['UPDATE_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR');
     }
 
     /**
@@ -192,27 +134,12 @@ class ProfileController extends Controller
     {
         try {
             $user = Auth::user();
-
             UserHelper::deleteUser($user, true);
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['PROFILE']['DELETE_SUCCESS']
-            );
+            return $this->response('PROFILE.DELETE_SUCCESS');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['PROFILE']['DELETE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['PROFILE']['DELETE_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR');
     }
 }

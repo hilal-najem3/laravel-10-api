@@ -2,13 +2,13 @@
 
 namespace App\Containers\Users\Controllers;
 
+use App\Containers\Common\Traits\PermissionControllersTrait;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
-
-use App\Containers\Common\Helpers\MessagesHelper;
 
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
@@ -22,18 +22,10 @@ use App\Containers\Common\Helpers\ContactHelper;
 
 use Exception;
 
-use App\Containers\Common\Traits\PermissionControllersTrait;
 
 class UsersController extends Controller
 {
     use ResponseHelper, UsersValidators, PermissionControllersTrait;
-
-    protected $messages = array();
-
-    public function __construct()
-    {
-        $this->messages = MessagesHelper::messages();;
-    }
 
     /**
      * Get all users
@@ -44,32 +36,19 @@ class UsersController extends Controller
     public function get(PaginationRequest $request)
     {
         try {
-            $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
+            $this->allowedAction(['get-users'], 'USERS.GET_ALLOWED_ERROR');
 
             $data = UserHelper::getAll($request->get('pagination'));
             $info = [
                 'meta' => $this->metaData($data),
                 'users' => $data->data
             ];
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['USERS']['GET']
-            );
-        } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['GET_ERROR'],
-                $this->exception_message($e)
-            );
-        }
 
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['GET_ERROR']
-        );
+            return $this->response('USERS.GET', $info);
+        } catch (Exception $e) {
+            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
+        }
+        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
     }
 
     /**
@@ -81,32 +60,19 @@ class UsersController extends Controller
     public function id(int $id)
     {
         try {
-            $this->allowedAction(['get-users'], $this->messages['USERS']['GET_ALLOWED_ERROR']);
+            $this->allowedAction(['get-users'], 'USERS.GET_ALLOWED_ERROR');
             $user = UserHelper::full($id);
             
             $info = [
                 'user' => $user,
             ];
 
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['USERS']['GET_ID']
-            );
+            return $this->response('USERS.GET_ID', $info);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['GET_ID_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.GET_ID_ERROR', $e);
         }
 
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['GET_ID_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.GET_ID_ERROR');
     }
 
     /**
@@ -118,29 +84,16 @@ class UsersController extends Controller
     public function create(CreateUserRequest $request)
     {
         try {
-            $this->allowedAction(['create-users'], $this->messages['USERS']['CREATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['create-users'], 'USERS.CREATE_USER_NOT_ALLOWED');
             $data = $request->all();
             $user = UserHelper::create($data);
 
-            return $this->return_response(
-                $this->success,
-                ['user' => $user],
-                $this->messages['USERS']['CREATE_USER_SUCCESS']
-            );
+            return $this->response('USERS.CREATE_USER_SUCCESS', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['CREATE_USER_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.CREATE_USER_FAILED', $e);
         }
 
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['CREATE_USER_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.CREATE_USER_FAILED');
     }
 
     /**
@@ -153,7 +106,7 @@ class UsersController extends Controller
     public function update(UpdateUserRequest $request, int $id)
     {
         try {
-            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
             $data = $request->all();
             $user = UserHelper::id($id);
 
@@ -161,26 +114,12 @@ class UsersController extends Controller
 
             $user = UserHelper::update($user, $data);
 
-            return $this->return_response(
-                $this->success,
-                ['user' => $user],
-                $this->messages['USERS']['UPDATE_USER_SUCCESS']
-            );
+            return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
 
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['UPDATE_USER_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['UPDATE_USER_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
     }
 
     /**
@@ -193,7 +132,7 @@ class UsersController extends Controller
     public function updateContactData(UpdateUserContactDataRequest $request, int $id)
     {
         try {
-            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
 
             $data = $request->all();
             $user = UserHelper::id($id);
@@ -217,25 +156,11 @@ class UsersController extends Controller
             }
 
             $user = UserHelper::full($user->id);
-            return $this->return_response(
-                $this->success,
-                ['user' => $user],
-                $this->messages['USERS']['UPDATE_USER_SUCCESS']
-            );
+            return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['UPDATE_USER_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['UPDATE_USER_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
     }
 
     /**
@@ -248,32 +173,18 @@ class UsersController extends Controller
     public function deleteContactData(DeleteUserContactDataRequest $request, int $id)
     {
         try {
-            $this->allowedAction(['update-users'], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
 
             $data = $request->all();
             $user = UserHelper::id($id);
 
             $this->crossAuthorization([$id]);
 
-            return $this->return_response(
-                $this->success,
-                ['user' => $user],
-                $this->messages['USERS']['UPDATE_USER_SUCCESS']
-            );
+            return $this->return_response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['UPDATE_USER_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['UPDATE_USER_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
     }
 
     /**
@@ -286,7 +197,7 @@ class UsersController extends Controller
     public function addPermissionsToUser(Request $request)
     {
         try {
-            $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+            $this->allowedAction(['attach-permissions'], 'USERS.ATTACH_PERMISSIONS_NOT_ALLOWED');
 
             $data = $request->all();
             $this->permissions_user($data)->validate();
@@ -298,25 +209,11 @@ class UsersController extends Controller
                 UserHelper::attachPermission($user, $permissionId);
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['ATTACH_PERMISSIONS']
-            );
+            return $this->response('USERS.ATTACH_PERMISSIONS');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['ATTACH_PERMISSIONS_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.ATTACH_PERMISSIONS_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['ATTACH_PERMISSIONS_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.ATTACH_PERMISSIONS_FAILED');
     }
 
     /**
@@ -329,7 +226,7 @@ class UsersController extends Controller
     public function removePermissionsToUser(Request $request)
     {
         try {
-            $this->allowedAction(['attach-permissions'], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+            $this->allowedAction(['attach-permissions'], 'USERS.ATTACH_PERMISSIONS_NOT_ALLOWED');
 
             $data = $request->all();
             $this->permissions_user($data)->validate();
@@ -341,25 +238,11 @@ class UsersController extends Controller
                 UserHelper::detachPermission($user, $permissionId);
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['DETACH_PERMISSIONS']
-            );
+            return $this->response('USERS.DETACH_PERMISSIONS');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['DETACH_PERMISSIONS_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.DETACH_PERMISSIONS_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['DETACH_PERMISSIONS_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.DETACH_PERMISSIONS_FAILED');
     }
 
     /**
@@ -372,7 +255,7 @@ class UsersController extends Controller
     public function addRolesToUser(Request $request)
     {
         try {
-            $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+            $this->allowedAction(['attach-roles'], 'USERS.ATTACH_ROLES_NOT_ALLOWED');
 
             $data = $request->all();
             $this->roles_user($data)->validate();
@@ -384,25 +267,11 @@ class UsersController extends Controller
                 UserHelper::attachRole($user, $roleId);
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['ATTACH_ROLES']
-            );
+            return $this->response('USERS.ATTACH_ROLES');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['ATTACH_ROLES_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.ATTACH_ROLES_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['ATTACH_ROLES_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.ATTACH_ROLES_FAILED');
     }
 
     /**
@@ -415,7 +284,7 @@ class UsersController extends Controller
     public function removeRolesToUser(Request $request)
     {
         try {
-            $this->allowedAction(['attach-roles'], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+            $this->allowedAction(['attach-roles'], 'USERS.ATTACH_ROLES_NOT_ALLOWED');
 
             $data = $request->all();
             $this->roles_user($data)->validate();
@@ -427,25 +296,11 @@ class UsersController extends Controller
                 UserHelper::detachRole($user, $roleId);
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['DETACH_ROLES']
-            );
+            return $this->response('USERS.DETACH_ROLES');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['DETACH_ROLES_FAILED'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.DETACH_ROLES_FAILED', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['DETACH_ROLES_FAILED']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.DETACH_ROLES_FAILED');
     }
 
     /**
@@ -460,7 +315,7 @@ class UsersController extends Controller
     public function deactivateUsers(UserArraysRequest $request)
     {
         try {
-            $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['activate-user'], 'USERS.ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED');
             $ids = $request->get('user_ids');
             
             $this->crossAuthorization($ids);
@@ -469,21 +324,11 @@ class UsersController extends Controller
                 UserHelper::inActivate(UserHelper::id($id));
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['DEACTIVATE']
-            );
+            return $this->response('USERS.DEACTIVATE');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['DEACTIVATE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.DEACTIVATE_ERROR', $e);
         }
-
-        return $this->return_response($this->bad_request, [], $this->messages['USERS']['DEACTIVATE_ERROR']);
+        return $this->errorResponse($this->bad_request, 'USERS.DEACTIVATE_ERROR');
     }
 
     /**
@@ -497,7 +342,7 @@ class UsersController extends Controller
     public function activateUsers(UserArraysRequest $request)
     {
         try {
-            $this->allowedAction(['activate-user'], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['activate-user'], 'USERS.ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED');
             $ids = $request->get('user_ids');
             
             $this->crossAuthorization($ids);
@@ -506,21 +351,11 @@ class UsersController extends Controller
                 UserHelper::activate(UserHelper::id($id));
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['ACTIVATE']
-            );
+            return $this->response('USERS.ACTIVATE');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['ACTIVATE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.ACTIVATE_ERROR', $e);
         }
-
-        return $this->return_response($this->bad_request, [], $this->messages['USERS']['ACTIVATE_ERROR']);
+        return $this->errorResponse($this->bad_request, 'USERS.ACTIVATE_ERROR');
     }
 
     /**
@@ -538,7 +373,7 @@ class UsersController extends Controller
     public function deleteUsers(UserArraysRequest $request)
     {
         try {
-            $this->allowedAction(['delete-user'], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
+            $this->allowedAction(['delete-user'], 'USERS.DELETE_USER_NOT_ALLOWED');
             $ids = $request->get('user_ids');
             
             $this->crossAuthorization($ids);
@@ -547,21 +382,11 @@ class UsersController extends Controller
                 UserHelper::deleteUser(UserHelper::id($id));
             }
 
-            return $this->return_response(
-                $this->success,
-                [],
-                $this->messages['USERS']['DELETE_SUCCESSFUL']
-            );
+            return $this->response('USERS.DELETE_SUCCESSFUL');
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['DELETE_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.DELETE_ERROR', $e);
         }
-
-        return $this->return_response($this->bad_request, [], $this->messages['USERS']['DELETE_ERROR']);
+        return $this->errorResponse($this->bad_request, 'USERS.DELETE_ERROR');
     }
 
     /**
@@ -574,7 +399,7 @@ class UsersController extends Controller
     public function getDeletedUsers(PaginationRequest $request)
     {
         try {
-            $this->allowedAction(['get-deleted-users'], $this->messages['USERS']['GET_ERROR']);
+            $this->allowedAction(['get-deleted-users'], 'USERS.GET_ERROR');
             $data = UserHelper::getDeleted($request->get('pagination'));
             
             $info = [
@@ -582,25 +407,11 @@ class UsersController extends Controller
                 'users' => $data->data
             ];
 
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['USERS']['GET']
-            );
+            return $this->response('USERS.GET', $info);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['GET_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['GET_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
     }
 
     /**
@@ -612,7 +423,7 @@ class UsersController extends Controller
     public function getInActiveUsers(PaginationRequest $request)
     {
         try {
-            $this->allowedAction(['get-inactive-users'], $this->messages['USERS']['GET_ERROR']);
+            $this->allowedAction(['get-inactive-users'], 'USERS.GET_ERROR');
             $data = UserHelper::getInActivated($request->get('pagination'));
             
             $info = [
@@ -620,24 +431,10 @@ class UsersController extends Controller
                 'users' => $data->data
             ];
 
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['USERS']['GET']
-            );
+            return $this->response('USERS.GET', $info);
         } catch (Exception $e) {
-            return $this->return_response(
-                $this->bad_request,
-                [],
-                $this->messages['USERS']['GET_ERROR'],
-                $this->exception_message($e)
-            );
+            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
         }
-
-        return $this->return_response(
-            $this->bad_request,
-            [],
-            $this->messages['USERS']['GET_ERROR']
-        );
+        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
     }
 }

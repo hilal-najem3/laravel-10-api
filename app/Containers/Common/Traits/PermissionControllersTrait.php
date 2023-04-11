@@ -3,7 +3,6 @@
 namespace App\Containers\Common\Traits;
 
 use App\Containers\Users\Helpers\CrossAuthorizationHelper;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\Common\NotAllowedException;
 
@@ -26,11 +25,10 @@ trait PermissionControllersTrait
         array $idsOfUsersAffectedByTheAction
         )
     {
-        $message = $this->messages['USERS']['CROSS_AUTH_ERROR'];
         $userDoingTheAction = Auth::user();
         $crossAuth = CrossAuthorizationHelper::crossAuthorized($userDoingTheAction, $idsOfUsersAffectedByTheAction);
         if(!$crossAuth) {
-            throw new NotAllowedException($message);
+            throw new NotAllowedException('USERS.CROSS_AUTH_ERROR');
         }
     }
 
@@ -41,14 +39,13 @@ trait PermissionControllersTrait
      * @param array $permissions
      * @param string $message
      */
-    public function allowedAction(array $permissions, string $message)
+    public function allowedAction(array $permissions, string $messageKey)
     {
-        // throw new NotAllowedException($message);
         foreach($permissions as $permission) {
             $user = Auth::user();
             $allowed = $user->allowedTo($permission);
             if (!$allowed) {
-                throw new NotAllowedException($message);
+                throw new NotAllowedException($messageKey);
             }
         }
     }
