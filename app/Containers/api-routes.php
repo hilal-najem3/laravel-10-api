@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/Auth/routes.php';
 require __DIR__ . '/Common/routes.php';
+require __DIR__ . '/Roles/routes.php';
 require __DIR__ . '/Users/routes.php';
