@@ -14,10 +14,9 @@ class SaveFileFailedException extends ApplicationException
 
     public function __construct($name = '')
     {
-        $this->name = $name;
-        $this->messages = MessagesHelper::messages();
-        $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['FILE_SAVE_FAILED'];
+        $message = MessagesHelper::processMessageKey($name);
+        $exceptionMessage = MessagesHelper::processMessageKey('FILE_SAVE_FAILED');
+        $this->message = $message . ' ' . $exceptionMessage;
     }
 
     public function status(): int

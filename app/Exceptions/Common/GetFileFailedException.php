@@ -8,16 +8,13 @@ use Illuminate\Http\Response;
 
 class GetFileFailedException extends ApplicationException
 {
-    protected $messages = array();
-    protected $name = '';
     protected $message = '';
 
     public function __construct($name = '')
     {
-        $this->name = $name;
-        $this->messages = MessagesHelper::messages();
-        $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['FILE_GET_FAILED'];
+        $message = MessagesHelper::processMessageKey($name);
+        $exceptionMessage = MessagesHelper::processMessageKey('FILE_GET_FAILED');
+        $this->message = $message . ' ' . $exceptionMessage;
     }
 
     public function status(): int

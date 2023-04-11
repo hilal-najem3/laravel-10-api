@@ -8,17 +8,13 @@ use Illuminate\Http\Response;
 
 class NotAllowedException extends ApplicationException
 {
-    protected $messages = array();
-    protected $name = '';
     protected $message = '';
 
     public function __construct($name = '')
     {
-        $this->name = $name;
-        $this->messages = MessagesHelper::messages();
-        $this->message = $this->messages['NOT_ALLOWED'];
-        $this->message .= ' ' . $this->name == '' ? '' : $this->name . ' ';
-        $this->message = trim($this->message);
+        $message = MessagesHelper::processMessageKey($name);
+        $exceptionMessage = MessagesHelper::processMessageKey('NOT_ALLOWED');
+        $this->message = $exceptionMessage . ' ' . $message;
     }
 
     public function status(): int

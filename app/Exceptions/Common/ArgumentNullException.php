@@ -8,16 +8,13 @@ use Illuminate\Http\Response;
 
 class ArgumentNullException extends ApplicationException
 {
-    protected $messages = array();
-    protected $name = '';
     protected $message = '';
 
     public function __construct($name = '')
     {
-        $this->name = $name;
-        $this->messages = MessagesHelper::messages();
-        $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['ARGUMENT_NULL'];
+        $message = MessagesHelper::processMessageKey($name);
+        $exceptionMessage = MessagesHelper::processMessageKey('ARGUMENT_NULL');
+        $this->message = $message . ' ' . $exceptionMessage;
     }
 
     public function status(): int
