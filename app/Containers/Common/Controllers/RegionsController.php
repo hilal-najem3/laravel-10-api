@@ -8,21 +8,12 @@ use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Common\Helpers\RegionsHelper as Helper;
 
-use App\Containers\Common\Helpers\MessagesHelper;
-
 use Exception;
 
 class RegionsController extends Controller
 {
     use ResponseHelper;
-
-    protected $messages = array();
-
-    public function __construct()
-    {
-        $this->messages = MessagesHelper::messages();
-    }
-
+    
     public function all()
     {
         try {
@@ -34,15 +25,10 @@ class RegionsController extends Controller
                 'types' => $types,
                 'regions' => $regions
             ];
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['REGIONS']['ALL']
-            );
+            return $this->response('REGIONS.ALL', $info);
         } catch (Exception $e) {
-            return $this->return_response($this->bad_request, [], $this->messages['REGIONS']['ALL_FAILED'], $e->getMessage());
+            return $this->errorResponse($this->bad_request, 'REGIONS.ALL_FAILED', $e);
         }
-
-        return $this->return_response($this->bad_request, [], $this->messages['REGIONS']['ALL_FAILED']);
+        return $this->errorResponse($this->bad_request, 'REGIONS.ALL_FAILED');
     }
 }

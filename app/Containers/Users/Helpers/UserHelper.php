@@ -99,7 +99,7 @@ class UserHelper
             $user = Auth::user();
 
             if(!$user || $user == null) {
-                throw new NotFoundException('User');
+                throw new NotFoundException('USERS.USER');
             }
 
             $user = $user->load(['roles', 'profileImage', 'contact']);

@@ -8,8 +8,10 @@ class Messages
     {
         return [
             'DATA' => [
+                'TYPE' => 'Data type',
                 'DATA' => 'Data',
-                'EXCEPTION' => 'Data'
+                'EXCEPTION' => 'Data',
+                'VALUE' => 'Value'
             ],
             'REGIONS' => [
                 'ALL' => 'Countries and region types loaded successfully',

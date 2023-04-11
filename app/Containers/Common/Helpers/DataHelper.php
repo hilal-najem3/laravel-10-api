@@ -302,10 +302,10 @@ class DataHelper
         $type = DataType::find($typeId);
         try {
             if(!$type) {
-                throw new NotFoundException('Data Type');
+                throw new NotFoundException('DATA.TYPE');
             }
             if(!$value) {
-                throw new ArgumentNullException('Value');
+                throw new ArgumentNullException('DATA.VALUE');
             }
             switch($type->slug) {
                 case 'json': {

@@ -23,6 +23,7 @@ class Messages
                 'DELETE_ERROR' => 'Profile delete failed'
             ],
             'USERS' => [
+                'USER' => 'User',
                 'GET' => 'Users found',
                 'GET_ALLOWED_ERROR' => 'get users',
                 'GET_ERROR' => 'Unable to get users',
