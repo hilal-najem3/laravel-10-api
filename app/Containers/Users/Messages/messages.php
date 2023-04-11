@@ -53,6 +53,12 @@ class Messages
                 'UPDATE_USER_NOT_ALLOWED' => 'update users',
                 'UPDATE_USER_SUCCESS' => 'User updated successfully',
                 'UPDATE_USER_FAILED' => 'User update failed',
+                'USER_CONTACT_DATA_UPDATED' => 'User contact data updated successfully',
+                'USER_CONTACT_DATA_UPDATE_FAILED' => 'User contact data update failed',
+                'USER_CONTACT_DATA_DELETED' => 'User contact data deleted successfully',
+                'USER_CONTACT_DATA_DELETE_FAILED' => 'User contact data delete failed',
+                'USER_CONTACT_ID_IS_DIFFERENT' => 'You are not allowed to update contact information for another entity associating him with this user id',
+                'USER_CONTACT_VALUE_IS_USED' => 'You are not allowed to update or create contact information that already exists'
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];

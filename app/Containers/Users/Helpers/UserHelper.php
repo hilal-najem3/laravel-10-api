@@ -13,6 +13,7 @@ use App\Helpers\Response\CollectionsHelper;
 use App\Helpers\Storage\StoreHelper;
 
 use App\Exceptions\Common\NotFoundException;
+use App\Exceptions\Common\NotAllowedException;
 use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
@@ -30,6 +31,7 @@ use App\Containers\Common\Helpers\ContactHelper;
 use App\Models\Permission;
 use App\Containers\Files\Models\Image;
 use App\Containers\Common\Models\ContactUser;
+use App\Containers\Common\Models\Contact;
 use App\Models\Role;
 use App\Models\User;
 
@@ -485,6 +487,36 @@ class UserHelper
         }
 
         throw new UpdateFailedException('PROFILE.EXCEPTION');
+    }
+
+    /**
+     * This function checks if this user's contact data is allowed to be created or updated.
+     * that is it checks for the existence of duplicates
+     * and if the contact id supplied is for the same user
+     * 
+     * @param User $user
+     * @param array $contactData this should have id, type_id and value
+     * @param Contact $contactModel
+     * @return boolean | NotAllowedException
+     */
+    public static function canSubmitContact(User $user, array $contactData, Contact $contactModel = null)
+    {
+        $count = Contact::where('value', trim($contactData['value']))->count();
+        if($contactModel != null && $contactModel->id != null) {
+            $exists = $user->contact()->where('id', $contactModel->id)->count();
+            if(!$exists) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
+            }
+            if($contactData['value'] != $contactModel->value && $count) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
+            }
+        } else {
+            if($count) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
+            }
+        }
+
+        return true;
     }
 
     /**

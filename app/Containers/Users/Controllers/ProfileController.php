@@ -3,17 +3,22 @@
 namespace App\Containers\Users\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 use App\Helpers\Response\ResponseHelper;
 
-use App\Containers\Auth\Helpers\UserAuthHelper;
+use App\Containers\Users\Requests\UpdateUserContactDataRequest;
+use App\Containers\Users\Requests\DeleteUserContactDataRequest;
 use App\Containers\Users\Requests\UpdateUserPasswordRequest;
 use App\Containers\Users\Requests\UpdateUserPhotoRequest;
 use App\Containers\Users\Requests\UpdateUserRequest;
+
 use App\Containers\Users\Helpers\UserHelper;
+use App\Containers\Auth\Helpers\UserAuthHelper;
+use App\Containers\Common\Helpers\ContactHelper;
 
 use Illuminate\Support\Facades\Auth;
+
+use App\Exceptions\Common\NotAllowedException;
 use Exception;
 
 class ProfileController extends Controller
@@ -141,5 +146,70 @@ class ProfileController extends Controller
             return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR', $e);
         }
         return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR');
+    }
+
+    /**
+     * Uploads profile contact info
+     * 
+     * @param  UpdateUserContactDataRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateContact(UpdateUserContactDataRequest $request)
+    {
+        try {
+            $data = $request->all();
+            $user = $request->user();
+
+            foreach($data['contact'] as $contactData) {
+                $data = [
+                    'type_id' => $contactData['type_id'],
+                    'value' => trim($contactData['value']),
+                ];
+
+                if(isset($contactData['id'])) {
+                    // update the contact
+                    $contact = ContactHelper::id($contactData['id']);
+                    UserHelper::canSubmitContact($user, $data, $contact); // this will throw exception if submit is not allowed
+                    ContactHelper::updateContact($contact, $data, 'users', $user->id);
+                } else {
+                    UserHelper::canSubmitContact($user, $data); // this will throw exception if submit is not allowed
+                    // create a new contact
+                    ContactHelper::createContact($data, 'users', $user->id);
+                }
+            }
+
+            $user = UserHelper::full($user->id);
+            return $this->response('USERS.USER_CONTACT_DATA_UPDATED', ['user' => $user]);
+        } catch (Exception $e) {
+            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
+        }
+        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED');
+    }
+
+    /**
+     * Update a profile contact data
+     * 
+     * @param DeleteUserContactDataRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteContactData(DeleteUserContactDataRequest $request)
+    {
+        try {
+            $user = $request->user();
+            $contactIds = $request->all()['contact'];
+
+            foreach ($contactIds as $contactId) {
+                if(!$user->contact()->where('id', $contactId)->count()) {
+                    throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
+                }
+                ContactHelper::deleteContact($contactId);
+            }
+
+            $user = UserHelper::full($user->id);
+            return $this->response('USERS.USER_CONTACT_DATA_DELETED', ['user' => $user]);
+        } catch (Exception $e) {
+            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
+        }
+        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED');
     }
 }

@@ -20,6 +20,7 @@ use App\Containers\Users\Helpers\UserHelper;
 
 use App\Containers\Common\Helpers\ContactHelper;
 
+use App\Exceptions\Common\NotAllowedException;
 use Exception;
 
 
@@ -148,19 +149,21 @@ class UsersController extends Controller
                 if(isset($contactData['id'])) {
                     // update the contact
                     $contact = ContactHelper::id($contactData['id']);
+                    UserHelper::canSubmitContact($user, $data, $contact); // this will throw exception if submit is not allowed
                     ContactHelper::updateContact($contact, $data, 'users', $user->id);
                 } else {
+                    UserHelper::canSubmitContact($user, $data); // this will throw exception if submit is not allowed
                     // create a new contact
                     ContactHelper::createContact($data, 'users', $user->id);
                 }
             }
 
             $user = UserHelper::full($user->id);
-            return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
+            return $this->response('USERS.USER_CONTACT_DATA_UPDATED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
+            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
+        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED');
     }
 
     /**
@@ -174,17 +177,23 @@ class UsersController extends Controller
     {
         try {
             $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
-
-            $data = $request->all();
             $user = UserHelper::id($id);
-
             $this->crossAuthorization([$id]);
 
-            return $this->return_response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
+            $contactIds = $request->all()['contact'];
+
+            foreach ($contactIds as $contactId) {
+                if(!$user->contact()->where('id', $contactId)->count()) {
+                    throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
+                }
+                ContactHelper::deleteContact($contactId);
+            }
+
+            return $this->response('USERS.USER_CONTACT_DATA_DELETED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
+            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
+        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED');
     }
 
     /**

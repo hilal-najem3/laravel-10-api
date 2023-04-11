@@ -10,11 +10,15 @@ class NotAllowedException extends ApplicationException
 {
     protected $message = '';
 
-    public function __construct($name = '')
+    public function __construct($name = '', $customKey = null)
     {
-        $message = MessagesHelper::processMessageKey($name);
-        $exceptionMessage = MessagesHelper::processMessageKey('NOT_ALLOWED');
-        $this->message = $exceptionMessage . ' ' . $message;
+        if($customKey != null) {
+            $this->message = MessagesHelper::processMessageKey($customKey);
+        } else {
+            $message = MessagesHelper::processMessageKey($name);
+            $exceptionMessage = MessagesHelper::processMessageKey('NOT_ALLOWED');
+            $this->message = $exceptionMessage . ' ' . $message;
+        }
     }
 
     public function status(): int

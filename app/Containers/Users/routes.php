@@ -11,16 +11,18 @@ Route::group([
     'middleware' => ['auth:api']
 ], function ()
 {
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'get'])->name('profile.get');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'delete'])->name('profile.delete');
-
-    // Profile Photo
-    Route::post('/profile_image', [ProfileController::class, 'updatePhoto'])->name('profile.photo.upload');
-
-    // Password
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::group([
+        'prefix' => 'profile'
+    ], function () {
+        // Profile
+        Route::get('/', [ProfileController::class, 'get'])->name('profile.get');
+        Route::put('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'delete'])->name('profile.delete');
+        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::post('/profile_image', [ProfileController::class, 'updatePhoto'])->name('profile.photo.upload');
+        Route::put('/contact', [ProfileController::class, 'updateContact'])->name('profile.contact.update');
+        Route::delete('/contact', [ProfileController::class, 'deleteContactData'])->name('profile.contact.delete');
+    });
     
     Route::group([
         'prefix' => 'users',
