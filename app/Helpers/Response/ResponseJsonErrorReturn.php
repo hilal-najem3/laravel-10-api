@@ -10,13 +10,19 @@ class ResponseJsonErrorReturn
      * 
      * @param  int         $status  status of the error
      * @param  string|null $message response error message
+     * @param  string|null $messageKey response error message key
      * @param  string $error   Exception message
      * 
      * @return \Illuminate\Http\Response
      */
-    public static function returnErrorResponse(int $status, string $message = null, string $error = null)
+    public static function returnErrorResponse(
+        int $status,
+        string $message = null,
+        string $messageKey = null,
+        string $error = null
+        )
     {
-        $result = ResponseJsonErrorReturn::fillResult($status, $message, $error);
+        $result = ResponseJsonErrorReturn::fillResult($status, $message, $messageKey, $error);
 
         return response()->json($result, $status);
     }
@@ -27,18 +33,25 @@ class ResponseJsonErrorReturn
      * 
      * @param  int         $status  status of the error
      * @param  string|null $message response error message
+     * @param  string|null $messageKey response error message key
      * @param  string $error   Exception message
      * 
      * @return array
      */
-    public static function fillResult(int $status, string $message = null, string $error = null)
+    public static function fillResult(
+        int $status,
+        string $message = null,
+        string $messageKey = null,
+        string $error = null
+        )
     {
         $result = [
             'status' => 'error',
         ];
 
-        if($message != null) {
+        if($message != null && $messageKey != null) {
             $result['message'] = $message;
+            $result['messageKey'] = $messageKey;
         } else {
             switch ($status) {
                 case 404:

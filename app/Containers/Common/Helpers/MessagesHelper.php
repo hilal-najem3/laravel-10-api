@@ -30,4 +30,34 @@ class MessagesHelper
 
         return $messages;
     }
+
+    public static function processMessageKey(string $key)
+    {
+        $output = '';
+        if($key != null) {
+            $messages = self::messages();
+            $keysArray = explode('.', $key);
+            $finalArray = self::getMessagesFinalArray($keysArray, $messages);
+            $finalKey = $keysArray[count($keysArray) - 1];
+            $output = $finalArray[$finalKey] ? $finalArray[$finalKey] : '';
+        }
+        return $output;
+    }
+
+    public static function getMessagesFinalArray($keysArray, $messages)
+    {
+        $output = $messages;
+        if(count($keysArray) == 1) {
+            return $output;
+        }
+        for($i = 0; $i < (count($keysArray) - 2); $i++) {
+            $current = $keysArray[$i];
+            $output = $output[$current];
+        }
+        $current = $keysArray[$i];
+        if(is_array($output[$current])) {
+            $output = $output[$current];
+        }
+        return $output;
+    }
 }

@@ -8,20 +8,11 @@ use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Common\Helpers\ContactHelper as Helper;
 
-use App\Containers\Common\Helpers\MessagesHelper;
-
 use Exception;
 
 class ContactsController extends Controller
 {
     use ResponseHelper;
-
-    protected $messages = array();
-
-    public function __construct()
-    {
-        $this->messages = MessagesHelper::messages();
-    }
 
     public function contactTypes()
     {
@@ -31,15 +22,14 @@ class ContactsController extends Controller
             $info = [
                 'types' => $types,
             ];
-            return $this->return_response(
-                $this->success,
-                $info,
-                $this->messages['CONTACT']['TYPES']
+            return $this->response(
+                'CONTACT.TYPES',
+                $info
             );
         } catch (Exception $e) {
-            return $this->return_response($this->bad_request, [], $this->messages['CONTACT']['TYPES_ERROR'], $e->getMessage());
+            return $this->errorResponse($this->bad_request, 'CONTACT.TYPES_ERROR', $e);
         }
 
-        return $this->return_response($this->bad_request, [], $this->messages['CONTACT']['TYPES_ERROR']);
+        return $this->errorResponse($this->bad_request, 'CONTACT.TYPES_ERROR');
     }
 }

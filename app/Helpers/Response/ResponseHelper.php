@@ -66,19 +66,19 @@ trait ResponseHelper
      */
     public function return_response(int $status, mixed $data, string $messageKey = null, Exception $exception = null)
     {
-        $messages = MessagesHelper::messages();
-        $message = $messages[$messageKey] ? $messages[$messageKey] : '';
+        $message = MessagesHelper::processMessageKey($messageKey);
 
         $error = $exception ? $this->exception_message($exception) : '';
 
         if($status != 200) {
-            return ResponseJsonErrorReturn::returnErrorResponse($status, $message, $error);
+            return ResponseJsonErrorReturn::returnErrorResponse($status, $message, $messageKey, $error);
         }
 
         $data['status'] = 'success';
 
         if($message != null) {
             $data['message'] = $message;
+            $data['messageKey'] = $messageKey;
         }
 
         return response()->json($data, 200);
