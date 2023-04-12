@@ -20,8 +20,8 @@ class RolesController extends Controller
             ];
             return $this->response('ROLES.ALL', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'ROLES.ALL_FAILED', $e);
+            return $this->errorResponse('ROLES.ALL_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'ROLES.ALL_FAILED');
+        return $this->errorResponse('ROLES.ALL_FAILED');
     }
 }

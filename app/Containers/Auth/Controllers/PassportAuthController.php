@@ -64,10 +64,10 @@ class PassportAuthController extends Controller
                 );
             }
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'LOGOUT_FAILED', $e);
+            return $this->errorResponse('LOGOUT_FAILED', $e);
         }
 
-        return $this->errorResponse($this->bad_request, 'LOGOUT_FAILED');
+        return $this->errorResponse('LOGOUT_FAILED');
     }
 
     /**

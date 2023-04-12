@@ -42,14 +42,15 @@ trait ResponseHelper
      * This is used for error returns only
      * used as a minified version of return_response() function
      * 
-     * @param  int         $status  status of the error
      * @param  string|null $messageKey response error message key
      * @param  Exception $e   Exception
+     * @param  int         $status  status of the error
      * 
      * @return \Illuminate\Http\Response
      */
-    public function errorResponse(int $status, string $messageKey = null, Exception $exception = null)
+    public function errorResponse(string $messageKey = null, Exception $exception = null, int $status = null)
     {
+        $status = $status == null ? $this->exception_status($exception) : $this->bad_request;
         return $this->return_response($status, null, $messageKey, $exception);
     }
 
@@ -106,6 +107,32 @@ trait ResponseHelper
             return $e->getMessage();
         }
         return $e->getMessage();
+    }
+
+    /**
+     * This function, receives an exception, 
+     * checks if it is a general exception or a custom exception
+     * returns appropriate status
+     * 
+     * @param Exception $e
+     * @return int
+     */
+    public function exception_status(Exception $e = null)
+    {
+        try {
+            $status = $this->bad_request;
+
+            if($e == null) {
+                $status = $this->bad_request;
+            } else {
+                $status = $e->status();
+            }
+
+            return $status;
+        } catch (Exception $exception) {
+            return $this->bad_request;
+        }
+        return $this->bad_request;
     }
 
     /**

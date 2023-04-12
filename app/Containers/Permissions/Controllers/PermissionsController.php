@@ -20,8 +20,8 @@ class PermissionsController extends Controller
             ];
             return $this->response('PERMISSIONS.ALL', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PERMISSIONS.ALL_FAILED', $e);
+            return $this->errorResponse('PERMISSIONS.ALL_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'PERMISSIONS.ALL_FAILED');
+        return $this->errorResponse('PERMISSIONS.ALL_FAILED');
     }
 }

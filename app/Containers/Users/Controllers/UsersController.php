@@ -40,9 +40,9 @@ class UsersController extends Controller
             UserHelper::id($id);
             return $this->response('USERS.EXISTS');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS', $e);
+            return $this->errorResponse('USERS.NOT_EXISTS', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS');
+        return $this->errorResponse('USERS.NOT_EXISTS');
     }
 
     /**
@@ -57,9 +57,9 @@ class UsersController extends Controller
             UserHelper::email($email);
             return $this->response('USERS.EXISTS');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS', $e);
+            return $this->errorResponse('USERS.NOT_EXISTS', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.NOT_EXISTS');
+        return $this->errorResponse('USERS.NOT_EXISTS');
     }
 
     /**
@@ -81,9 +81,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.GET', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
+            return $this->errorResponse('USERS.GET_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
+        return $this->errorResponse('USERS.GET_ERROR');
     }
 
     /**
@@ -104,10 +104,10 @@ class UsersController extends Controller
 
             return $this->response('USERS.GET_ID', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.GET_ID_ERROR', $e);
+            return $this->errorResponse('USERS.GET_ID_ERROR', $e);
         }
 
-        return $this->errorResponse($this->bad_request, 'USERS.GET_ID_ERROR');
+        return $this->errorResponse('USERS.GET_ID_ERROR');
     }
 
     /**
@@ -125,10 +125,10 @@ class UsersController extends Controller
 
             return $this->response('USERS.CREATE_USER_SUCCESS', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.CREATE_USER_FAILED', $e);
+            return $this->errorResponse('USERS.CREATE_USER_FAILED', $e);
         }
 
-        return $this->errorResponse($this->bad_request, 'USERS.CREATE_USER_FAILED');
+        return $this->errorResponse('USERS.CREATE_USER_FAILED');
     }
 
     /**
@@ -152,9 +152,9 @@ class UsersController extends Controller
             return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
 
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED', $e);
+            return $this->errorResponse('USERS.UPDATE_USER_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.UPDATE_USER_FAILED');
+        return $this->errorResponse('USERS.UPDATE_USER_FAILED');
     }
 
     /**
@@ -195,9 +195,9 @@ class UsersController extends Controller
             $user = UserHelper::full($user->id);
             return $this->response('USERS.USER_CONTACT_DATA_UPDATED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
+            return $this->errorResponse('USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED');
+        return $this->errorResponse('USERS.USER_CONTACT_DATA_UPDATE_FAILED');
     }
 
     /**
@@ -225,9 +225,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.USER_CONTACT_DATA_DELETED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
+            return $this->errorResponse('USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED');
+        return $this->errorResponse('USERS.USER_CONTACT_DATA_DELETE_FAILED');
     }
 
     /**
@@ -254,9 +254,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.ATTACH_PERMISSIONS');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.ATTACH_PERMISSIONS_FAILED', $e);
+            return $this->errorResponse('USERS.ATTACH_PERMISSIONS_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.ATTACH_PERMISSIONS_FAILED');
+        return $this->errorResponse('USERS.ATTACH_PERMISSIONS_FAILED');
     }
 
     /**
@@ -283,9 +283,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.DETACH_PERMISSIONS');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.DETACH_PERMISSIONS_FAILED', $e);
+            return $this->errorResponse('USERS.DETACH_PERMISSIONS_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.DETACH_PERMISSIONS_FAILED');
+        return $this->errorResponse('USERS.DETACH_PERMISSIONS_FAILED');
     }
 
     /**
@@ -312,9 +312,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.ATTACH_ROLES');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.ATTACH_ROLES_FAILED', $e);
+            return $this->errorResponse('USERS.ATTACH_ROLES_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.ATTACH_ROLES_FAILED');
+        return $this->errorResponse('USERS.ATTACH_ROLES_FAILED');
     }
 
     /**
@@ -341,9 +341,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.DETACH_ROLES');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.DETACH_ROLES_FAILED', $e);
+            return $this->errorResponse('USERS.DETACH_ROLES_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.DETACH_ROLES_FAILED');
+        return $this->errorResponse('USERS.DETACH_ROLES_FAILED');
     }
 
     /**
@@ -369,9 +369,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.DEACTIVATE');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.DEACTIVATE_ERROR', $e);
+            return $this->errorResponse('USERS.DEACTIVATE_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.DEACTIVATE_ERROR');
+        return $this->errorResponse('USERS.DEACTIVATE_ERROR');
     }
 
     /**
@@ -396,9 +396,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.ACTIVATE');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.ACTIVATE_ERROR', $e);
+            return $this->errorResponse('USERS.ACTIVATE_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.ACTIVATE_ERROR');
+        return $this->errorResponse('USERS.ACTIVATE_ERROR');
     }
 
     /**
@@ -427,9 +427,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.DELETE_SUCCESSFUL');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.DELETE_ERROR', $e);
+            return $this->errorResponse('USERS.DELETE_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.DELETE_ERROR');
+        return $this->errorResponse('USERS.DELETE_ERROR');
     }
 
     /**
@@ -452,9 +452,9 @@ class UsersController extends Controller
 
             return $this->response('USERS.GET', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
+            return $this->errorResponse('USERS.GET_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
+        return $this->errorResponse('USERS.GET_ERROR');
     }
 
     /**
@@ -476,8 +476,8 @@ class UsersController extends Controller
 
             return $this->response('USERS.GET', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR', $e);
+            return $this->errorResponse('USERS.GET_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.GET_ERROR');
+        return $this->errorResponse('USERS.GET_ERROR');
     }
 }

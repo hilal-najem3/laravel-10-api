@@ -27,9 +27,9 @@ class ContactsController extends Controller
                 $info
             );
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'CONTACT.TYPES_ERROR', $e);
+            return $this->errorResponse('CONTACT.TYPES_ERROR', $e);
         }
 
-        return $this->errorResponse($this->bad_request, 'CONTACT.TYPES_ERROR');
+        return $this->errorResponse('CONTACT.TYPES_ERROR');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Helpers\Database;
 
 use App\Containers\Users\Permissions\Permissions as UserPermissions;
+use App\Containers\Agencies\Permissions\Permissions as AgenciesPermissions;
 
 use Illuminate\Support\Facades\DB;
 use App\Containers\Permissions\Models\Permission;
@@ -56,7 +57,10 @@ class PermissionsHelper
         $permissions = array();
         
         $userPermissions = UserPermissions::permissions();
+        $agenciesPermissions = AgenciesPermissions::permissions();
+
         $permissions = array_merge($permissions, $userPermissions);
+        $permissions = array_merge($permissions, $agenciesPermissions);
 
         return $permissions;
     }

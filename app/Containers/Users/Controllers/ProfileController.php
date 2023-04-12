@@ -39,10 +39,10 @@ class ProfileController extends Controller
 
             return $this->response('PROFILE.GET', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PROFILE.GET_ERROR', $e);
+            return $this->errorResponse('PROFILE.GET_ERROR', $e);
         }
         
-        return $this->errorResponse($this->bad_request, 'PROFILE.GET_ERROR');
+        return $this->errorResponse('PROFILE.GET_ERROR');
     }
 
     /**
@@ -68,10 +68,10 @@ class ProfileController extends Controller
                 $data
             );
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR', $e);
+            return $this->errorResponse('PROFILE.UPDATE_ERROR', $e);
         }
 
-        return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR');
+        return $this->errorResponse('PROFILE.UPDATE_ERROR');
     }
 
     /**
@@ -97,9 +97,9 @@ class ProfileController extends Controller
                 );
             }
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PROFILE.PASSWORD_ERROR', $e);
+            return $this->errorResponse('PROFILE.PASSWORD_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'PROFILE.PASSWORD_ERROR');
+        return $this->errorResponse('PROFILE.PASSWORD_ERROR');
     }
 
     /**
@@ -125,9 +125,9 @@ class ProfileController extends Controller
                 ['user' => UserHelper::profile()]
             );
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR', $e);
+            return $this->errorResponse('PROFILE.UPDATE_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'PROFILE.UPDATE_ERROR');
+        return $this->errorResponse('PROFILE.UPDATE_ERROR');
     }
 
     /**
@@ -143,9 +143,9 @@ class ProfileController extends Controller
 
             return $this->response('PROFILE.DELETE_SUCCESS');
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR', $e);
+            return $this->errorResponse('PROFILE.DELETE_ERROR', $e);
         }
-        return $this->errorResponse($this->bad_request, 'PROFILE.DELETE_ERROR');
+        return $this->errorResponse('PROFILE.DELETE_ERROR');
     }
 
     /**
@@ -181,9 +181,9 @@ class ProfileController extends Controller
             $user = UserHelper::full($user->id);
             return $this->response('USERS.USER_CONTACT_DATA_UPDATED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
+            return $this->errorResponse('USERS.USER_CONTACT_DATA_UPDATE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_UPDATE_FAILED');
+        return $this->errorResponse('USERS.USER_CONTACT_DATA_UPDATE_FAILED');
     }
 
     /**
@@ -208,8 +208,8 @@ class ProfileController extends Controller
             $user = UserHelper::full($user->id);
             return $this->response('USERS.USER_CONTACT_DATA_DELETED', ['user' => $user]);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
+            return $this->errorResponse('USERS.USER_CONTACT_DATA_DELETE_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'USERS.USER_CONTACT_DATA_DELETE_FAILED');
+        return $this->errorResponse('USERS.USER_CONTACT_DATA_DELETE_FAILED');
     }
 }

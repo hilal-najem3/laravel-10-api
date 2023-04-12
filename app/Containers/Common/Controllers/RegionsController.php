@@ -27,8 +27,8 @@ class RegionsController extends Controller
             ];
             return $this->response('REGIONS.ALL', $info);
         } catch (Exception $e) {
-            return $this->errorResponse($this->bad_request, 'REGIONS.ALL_FAILED', $e);
+            return $this->errorResponse('REGIONS.ALL_FAILED', $e);
         }
-        return $this->errorResponse($this->bad_request, 'REGIONS.ALL_FAILED');
+        return $this->errorResponse('REGIONS.ALL_FAILED');
     }
 }

@@ -23,7 +23,7 @@ class NotAllowedException extends ApplicationException
 
     public function status(): int
     {
-        return Response::HTTP_BAD_REQUEST;
+        return Response::HTTP_METHOD_NOT_ALLOWED;
     }
 
     public function help(): string

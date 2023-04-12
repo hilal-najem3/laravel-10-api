@@ -43,6 +43,24 @@ trait TestsFacilitator
     }
 
     /**
+     * This function receives logins user as super admin and
+     * returns content of response
+     * 
+     * @return $content of response
+     */
+    public function super_login()
+    {
+        $credentials = ['email' => 'super-admin@example.com', 'password' => 'password'];
+        $response = $this->json('POST', '/api/v1/login', $credentials, ['Accept' => 'application/json']);
+        
+        $response->assertStatus(200);
+
+        $content = json_decode($response->getContent());
+
+        return $content;
+    }
+
+    /**
      * This function creates random user in the database
      * and returns him with his raw data
      * 
