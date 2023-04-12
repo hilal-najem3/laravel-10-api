@@ -37,6 +37,12 @@ class AgencyTypesHelper extends TestCase
         return $data;
     }
 
+    protected function create(): AgencyType
+    {
+        $data = $this->createData();
+        return Helper::create($data);
+    }
+
     /**
      * Test successful all type.
      *
@@ -56,8 +62,7 @@ class AgencyTypesHelper extends TestCase
      */
     public function test_id_successful()
     {
-        $data = $this->createData();
-        $agency = Helper::create($data);
+        $agency = $this->create();
         $result = Helper::id($agency->id);
         $agency = AgencyType::find($agency->id);
         $this->assertEquals($result, $agency);
@@ -118,5 +123,54 @@ class AgencyTypesHelper extends TestCase
         $this->expectException(CreateFailedException::class);
         $result = Helper::create([]);
         $this->assertException($result, 'CreateFailedException');
+    }
+
+    /**
+     * Test successful update type.
+     *
+     * @return void
+     */
+    public function test_update_successful()
+    {
+        $agency = $this->create();
+        $data = $this->createData();
+        unset($data['description']);
+
+        $result = Helper::update($agency, $data);
+        $this->assertEquals($result, Helper::id($agency->id));
+        $this->assertEquals($result->description, '');
+        $this->assertEquals($result->name, $data['name']);
+    }
+
+    /**
+     * Test fail update type duplicate.
+     *
+     * @return void
+     */
+    public function test_update_duplicate_fail()
+    {
+        $this->expectException(AgencyTypeDuplicateNameException::class);
+        $agencyType = $this->create();
+        $anotherAgencyType = $this->create();
+
+        $data = [
+            'name' => $anotherAgencyType->name,
+        ];
+
+        $result = Helper::update($agencyType, $data);
+        $this->assertException($result, 'AgencyTypeDuplicateNameException');
+    }
+
+    /**
+     * Test fail update type.
+     *
+     * @return void
+     */
+    public function test_update_fail()
+    {
+        $this->expectException(UpdateFailedException::class);
+        $agencyType = $this->create();
+        $result = Helper::update($agencyType, []);
+        $this->assertException($result, 'UpdateFailedException');
     }
 }

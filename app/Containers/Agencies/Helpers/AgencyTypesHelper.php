@@ -63,7 +63,7 @@ class AgencyTypesHelper
     }
 
     /**
-     * create a new data object
+     * create a new AgencyType
      * 
      * @param  array $data
      * @return AgencyType | CreateFailedException | AgencyTypeDuplicateNameException
@@ -94,6 +94,50 @@ class AgencyTypesHelper
             throw $e;
         }
         throw new CreateFailedException('AGENCY_TYPES.CREATE_FAILED');
+    }
+
+    /**
+     * update an AgencyType
+     * 
+     * @param  AgencyType $type
+     * @param  array $data
+     * @return AgencyType | UpdateFailedException | AgencyTypeDuplicateNameException
+     */
+    public static function update(AgencyType $type, array $data)
+    {
+        $ex = '';
+        DB::beginTransaction();
+        try {
+            $data = self::trim($data);
+            if($type == null || !isset($data['name'])) {
+                $ex = 'UpdateFailedException';
+                throw new UpdateFailedException('AGENCY_TYPES.UPDATE_FAILED');
+            }
+
+            if($data['name'] != $type) {
+                $agencyTypeNameCount = AgencyType::where('name', $data['name'])->count();
+                if($agencyTypeNameCount) {
+                    $ex = 'AgencyTypeDuplicateNameException';
+                    throw new AgencyTypeDuplicateNameException();
+                }
+            }
+
+            $type->name = $data['name'];
+            isset($data['description']) ?
+                $type->description = $data['description'] : $type->description = '';
+            
+            $type->save();
+            DB::commit();
+
+            return self::id($type->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            if($ex != 'CreateFailedException' && $ex != 'AgencyTypeDuplicateNameException') {
+                throw new UpdateFailedException('AGENCY_TYPES.UPDATE_FAILED');
+            }
+            throw $e;
+        }
+        throw new UpdateFailedException('AGENCY_TYPES.UPDATE_FAILED');
     }
 
     /**
