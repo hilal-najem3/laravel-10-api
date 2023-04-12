@@ -21,11 +21,13 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->boolean('is_branch')->default(false);
             $table->unsignedBigInteger('type_id');
+            $table->unsignedBigInteger('logo_id')->nullable();
             $table->unsignedBigInteger('agency_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('type_id')->references('id')->on('agency_types')->onDelete('cascade');
+            $table->foreign('logo_id')->references('id')->on('images')->onDelete('cascade');
             $table->foreign('agency_id')->references('id')->on('agencies')->onDelete('cascade');
         });
     }
@@ -38,7 +40,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('agencies', function (Blueprint $table) {
-            $table->dropForeign(['type_id', 'agency_id']);
+            $table->dropForeign(['type_id', 'logo_id', 'agency_id']);
         });
         Schema::dropIfExists('agencies');
     }

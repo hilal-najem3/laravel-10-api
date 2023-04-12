@@ -8,6 +8,7 @@ use App\Containers\Permissions\Messages\Messages as PermissionsMessages;
 use App\Containers\Files\Messages\Messages as FilesMessages;
 use App\Containers\Users\Messages\Messages as UsersMessages;
 use App\Containers\Auth\Messages\Messages as AuthMessages;
+use App\Containers\Agencies\Messages\Messages as AgencyMessages;
 
 class MessagesHelper
 {
@@ -18,12 +19,14 @@ class MessagesHelper
         $usersMessages = UsersMessages::messages();
         $authMessages = AuthMessages::messages();
         $rolesMessages = RolesMessages::messages();
+        $agencyMessages = AgencyMessages::messages();
         $permissionsMessages = PermissionsMessages::messages();
 
         $messages = array_merge($commonMessages, $usersMessages);
         $messages = array_merge($messages, $filesMessages);
         $messages = array_merge($messages, $rolesMessages);
         $messages = array_merge($messages, $permissionsMessages);
+        $messages = array_merge($messages, $agencyMessages);
         $messages = array_merge($messages, $authMessages);
 
         $messages = array_merge($messages, [

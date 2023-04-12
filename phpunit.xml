@@ -14,6 +14,9 @@
         <testsuite name="Users">
             <directory suffix="Test.php">./app/Containers/Users/Tests</directory>
         </testsuite>
+        <testsuite name="Agencies">
+            <directory suffix="Test.php">./app/Containers/Agencies/Tests</directory>
+        </testsuite>
         <testsuite name="Auth">
             <directory suffix="Test.php">./app/Containers/Auth/Tests</directory>
         </testsuite>
