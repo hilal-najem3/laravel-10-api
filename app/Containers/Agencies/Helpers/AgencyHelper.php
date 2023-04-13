@@ -61,7 +61,7 @@ class AgencyHelper
             }
 
             if($agency->logo) {
-                $agency->logo->link = StoreHelper::getFileLink($agency->logo->k);
+                $agency->logo->link = StoreHelper::getFileLink($agency->logo->link);
             }
 
             return $agency;
@@ -83,7 +83,7 @@ class AgencyHelper
             $agencies = Agency::with(['type', 'parent_agency', 'logo'])
             ->get()->each(function (Agency $agency) {
                 if($agency->logo) {
-                    $agency->logo->link = StoreHelper::getFileLink($agency->logo->k);
+                    $agency->logo->link = StoreHelper::getFileLink($agency->logo->link);
                 }
             });
 

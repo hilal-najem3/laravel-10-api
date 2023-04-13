@@ -18,7 +18,7 @@ Route::group([
         Route::get('get/{id}', [AgencyController::class, 'get'])->name('agency.get');
         Route::post('create', [AgencyController::class, 'create'])->name('agency.create');
         Route::put('update/{id}', [AgencyController::class, 'update'])->name('agency.update');
-        Route::put('logo_update/{id}', [AgencyController::class, 'updateLogo'])->name('agency.update.logo');
+        Route::post('logo/{id}', [AgencyController::class, 'logo'])->name('agency.update.logo');
     });
 
     Route::group([

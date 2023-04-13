@@ -110,7 +110,7 @@ class AgencyController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function updateLogo(UpdateAgencyLogoRequest $request, $id)
+    public function logo(UpdateAgencyLogoRequest $request, $id)
     {
         try {
             $this->allowedAction(['write-agency'], 'AGENCY.UPDATE_FAILED');
@@ -123,6 +123,7 @@ class AgencyController extends Controller
                 $image = Helper::updateLogo($agency, $image, $request->file('logo')->getSize());
             }
 
+            $agency = Helper::full($agency->id);
             return $this->response('AGENCY.UPDATE_SUCCESSFUL', ['agency' => $agency]);
 
         } catch (Exception $e) {
