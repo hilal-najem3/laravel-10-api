@@ -119,4 +119,60 @@ class AgencyTypesControllerTest extends TestCase
         $agency = json_encode(AgencyType::orderBy('id', 'desc')->first());
         $this->assertEquals($agency, $result);
     }
+
+    /**
+     * Test successful update type.
+     *
+     * @return void
+     */
+    public function test_update_successful()
+    {
+        $data = $this->createData();
+        $agencyType = $this->create();
+        $content = $this->super_login();
+        $token = $content->token;
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/agency_type/update/' . $agencyType->id,
+            $data,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+        $response->assertStatus(200);
+        $result = json_encode(json_decode($response->getContent(), true)['agency_type']);
+        $agency = json_encode(AgencyType::find($agencyType->id));
+        $this->assertEquals($agency, $result);
+    }
+
+    /**
+     * Test fail update type.
+     *
+     * @return void
+     */
+    public function test_update_fail()
+    {
+        $agencyType = $this->create();
+        $anotherAgencyType = $this->create();
+        $content = $this->super_login();
+        $token = $content->token;
+
+        $data = [
+            'name' => $anotherAgencyType->name
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/agency_type/update/' . $agencyType->id,
+            $data,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+
+        $response->assertStatus(400);
+    }
 }

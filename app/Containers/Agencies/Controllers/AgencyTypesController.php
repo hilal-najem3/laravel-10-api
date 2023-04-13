@@ -93,7 +93,7 @@ class AgencyTypesController extends Controller
             $agencyType = Helper::id($id);
             $agencyType = Helper::update($agencyType, $data);
 
-            return $this->response('AGENCY_TYPES.UPDATE_SUCCESSFUL', ['agency' => $agencyType]);
+            return $this->response('AGENCY_TYPES.UPDATE_SUCCESSFUL', ['agency_type' => $agencyType]);
 
         } catch (Exception $e) {
             return $this->errorResponse('AGENCY_TYPES.UPDATE_FAILED', $e);
