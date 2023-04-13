@@ -48,6 +48,14 @@ trait HasPermissionsTrait
         return false;
     }
 
+    public function isSuper()
+    {
+        if ($this->roles->contains('slug', 'super-admin')) {
+            return true;
+        }
+        return false;
+    }
+
     public function allowedTo(string $permissionsString)
     {
         // add the permissions to permissions table if not added

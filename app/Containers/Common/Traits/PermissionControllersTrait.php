@@ -41,11 +41,30 @@ trait PermissionControllersTrait
      */
     public function allowedAction(array $permissions, string $messageKey)
     {
+        $user = Auth::user();
         foreach($permissions as $permission) {
-            $user = Auth::user();
             $allowed = $user->allowedTo($permission);
             if (!$allowed) {
                 throw new NotAllowedException($messageKey);
+            }
+        }
+    }
+
+    /**
+     * This function checks if the user authenticated is allowed to perform the action
+     * It returns the appropriate response otherwise
+     * 
+     * @param int $permissionId
+     * @param string $message
+     */
+    public function allowedEditPermission(int $permissionId, string $messageKey)
+    {
+        $user = Auth::user();
+        $isSuper = $user->isSuper();
+        if(!$isSuper) {
+            $permissionCount = $user->permissions()->where('id', $permissionId)->count();
+            if(!$permissionCount) {
+                throw new NotAllowedException('', $messageKey);
             }
         }
     }

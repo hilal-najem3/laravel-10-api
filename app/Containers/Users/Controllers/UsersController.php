@@ -19,6 +19,7 @@ use App\Containers\Users\Requests\UpdateUserRequest;
 use App\Containers\Users\Helpers\UserHelper;
 
 use App\Containers\Common\Helpers\ContactHelper;
+use App\Containers\Users\Helpers\UserRolesHelper;
 
 use App\Exceptions\Common\NotAllowedException;
 use Exception;
@@ -249,6 +250,7 @@ class UsersController extends Controller
             $this->crossAuthorization([$data['user_id']]);
 
             foreach($data['permissions'] as $permissionId) {
+                $this->allowedEditPermission($permissionId, 'USERS.ATTACH_PERMISSION_FAILED_LEVEL');
                 UserHelper::attachPermission($user, $permissionId);
             }
 
@@ -278,6 +280,7 @@ class UsersController extends Controller
             $this->crossAuthorization([$data['user_id']]);
 
             foreach($data['permissions'] as $permissionId) {
+                $this->allowedEditPermission($permissionId, 'USERS.ATTACH_PERMISSION_FAILED_LEVEL');
                 UserHelper::detachPermission($user, $permissionId);
             }
 
@@ -306,7 +309,14 @@ class UsersController extends Controller
 
             $this->crossAuthorization([$data['user_id']]);
 
+            $currentUser = $request->user();
+            $currentUserHighestRole = UserRolesHelper::getCurrentHighestRole();
+            $isSuper = $currentUser->isSuper();
+
             foreach($data['roles'] as $roleId) {
+                if(!$isSuper && $roleId <= $currentUserHighestRole->id) {
+                    throw new NotAllowedException('', 'USERS.ATTACH_ROLES_FAILED_LEVEL');
+                }
                 UserHelper::attachRole($user, $roleId);
             }
 
@@ -335,7 +345,14 @@ class UsersController extends Controller
 
             $this->crossAuthorization([$data['user_id']]);
 
+            $currentUser = $request->user();
+            $currentUserHighestRole = UserRolesHelper::getCurrentHighestRole();
+            $isSuper = $currentUser->isSuper();
+
             foreach($data['roles'] as $roleId) {
+                if(!$isSuper && $roleId <= $currentUserHighestRole->id) {
+                    throw new NotAllowedException('', 'USERS.ATTACH_ROLES_FAILED_LEVEL');
+                }
                 UserHelper::detachRole($user, $roleId);
             }
 
