@@ -20,7 +20,6 @@ class Agency extends Model
         'bio',
         'active',
         'is_branch',
-        'active',
         'type_id',
         'logo_id',
         'agency_id'

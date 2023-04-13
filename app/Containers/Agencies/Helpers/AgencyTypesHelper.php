@@ -132,7 +132,7 @@ class AgencyTypesHelper
             return self::id($type->id);
         } catch (Exception $e) {
             DB::rollBack();
-            if($ex != 'CreateFailedException' && $ex != 'AgencyTypeDuplicateNameException') {
+            if($ex != 'UpdateFailedException' && $ex != 'AgencyTypeDuplicateNameException') {
                 throw new UpdateFailedException('AGENCY_TYPES.UPDATE_FAILED');
             }
             throw $e;
