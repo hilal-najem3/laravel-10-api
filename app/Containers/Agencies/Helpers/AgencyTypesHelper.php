@@ -114,7 +114,7 @@ class AgencyTypesHelper
                 throw new UpdateFailedException('AGENCY_TYPES.UPDATE_FAILED');
             }
 
-            if($data['name'] != $type) {
+            if($data['name'] != $type->name) {
                 $agencyTypeNameCount = AgencyType::where('name', $data['name'])->count();
                 if($agencyTypeNameCount) {
                     $ex = 'AgencyTypeDuplicateNameException';

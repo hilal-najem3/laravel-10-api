@@ -45,7 +45,7 @@ class AgencyTypesController extends Controller
                 ];
             }
 
-            return $this->response('AGENCY_TYPES.CREATE_SUCCESSFUL', $data);
+            return $this->response('AGENCY_TYPES.GET', $data);
 
         } catch (Exception $e) {
             return $this->errorResponse('AGENCY_TYPES.NOT_FOUND', $e);
