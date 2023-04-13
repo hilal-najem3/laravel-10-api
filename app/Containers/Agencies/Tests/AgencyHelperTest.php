@@ -2,6 +2,7 @@
 
 namespace App\Containers\Agencies\Tests;
 
+use App\Helpers\Storage\StoreHelper;
 use Illuminate\Http\Testing\File;
 use Illuminate\Support\Str;
 
@@ -61,8 +62,13 @@ class AgencyHelperTest extends TestCase
     {
         $this->create();
         $result = Helper::all();
-        $types = Agency::all();
-        $this->assertEquals($result, $types);
+        $agencies = Agency::with(['type', 'parent_agency', 'logo'])
+        ->get()->each(function (Agency $agency) {
+            if($agency->logo) {
+                $agency->logo->link = StoreHelper::getFileLink($agency->logo->k);
+            }
+        });;
+        $this->assertEquals($result, $agencies);
     }
 
     /**
