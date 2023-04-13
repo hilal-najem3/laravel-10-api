@@ -45,6 +45,34 @@ class AgencyHelper
     }
 
     /**
+     * get agency type full info
+     * by id
+     * 
+     * @param int $id
+     * @return Agency $agency
+     */
+    public static function full(int $id)
+    {
+        try {
+            $agency = Agency::with(['type', 'parent_agency', 'logo'])->where('id', $id)->first();
+
+            if(!$agency) {
+                throw new NotFoundException('AGENCY.NOT_FOUND');
+            }
+
+            if($agency->logo) {
+                $agency->logo->link = StoreHelper::getFileLink($agency->logo->k);
+            }
+
+            return $agency;
+        } catch (Exception $e) {
+            throw new NotFoundException('AGENCY.NOT_FOUND');
+        }
+
+        throw new NotFoundException('AGENCY.NOT_FOUND');
+    }
+
+    /**
      * get all agency types base info
      * 
      * @return Agency[] $agencies
@@ -52,7 +80,12 @@ class AgencyHelper
     public static function all()
     {
         try {
-            $agencies = Agency::all();
+            $agencies = Agency::with(['type', 'parent_agency', 'logo'])
+            ->get()->each(function (Agency $agency) {
+                if($agency->logo) {
+                    $agency->logo->link = StoreHelper::getFileLink($agency->logo->k);
+                }
+            });
 
             if(!$agencies) {
                 throw new NotFoundException('AGENCY.NOT_FOUND');

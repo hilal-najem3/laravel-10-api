@@ -31,7 +31,7 @@ class Agency extends Model
         return $this->belongsTo(AgencyType::class, 'type_id');
     }
 
-    public function agency()
+    public function parent_agency()
     {
         return $this->belongsTo(Agency::class, 'agency_id');
     }

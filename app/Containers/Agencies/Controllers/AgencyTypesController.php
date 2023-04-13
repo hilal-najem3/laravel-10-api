@@ -78,7 +78,7 @@ class AgencyTypesController extends Controller
     }
 
     /**
-     * Create a new agency type
+     * Update an agency type
      * 
      * @param UpdateAgencyTypeRequest $request
      * @param int $id
