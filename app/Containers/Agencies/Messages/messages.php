@@ -11,18 +11,18 @@ class Messages
                 'NOT_FOUND' => 'Agency type',
                 'GET' => 'Agency Type/s loaded successfully',
                 'CREATE_SUCCESSFUL' => 'Agency type created successfully',
-                'CREATE_FAILED' => 'Agency type create failed',
+                'CREATE_FAILED' => 'Agency type',
                 'DUPLICATE_NAME' => 'There is another agency type with the same name',
                 'UPDATE_SUCCESSFUL' => 'Agency type updated successfully',
-                'UPDATE_FAILED' => 'Agency type update failed',
+                'UPDATE_FAILED' => 'Agency type',
             ],
             'AGENCY' => [
                 'NOT_FOUND' => 'Agency',
                 'GET' => 'Agency loaded successfully',
                 'CREATE_SUCCESSFUL' => 'Agency created successfully',
-                'CREATE_FAILED' => 'Agency create failed',
+                'CREATE_FAILED' => 'Agency',
                 'UPDATE_SUCCESSFUL' => 'Agency updated successfully',
-                'UPDATE_FAILED' => 'Agency update failed',
+                'UPDATE_FAILED' => 'Agency',
                 'DUPLICATE_USERNAME' => 'There is another agency with the same username'
             ]
         ];

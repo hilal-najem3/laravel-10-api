@@ -77,12 +77,19 @@ class AgencyHelper
             if(isset($data['agency_id'])) {
                 $data['is_branch'] = true;
             }
+            if($data['username']) {
+                $agencyNameCount = Agency::where('username', $data['username'])->count();
+                if($agencyNameCount) {
+                    $ex = 'AgencyDuplicateUserNameException';
+                    throw new AgencyDuplicateUserNameException();
+                }
+            }
             $agency = Agency::create($data);
             DB::commit();
-            return self::id($agency);
+            return self::id($agency->id);
         } catch (Exception $e) {
             DB::rollBack();
-            if($ex != 'CreateFailedException') {
+            if($ex != 'CreateFailedException' && $ex != 'AgencyDuplicateUserNameException') {
                 throw new CreateFailedException('AGENCY.CREATE_FAILED');
             }
             throw $e;
@@ -178,7 +185,7 @@ class AgencyHelper
      */
     private static function checkRequired(array $data)
     {
-        if(isset($data['name']) || isset($data['username']) || isset($data['type_id']) ) {
+        if(!isset($data['name']) || !isset($data['username']) || !isset($data['type_id']) ) {
             return false;
         }
 
