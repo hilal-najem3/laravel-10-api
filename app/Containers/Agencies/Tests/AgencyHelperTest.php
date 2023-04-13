@@ -2,6 +2,7 @@
 
 namespace App\Containers\Agencies\Tests;
 
+use Illuminate\Http\Testing\File;
 use Illuminate\Support\Str;
 
 use App\Containers\Agencies\Exceptions\AgencyDuplicateUserNameException;
@@ -190,5 +191,25 @@ class AgencyHelperTest extends TestCase
         $agency = $this->create();
         $result = Helper::update($agency, []);
         $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test update logo photo successful.
+     *
+     * @return void
+     */
+    public function test_update_logo_photo_successful()
+    {
+        $image = File::image('image.png', 400, 100);
+        $agency = $this->create();
+
+        // Result should be the newly created image model
+        $result = Helper::updateLogo($agency, $image);
+        $agency = Helper::id($agency->id);
+        $this->assertEquals($agency->logo_id, $result->id);
+
+        $result = Helper::updateLogo($agency, null);
+        $agency = Helper::id($agency->id);
+        $this->assertEquals($agency->logo_id, null);
     }
 }

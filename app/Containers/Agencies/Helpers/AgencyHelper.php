@@ -4,6 +4,10 @@ namespace App\Containers\Agencies\Helpers;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Helpers\Storage\StoreHelper;
+use App\Containers\Files\Models\Image;
+use App\Containers\Files\Helpers\ImagesHelper;
+
 use App\Containers\Agencies\Models\Agency;
 
 use App\Containers\Agencies\Exceptions\AgencyDuplicateUserNameException;
@@ -152,6 +156,58 @@ class AgencyHelper
             throw $e;
         }
         throw new UpdateFailedException('AGENCY.UPDATE_FAILED');
+    }
+
+    /**
+     * This function updates the logo photo of the agency
+     * 
+     * @param Agency $agency
+     * @param $photo
+     * @param $photoSize
+     * @return Image $image | UpdateFailedException
+     */
+    public static function updateLogo(Agency $agency, $photo, $photoSize = null)
+    {
+        DB::beginTransaction();
+        try {
+            $subPath = 'uploads/images/agencies/' . $agency->id;
+            $image = $agency->logo()->first();
+
+            if($photo != null) {
+                $path = StoreHelper::storeFile($photo, $subPath);
+
+                if($image) {
+                    StoreHelper::deleteFile($image->link);
+                    $data = [
+                        'link' => $path,
+                        'size' => $photoSize
+                    ];
+                    $image = ImagesHelper:: update($image, $data, 'logo');
+                } else {
+                    $image = ImagesHelper::create([
+                        'link' => $path,
+                        'size' => $photoSize
+                    ], 'logo');
+                }
+    
+                $agency->logo_id = $image->id;
+            } else {
+                if($image) {
+                    StoreHelper::deleteFile($image->link);
+                    $image->delete();
+                }
+                $agency->logo_id = null;
+            }
+            
+            $agency->save();
+            DB::commit();
+            return $image;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new UpdateFailedException('AGENCY.LOGO_ERROR');
+        }
+
+        throw new UpdateFailedException('AGENCY.LOGO_ERROR');
     }
 
     /**

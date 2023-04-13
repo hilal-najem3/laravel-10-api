@@ -23,7 +23,9 @@ class Messages
                 'CREATE_FAILED' => 'Agency',
                 'UPDATE_SUCCESSFUL' => 'Agency updated successfully',
                 'UPDATE_FAILED' => 'Agency',
-                'DUPLICATE_USERNAME' => 'There is another agency with the same username'
+                'DUPLICATE_USERNAME' => 'There is another agency with the same username',
+                'LOGO' => 'Logo image uploaded successfully',
+                'LOGO_ERROR' => 'Agency logo image',
             ]
         ];
     }
