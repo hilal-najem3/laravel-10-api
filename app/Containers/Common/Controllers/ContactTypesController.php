@@ -4,6 +4,7 @@ namespace App\Containers\Common\Controllers;
 
 use App\Http\Controllers\Controller;
 
+use App\Containers\Common\Traits\PermissionControllersTrait;
 use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Common\Requests\CreateContactTypeRequest;
@@ -14,7 +15,7 @@ use Exception;
 
 class ContactTypesController extends Controller
 {
-    use ResponseHelper;
+    use ResponseHelper, PermissionControllersTrait;
 
     /**
      * Get all contact types
