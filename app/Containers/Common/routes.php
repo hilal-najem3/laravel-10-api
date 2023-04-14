@@ -23,6 +23,7 @@ Route::group([
         ], function ()
         {
             Route::post('/create', [ContactTypesController::class, 'create'])->name('contact_types.create');
+            Route::put('/update/{id}', [ContactTypesController::class, 'update'])->name('contact_types.update');
         });
     });
 });

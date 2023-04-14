@@ -22,11 +22,13 @@ class Messages
                 'GET_ERROR' => 'Contact types loaded successfully',
                 'CREATE_SUCCESSFUL' => 'Contact type created successfully',
                 'CREATE_FAILED' => 'Contact type creation failed',
+                'UPDATE_SUCCESSFUL' => 'Contact type updates successfully',
+                'UPDATE_FAIL' => 'Contact type update failed',
                 'DUPLICATE_NAME' => 'Contact type already exists',
+                "NAME" => 'Contact type'
             ],
             'CONTACT' => [
                 'CONTACT_EXCEPTION' => 'Contact',
-                "CONTACT_TYPE_EXCEPTION" => 'Contact type'
             ]
         ];
     }

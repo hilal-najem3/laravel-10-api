@@ -8,6 +8,7 @@ use App\Containers\Common\Traits\PermissionControllersTrait;
 use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Common\Requests\CreateContactTypeRequest;
+use App\Containers\Common\Requests\UpdateContactTypeRequest;
 
 use App\Containers\Common\Helpers\ContactTypesHelper as Helper;
 
@@ -49,7 +50,7 @@ class ContactTypesController extends Controller
     }
 
     /**
-     * Create a new agency type
+     * Create a new contact type
      * 
      * @param CreateContactTypeRequest $request
      * @return \Illuminate\Http\Response
@@ -69,5 +70,30 @@ class ContactTypesController extends Controller
         }
 
         return $this->errorResponse('CONTACT_TYPES.CREATE_FAILED');
+    }
+
+    /**
+     * Update a contact type
+     * 
+     * @param UpdateContactTypeRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateContactTypeRequest $request, int $id)
+    {
+        try {
+            $this->allowedAction(['write-contact_type'], 'CONTACT_TYPES.UPDATE_FAIL');
+            $data = $request->all();
+            
+            $contact_type = Helper::id($id);
+            $contact_type = Helper::update($contact_type, $data);
+
+            return $this->response('CONTACT_TYPES.UPDATE_SUCCESSFUL', ['contact_type' => $contact_type]);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('CONTACT_TYPES.UPDATE_FAIL', $e);
+        }
+
+        return $this->errorResponse('CONTACT_TYPES.UPDATE_FAIL');
     }
 }

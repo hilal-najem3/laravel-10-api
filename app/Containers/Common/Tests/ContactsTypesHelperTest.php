@@ -131,5 +131,50 @@ class ContactsTypesHelperTest extends TestCase
         $result = Helper::create($data);
         $this->assertException($result, 'ContactTypeDuplicateNameException');
     }
+
+    /**
+     * Test successful update data.
+     *
+     * @return void
+     */
+    public function test_update_contact_type_successful()
+    {
+        $contactType = $this->create();
+        $data = $this->createData();
+
+        $result = Helper::update($contactType, $data);
+        $databaseContactType = ContactType::where('name', $data['name'])->first();
+        $this->assertEquals($result, $databaseContactType);
+        
+    }
+
+    /**
+     * Test fail update data.
+     *
+     * @return void
+     */
+    public function test_update_fail()
+    {
+        $this->expectException(UpdateFailedException::class);
+        $result = Helper::update($this->create(), []);
+        $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test fail update data.
+     *
+     * @return void
+     */
+    public function test_update_duplicate_fail()
+    {
+        $this->expectException(ContactTypeDuplicateNameException::class);
+        $contactType = $this->create();
+        $contactType2 = $this->create();
+        $data = [
+            'name' => $contactType2->name
+        ];
+        $result = Helper::update($contactType, $data);
+        $this->assertException($result, 'ContactTypeDuplicateNameException');
+    }
     
 }

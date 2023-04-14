@@ -137,4 +137,55 @@ class ContactTypesControllerTest extends TestCase
         );
         $response->assertStatus(422);
     }
+
+    /**
+     * Test successful update data.
+     *
+     * @return void
+     */
+    public function test_update_contact_type_controller_successful()
+    {
+        $content = $this->super_login();
+        $token = $content->token;
+        $contactType = $this->create();
+        $data = $this->createData();
+        $response = $this->json(
+            'PUT',
+            '/api/v1/contact_types/update/' . $contactType->id,
+            $data,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+        $response->assertStatus(200);
+        $data = json_encode(json_decode($response->getContent(), true)['contact_type']);
+        $this->assertEquals($data, ContactType::find($contactType->id));
+    }
+
+    /**
+     * Test fail update data.
+     *
+     * @return void
+     */
+    public function test_update_contact_type_controller_fail()
+    {
+        $content = $this->super_login();
+        $token = $content->token;
+        $contactType = $this->create();
+        $contactType2 = $this->create();
+
+        $data = $this->createData();
+        $data['name'] = $contactType2->name;
+        $response = $this->json(
+            'PUT',
+            '/api/v1/contact_types/update/' . $contactType->id,
+            $data,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+        $response->assertStatus(400);
+    }
 }

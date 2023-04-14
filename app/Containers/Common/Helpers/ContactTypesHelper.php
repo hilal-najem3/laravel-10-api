@@ -44,7 +44,7 @@ class ContactTypesHelper
             $type = ContactType::find($id);
 
             if($type == null) {
-                throw new NotFoundException('CONTACT.CONTACT_TYPE_EXCEPTION');
+                throw new NotFoundException('CONTACT_TYPES.NAME');
             }
             
             return $type;
@@ -65,7 +65,7 @@ class ContactTypesHelper
             $type = ContactType::where('name', trim($name))->first();
 
             if($type == null) {
-                throw new NotFoundException('CONTACT.CONTACT_TYPE_EXCEPTION');
+                throw new NotFoundException('CONTACT_TYPES.NAME');
             }
             
             return $type;
@@ -102,13 +102,63 @@ class ContactTypesHelper
             DB::rollBack();
             $ex == 'ContactTypeDuplicateNameException' ? 
             throw new ContactTypeDuplicateNameException() :
-            throw new  CreateFailedException('CONTACT.CONTACT_EXCEPTION');
+            throw new  CreateFailedException('CONTACT_TYPES.NAME');
         }
 
-        throw new  CreateFailedException('CONTACT.CONTACT_EXCEPTION');
+        throw new  CreateFailedException('CONTACT_TYPES.NAME');
     }
 
-    private static function trim(array $data)
+    /**
+     * update a contact type
+     * 
+     * @param ContactType $contactType
+     * @param  array $data
+     * @return ContactType | UpdateFailedException
+     */
+    public static function update(ContactType $contactType, array $data)
+    {
+        $ex = '';
+        DB::beginTransaction();
+        try {
+            $data = self::trim($data);
+            if($data == null || $data['name'] == null) {
+                throw new  UpdateFailedException('CONTACT.CONTACT_EXCEPTION');
+            }
+            if($contactType->name != $data['name'] &&ContactType::where('name', $data['name'])->get()->count()) {
+                $ex = 'ContactTypeDuplicateNameException';
+                throw new ContactTypeDuplicateNameException();
+            }
+            
+            $contactType->name = $data['name'];
+            isset($data['allow_duplicates']) ? 
+            $contactType->allow_duplicates = $data['allow_duplicates'] : 
+            $contactType->allow_duplicates = false;
+
+            isset($data['regex']) ? 
+            $contactType->regex = $data['regex'] : 
+            $contactType->regex = '';
+
+            $contactType->save();
+
+            DB::commit();
+            return self::id($contactType->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            $ex == 'ContactTypeDuplicateNameException' ? 
+            throw new ContactTypeDuplicateNameException() :
+            throw new  UpdateFailedException('CONTACT_TYPES.NAME');
+        }
+
+        throw new  UpdateFailedException('CONTACT_TYPES.NAME');
+    }
+
+    /**
+     * Trims the appropriate data for contact type
+     * 
+     * @param array $data
+     * @return array $data
+     */
+    private static function trim(array $data): array
     {
         isset($data['name']) ? $data['name'] = trim($data['name']): null;
         isset($data['regex']) ? $data['regex'] = trim($data['regex']): null;
