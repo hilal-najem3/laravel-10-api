@@ -3,6 +3,7 @@
 namespace App\Containers\Common\Helpers;
 
 use App\Containers\Common\Exceptions\ContactTypeDuplicateNameException;
+use App\Containers\Common\Exceptions\ContactTypeDeleteFailedException;
 
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
@@ -150,6 +151,34 @@ class ContactTypesHelper
         }
 
         throw new  UpdateFailedException('CONTACT_TYPES.NAME');
+    }
+
+    /**
+     * delete a contact type
+     * 
+     * @param  ContactType $contactType
+     * @return true | DeleteFailedException
+     */
+    public static function delete(ContactType $contactType)
+    {
+        $ex = '';
+        DB::beginTransaction();
+        try {
+            if($contactType->contacts()->count() > 0) {
+                $ex = 'ContactTypeDeleteFailedException';
+                throw new ContactTypeDeleteFailedException();
+            }
+            $contactType->delete();
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            $ex == 'ContactTypeDeleteFailedException' ? 
+            throw new ContactTypeDeleteFailedException() :
+            throw new  DeleteFailedException('CONTACT_TYPES.NAME');
+        }
+
+        throw new  DeleteFailedException('CONTACT_TYPES.NAME');
     }
 
     /**

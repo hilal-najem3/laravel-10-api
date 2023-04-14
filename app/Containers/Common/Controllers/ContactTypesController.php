@@ -96,4 +96,27 @@ class ContactTypesController extends Controller
 
         return $this->errorResponse('CONTACT_TYPES.UPDATE_FAIL');
     }
+
+    /**
+     * Delete a contact type
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(int $id)
+    {
+        try {
+            $this->allowedAction(['write-contact_type'], 'CONTACT_TYPES.DELETE_FAIL');
+            
+            $contact_type = Helper::id($id);
+            $contact_type = Helper::delete($contact_type);
+
+            return $this->response('CONTACT_TYPES.DELETE_SUCCESSFUL', ['contact_type' => $contact_type]);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('CONTACT_TYPES.DELETE_FAIL', $e);
+        }
+
+        return $this->errorResponse('CONTACT_TYPES.DELETE_FAIL');
+    }
 }

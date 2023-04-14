@@ -185,11 +185,11 @@ class UsersController extends Controller
                     // update the contact
                     $contact = ContactHelper::id($contactData['id']);
                     UserHelper::canSubmitContact($user, $data, $contact); // this will throw exception if submit is not allowed
-                    ContactHelper::updateContact($contact, $data, 'users', $user->id);
+                    ContactHelper::update($contact, $data, 'users', $user->id);
                 } else {
                     UserHelper::canSubmitContact($user, $data); // this will throw exception if submit is not allowed
                     // create a new contact
-                    ContactHelper::createContact($data, 'users', $user->id);
+                    ContactHelper::create($data, 'users', $user->id);
                 }
             }
 
@@ -221,7 +221,7 @@ class UsersController extends Controller
                 if(!$user->contact()->where('id', $contactId)->count()) {
                     throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
                 }
-                ContactHelper::deleteContact($contactId);
+                ContactHelper::delete($contactId);
             }
 
             return $this->response('USERS.USER_CONTACT_DATA_DELETED', ['user' => $user]);

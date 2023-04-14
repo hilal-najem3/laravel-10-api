@@ -25,7 +25,10 @@ class Messages
                 'UPDATE_SUCCESSFUL' => 'Contact type updates successfully',
                 'UPDATE_FAIL' => 'Contact type update failed',
                 'DUPLICATE_NAME' => 'Contact type already exists',
-                "NAME" => 'Contact type'
+                "NAME" => 'Contact type',
+                'HAS_CONTACTS' => 'Contact type delete failed, because it has many contacts associated with it',
+                'DELETE_FAIL' => 'Contact type delete failed',
+                'DELETE_SUCCESSFUL' => 'Contact type deletes successfully'
             ],
             'CONTACT' => [
                 'CONTACT_EXCEPTION' => 'Contact',
