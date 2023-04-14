@@ -4,6 +4,7 @@ namespace  App\Containers\Common\Tests;
 
 use Illuminate\Support\Str;
 
+use App\Containers\Common\Helpers\ContactHelper;
 use App\Containers\Common\Helpers\ContactTypesHelper as Helper;
 use App\Containers\Common\Models\ContactType;
 
@@ -187,5 +188,68 @@ class ContactTypesControllerTest extends TestCase
             ]
         );
         $response->assertStatus(400);
+    }
+
+    /**
+     * Test successful delete data.
+     *
+     * @return void
+     */
+    public function test_delete_contact_type_controller_successful()
+    {
+        $content = $this->super_login();
+        $token = $content->token;
+        $contactType = $this->create();
+        $response = $this->json(
+            'DELETE',
+            '/api/v1/contact_types/delete/' . $contactType->id,
+            [],
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertEquals(null, ContactType::find($contactType->id));
+    }
+
+    /**
+     * Test fail delete data.
+     *
+     * @return void
+     */
+    public function test_delete_contact_type_controller_fail()
+    {
+        $content = $this->super_login();
+        $token = $content->token;
+        $contactType = $this->create();
+        $contact = $this->createContact($contactType->name);
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/contact_types/delete/' . $contactType->id,
+            [],
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ]
+        );
+        $response->assertStatus(405);
+    }
+
+    protected function createContact(string $typeName)
+    {
+        $user = $this->createUser()['user'];
+        $type = ContactType::where('name', $typeName)->first();
+        $email = Str::random(5);
+        $data = [
+            'value' => $email,
+            'type_id' => $type->id
+        ];
+        $userId = $user->id;
+        $targetTag = 'users';
+        $result = ContactHelper::create($data, $targetTag, $userId);
+
+        return $result;
     }
 }

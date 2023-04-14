@@ -28,7 +28,9 @@ class Messages
                 "NAME" => 'Contact type',
                 'HAS_CONTACTS' => 'Contact type delete failed, because it has many contacts associated with it',
                 'DELETE_FAIL' => 'Contact type delete failed',
-                'DELETE_SUCCESSFUL' => 'Contact type deletes successfully'
+                'DELETE_SUCCESSFUL' => 'Contact type deletes successfully',
+                'GET_CONTACTS' => 'Contacts associated contact type loaded successfully',
+                'GET_CONTACTS_ERROR' => 'Contacts for contact type not found'
             ],
             'CONTACT' => [
                 'CONTACT_EXCEPTION' => 'Contact',

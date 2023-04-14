@@ -12,11 +12,47 @@ use App\Containers\Common\Requests\UpdateContactTypeRequest;
 
 use App\Containers\Common\Helpers\ContactTypesHelper as Helper;
 
+use App\Containers\Common\Models\Contact;
+
 use Exception;
 
 class ContactTypesController extends Controller
 {
     use ResponseHelper, PermissionControllersTrait;
+
+    /**
+     * Get all contacts
+     * by with contact type id
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getContactsByContactTypeId(int $id = null)
+    {
+        try {
+            $info = [];
+
+            $contact_type = Helper::id($id);
+            $contacts = $contact_type->contacts()->get()
+            ->each(function(Contact $contact) {
+                $contact = $contact->load(['users']);
+            });
+
+            $info = [
+                'contact_type' => $contact_type,
+                'contacts' => $contacts
+            ];
+
+            return $this->response(
+                'CONTACT_TYPES.GET_CONTACTS',
+                $info
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse('CONTACT_TYPES.GET_CONTACTS_ERROR', $e);
+        }
+
+        return $this->errorResponse('CONTACT_TYPES.GET_CONTACTS_ERROR');
+    }
 
     /**
      * Get all contact types

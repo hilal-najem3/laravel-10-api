@@ -22,6 +22,8 @@ Route::group([
             'middleware' => ['roles:super-admin/admin']
         ], function ()
         {
+            Route::get('/contactsByContactTypeId/get/{id}', [ContactTypesController::class, 'getContactsByContactTypeId'])
+            ->name('contact_types.getContactsByContactTypeId');
             Route::post('/create', [ContactTypesController::class, 'create'])->name('contact_types.create');
             Route::put('/update/{id}', [ContactTypesController::class, 'update'])->name('contact_types.update');
             Route::delete('/delete/{id}', [ContactTypesController::class, 'delete'])->name('contact_types.delete');
