@@ -477,7 +477,7 @@ class UserHelperTest extends TestCase
         ];
         $userId = $user->id;
         $targetTag = 'users';
-        $contact = ContactHelper::createContact($data, $targetTag, $userId);
+        $contact = ContactHelper::create($data, $targetTag, $userId);
 
         // delete user
         $delete = UserHelper::deleteUser($user);

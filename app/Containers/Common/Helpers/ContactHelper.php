@@ -11,49 +11,12 @@ use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
-use App\Containers\Common\Models\ContactType;
 use App\Containers\Common\Models\Contact;
 
 use Illuminate\Support\Facades\DB;
 
 class ContactHelper
 {
-    /**
-     * get all contact types
-     * 
-     * @return ContactType[] $regions
-     */
-    public static function types()
-    {
-        try {
-            $types = ContactType::all();
-            return $types;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * get contact type by name
-     * 
-     * @param string $name
-     * @return ContactType $type
-     */
-    public static function type(string $name)
-    {
-        try {
-            $type = ContactType::where('name', trim($name))->first();
-
-            if($type == null) {
-                throw new NotFoundException('CONTACT.CONTACT_TYPE_EXCEPTION');
-            }
-            
-            return $type;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
     /**
      * get [contact] by id
      * 
@@ -81,7 +44,7 @@ class ContactHelper
      * @param int $targetId
      * @return Contact | CreateFailedException
      */
-    public static function createContact(array $data, string $targetTag, int $targetId)
+    public static function create(array $data, string $targetTag, int $targetId)
     {
         DB::beginTransaction();
         try {
@@ -98,6 +61,8 @@ class ContactHelper
                 ) {
                 throw new  CreateFailedException('CONTACT.CONTACT_EXCEPTION');
             }
+
+            $data['value'] = trim($data['value']);
             
             $contact = Contact::create($data);
 
@@ -135,7 +100,7 @@ class ContactHelper
      * @param int $targetId
      * @return Contact | UpdateFailedException
      */
-    public static function updateContact(Contact $contact, array $data, string $targetTag, int $targetId)
+    public static function update(Contact $contact, array $data, string $targetTag, int $targetId)
     {
         DB::beginTransaction();
         try {
@@ -153,6 +118,8 @@ class ContactHelper
                 ) {
                 throw new  UpdateFailedException('CONTACT.CONTACT_EXCEPTION');
             }
+
+            $data['value'] = trim($data['value']);
             
             $contact->value = $data['value'];
             $contact->type_id = $data['type_id'];
@@ -191,7 +158,7 @@ class ContactHelper
      * @param int $id
      * @return boolean | DeleteFailedException
      */
-    public static function deleteContact(int $id)
+    public static function delete(int $id)
     {
         DB::beginTransaction();
         try {
@@ -222,7 +189,7 @@ class ContactHelper
      * @param int $id
      * @return Contact | UpdateFailedException
      */
-    public static function restoreContact(int $id)
+    public static function restore(int $id)
     {
         DB::beginTransaction();
         try {

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('contact_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->boolean('allow_duplicates')->default(false);
             $table->string('regex')->nullable();
             $table->softDeletes();
             $table->timestamps();

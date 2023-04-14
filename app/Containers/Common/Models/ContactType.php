@@ -13,6 +13,7 @@ class ContactType extends Model
      */
     protected $fillable = [
         'name',
+        'allow_duplicates',
         'regex',
     ];
 

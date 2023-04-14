@@ -17,7 +17,7 @@ use Tests\TestCase;
 /**
  * This class will test controller and helper for regions
  */
-class ContactsTest extends TestCase
+class ContactsHelperTest extends TestCase
 {
     use TestsFacilitator;
 
@@ -38,34 +38,9 @@ class ContactsTest extends TestCase
         ];
         $userId = $user->id;
         $targetTag = 'users';
-        $result = Helper::createContact($data, $targetTag, $userId);
+        $result = Helper::create($data, $targetTag, $userId);
 
         return $result;
-    }
-
-    /**
-     * Test successful get all types.
-     *
-     * @return void
-     */
-    public function test_types_successful()
-    {
-        $types = ContactType::all();
-        $result = Helper::types();
-        $this->assertEquals($types, $result);
-    }
-
-    /**
-     * Test successful get type by name.
-     *
-     * @return void
-     */
-    public function test_type_successful()
-    {
-        $name = 'email';
-        $types = ContactType::where('name', trim($name))->first();
-        $result = Helper::type($name);
-        $this->assertEquals($types, $result);
     }
 
     /**
@@ -109,7 +84,7 @@ class ContactsTest extends TestCase
         ];
         $userId = $user->id;
         $targetTag = 'users';
-        $result = Helper::createContact($data, $targetTag, $userId);
+        $result = Helper::create($data, $targetTag, $userId);
 
         $contactId = $user->contact()->get()->first()->id;
         $contact = Helper::id($contactId);
@@ -137,7 +112,7 @@ class ContactsTest extends TestCase
         $userId = $user->id;
         $targetTag = 'users';
 
-        $result = Helper::createContact($data, $targetTag, $userId);
+        $result = Helper::create($data, $targetTag, $userId);
 
         $this->assertException($result, 'CreateFailedException');
     }
@@ -157,7 +132,7 @@ class ContactsTest extends TestCase
         ];
         $newUser = $this->createUser()['user'];
 
-        $result = Helper::updateContact($contact, $data, 'users', $newUser->id);
+        $result = Helper::update($contact, $data, 'users', $newUser->id);
 
         $contact = Helper::id($contact->id);
         $this->assertEquals($contact, $result);
@@ -182,7 +157,7 @@ class ContactsTest extends TestCase
         ];
         $newUser = $this->createUser()['user'];
 
-        $result = Helper::updateContact($contact, $data, 'users', $newUser->id);
+        $result = Helper::update($contact, $data, 'users', $newUser->id);
         $this->assertException($result, 'UpdateFailedException');
     }
 
@@ -194,7 +169,7 @@ class ContactsTest extends TestCase
     public function test_deleteContact_successful()
     {
         $contact = $this->createContact();
-        $result = Helper::deleteContact($contact->id);
+        $result = Helper::delete($contact->id);
         $this->assertEquals(true, $result);
     }
 
@@ -207,7 +182,7 @@ class ContactsTest extends TestCase
     {
         $this->expectException(DeleteFailedException::class);
 
-        $result = Helper::deleteContact(84585412);
+        $result = Helper::delete(84585412);
         $this->assertEquals(true, $result);
 
         $this->assertException($result, 'DeleteFailedException');
@@ -222,10 +197,10 @@ class ContactsTest extends TestCase
     {
         $contact = $this->createContact();
         $id = $contact->id;
-        $delete = Helper::deleteContact($id);
+        $delete = Helper::delete($id);
         $this->assertEquals(true, $delete);
 
-        $result = Helper::restoreContact($id);
+        $result = Helper::restore($id);
         $contact = Helper::id($id);
         $this->assertEquals($contact, $result);
     }
@@ -239,7 +214,7 @@ class ContactsTest extends TestCase
     {
         $this->expectException(UpdateFailedException::class);
 
-        $result = Helper::restoreContact(84585412);
+        $result = Helper::restore(84585412);
 
         $this->assertException($result, 'UpdateFailedException');
     }

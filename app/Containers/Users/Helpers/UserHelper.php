@@ -743,7 +743,7 @@ class UserHelper
 
             $contactsUser = ContactUser::where('user_id', $user->id)->get();
             foreach ($contactsUser as $contactUser) {
-                ContactHelper::restoreContact($contactUser->contact_id);
+                ContactHelper::restore($contactUser->contact_id);
             }
 
             DB::commit();
