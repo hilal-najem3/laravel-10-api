@@ -2,6 +2,8 @@
 
 namespace App\Containers\Common\Helpers;
 
+use App\Containers\Common\Exceptions\ContactTypeDuplicateNameException;
+
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
@@ -80,11 +82,16 @@ class ContactTypesHelper
      */
     public static function create(array $data)
     {
+        $ex = '';
         DB::beginTransaction();
         try {
             $data = self::trim($data);
             if($data == null || $data['name'] == null) {
                 throw new  CreateFailedException('CONTACT.CONTACT_EXCEPTION');
+            }
+            if(ContactType::where('name', $data['name'])->get()->count()) {
+                $ex = 'ContactTypeDuplicateNameException';
+                throw new ContactTypeDuplicateNameException();
             }
             
             $type = ContactType::create($data);
@@ -93,6 +100,8 @@ class ContactTypesHelper
             return self::id($type->id);
         } catch (Exception $e) {
             DB::rollBack();
+            $ex == 'ContactTypeDuplicateNameException' ? 
+            throw new ContactTypeDuplicateNameException() :
             throw new  CreateFailedException('CONTACT.CONTACT_EXCEPTION');
         }
 
@@ -101,5 +110,8 @@ class ContactTypesHelper
 
     private static function trim(array $data)
     {
+        isset($data['name']) ? $data['name'] = trim($data['name']): null;
+        isset($data['regex']) ? $data['regex'] = trim($data['regex']): null;
+        return $data;
     }
 }

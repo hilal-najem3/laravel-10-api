@@ -11,11 +11,18 @@ Route::group([
     'middleware' => ['auth:api']
 ], function ()
 {
-    Route::get('regions', [RegionsController::class, 'all'])->name('get.allRegions&Types');
+    Route::get('regions', [RegionsController::class, 'all'])->name('allRegions&Types.get');
 
     Route::prefix('contact_types')
     ->group(function () {
-        Route::get('/get', [ContactTypesController::class, 'get'])->name('get.contact_types');
-        Route::get('/get/{id}', [ContactTypesController::class, 'get'])->name('get.contact_types');
+        Route::get('/get', [ContactTypesController::class, 'get'])->name('contact_types.get');
+        Route::get('/get/{id}', [ContactTypesController::class, 'get'])->name('contact_types.get');
+
+        Route::group([
+            'middleware' => ['roles:super-admin/admin']
+        ], function ()
+        {
+            Route::post('/create', [ContactTypesController::class, 'create'])->name('contact_types.create');
+        });
     });
 });

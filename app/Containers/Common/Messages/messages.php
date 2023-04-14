@@ -17,9 +17,14 @@ class Messages
                 'ALL' => 'Countries and region types loaded successfully',
                 'ALL_FAILED' => 'Countries and region types load failed'
             ],
+            'CONTACT_TYPES' => [
+                'GET' => 'Contact type/s loaded successfully',
+                'GET_ERROR' => 'Contact types loaded successfully',
+                'CREATE_SUCCESSFUL' => 'Contact type created successfully',
+                'CREATE_FAILED' => 'Contact type creation failed',
+                'DUPLICATE_NAME' => 'Contact type already exists',
+            ],
             'CONTACT' => [
-                'TYPES' => 'Contact types loaded successfully',
-                'TYPES_ERROR' => 'Contact types loaded successfully',
                 'CONTACT_EXCEPTION' => 'Contact',
                 "CONTACT_TYPE_EXCEPTION" => 'Contact type'
             ]
