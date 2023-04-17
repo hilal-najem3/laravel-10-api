@@ -16,6 +16,11 @@ class Currency extends Model
      */
     protected $fillable = [
         'name',
-        'symbol'
+        'symbol',
+        'symbol_native',
+        'decimal_digits',
+        'code',
+        'name_plural',
+        'rounding'
     ];
 }

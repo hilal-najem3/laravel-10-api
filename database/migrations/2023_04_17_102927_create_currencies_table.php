@@ -17,6 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('symbol');
+            $table->string('symbol_native');
+            $table->integer('decimal_digits');
+            $table->string('code');
+            $table->string('name_plural');
+            $table->integer('rounding');
             $table->softDeletes();
             $table->timestamps();
         });
