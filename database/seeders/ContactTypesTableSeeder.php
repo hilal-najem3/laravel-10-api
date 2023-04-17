@@ -21,6 +21,7 @@ class ContactTypesTableSeeder extends Seeder
             ['name' => 'email'],
             ['name' => 'phone'],
             ['name' => 'fax'],
+            ['name' => 'website'],
             ['name' => 'facebook'],
             ['name' => 'instagram'],
             ['name' => 'twitter'],

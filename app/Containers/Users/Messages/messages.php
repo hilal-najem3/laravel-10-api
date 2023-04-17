@@ -61,6 +61,7 @@ class Messages
                 'USER_CONTACT_DATA_DELETE_FAILED' => 'User contact data delete failed',
                 'USER_CONTACT_ID_IS_DIFFERENT' => 'You are not allowed to update contact information for another entity associating him with this user id',
                 'USER_CONTACT_VALUE_IS_USED' => 'You are not allowed to update or create contact information that already exists',
+                'USER_CONTACT_VALUE_SELF_DUPLICATE' => 'This contact data is already associated with this user\'s profile',
                 'ATTACH_ROLES_FAILED_LEVEL' => 'You are not allowed to add or remove user role with a role that us equal or higher than yours',
                 'ATTACH_PERMISSION_FAILED_LEVEL' => 'You are not allowed to add or remove user permission with a permission that you don\'t have'
             ],

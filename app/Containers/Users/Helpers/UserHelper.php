@@ -27,6 +27,7 @@ use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Common\Helpers\ContactHelper;
+use App\Containers\Common\Helpers\ContactTypesHelper;
 
 use App\Containers\Permissions\Models\Permission;
 use App\Containers\Files\Models\Image;
@@ -518,17 +519,22 @@ class UserHelper
      */
     public static function canSubmitContact(User $user, array $contactData, Contact $contactModel = null)
     {
+        $contactType = ContactTypesHelper::id($contactData['type_id']);
         $count = Contact::where('value', trim($contactData['value']))->count();
+        $userDataCountValue = $user->contact()->where('value', trim($contactData['value']))->count(); // This the count of the contact data of this user having the same value that is submitted
+        if($userDataCountValue) {
+            throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
+        }
         if($contactModel != null && $contactModel->id != null) {
             $exists = $user->contact()->where('id', $contactModel->id)->count();
             if(!$exists) {
                 throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
             }
-            if($contactData['value'] != $contactModel->value && $count) {
+            if(!$contactType->allow_duplicates && $contactData['value'] != $contactModel->value && $count) {
                 throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
             }
         } else {
-            if($count) {
+            if(!$contactType->allow_duplicates && $count) {
                 throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
             }
         }
