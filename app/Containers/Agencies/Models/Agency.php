@@ -5,7 +5,8 @@ namespace App\Containers\Agencies\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Containers\Files\Models\Image;
-
+use App\Containers\Currencies\Models\CurrencyConversion;
+use App\Containers\Currencies\Models\CurrencyConversionHistory;
 class Agency extends Model
 {
     use SoftDeletes;
@@ -39,5 +40,15 @@ class Agency extends Model
     public function logo()
     {
         return $this->belongsTo(Image::class, 'logo_id');
+    }
+
+    public function currentConversions()
+    {
+        return $this->hasMany(CurrencyConversion::class, 'agency_id');
+    }
+
+    public function conversionsHistory()
+    {
+        return $this->hasMany(CurrencyConversionHistory::class, 'agency_id');
     }
 }
