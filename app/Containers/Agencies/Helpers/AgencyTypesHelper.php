@@ -14,52 +14,22 @@ use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
-class AgencyTypesHelper
+use App\Helpers\BaseHelper;
+
+class AgencyTypesHelper extends BaseHelper
 {
-    /**
-     * get agency type base info
-     * by id
-     * 
-     * @param int $id
-     * @return AgencyType $agencyType
-     */
-    public static function id(int $id)
+    protected static string $messageKeyBase = 'AGENCY_TYPES';
+    protected static string $modelName = 'AgencyType';
+    protected static string $model = AgencyType::class;
+
+    protected static function model()
     {
-        try {
-            $agencyType = AgencyType::find($id);
-
-            if(!$agencyType) {
-                throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
-            }
-
-            return $agencyType;
-        } catch (Exception $e) {
-            throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
-        }
-
-        throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
+        return self::$model;
     }
 
-    /**
-     * get all agency types base info
-     * 
-     * @return AgencyType[] $agencyTypes
-     */
-    public static function all()
+    protected static function message()
     {
-        try {
-            $agencyTypes = AgencyType::all();
-
-            if(!$agencyTypes) {
-                throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
-            }
-
-            return $agencyTypes;
-        } catch (Exception $e) {
-            throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
-        }
-
-        throw new NotFoundException('AGENCY_TYPES.NOT_FOUND');
+        return self::$messageKeyBase;
     }
 
     /**

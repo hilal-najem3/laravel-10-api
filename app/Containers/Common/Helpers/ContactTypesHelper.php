@@ -16,42 +16,22 @@ use App\Containers\Common\Models\ContactType;
 
 use Illuminate\Support\Facades\DB;
 
-class ContactTypesHelper
+use App\Helpers\BaseHelper;
+
+class ContactTypesHelper extends BaseHelper
 {
-    /**
-     * get all contact types
-     * 
-     * @return ContactType[] $regions
-     */
-    public static function all()
+    protected static string $messageKeyBase = 'CONTACT_TYPES';
+    protected static string $modelName = 'ContactType';
+    protected static string $model = ContactType::class;
+
+    protected static function model()
     {
-        try {
-            $types = ContactType::all();
-            return $types;
-        } catch (Exception $e) {
-            throw $e;
-        }
+        return self::$model;
     }
 
-    /**
-     * get contact type by id
-     * 
-     * @param int $id
-     * @return ContactType $type
-     */
-    public static function id(int $id)
+    protected static function message()
     {
-        try {
-            $type = ContactType::find($id);
-
-            if($type == null) {
-                throw new NotFoundException('CONTACT_TYPES.NAME');
-            }
-            
-            return $type;
-        } catch (Exception $e) {
-            throw $e;
-        }
+        return self::$messageKeyBase;
     }
 
     /**

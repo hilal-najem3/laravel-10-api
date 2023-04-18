@@ -18,8 +18,24 @@ use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
-class AgencyHelper
+use App\Helpers\BaseHelper;
+
+class AgencyHelper extends BaseHelper
 {
+    protected static string $messageKeyBase = 'AGENCY';
+    protected static string $modelName = 'Agency';
+    protected static string $model = Agency::class;
+
+    protected static function model()
+    {
+        return self::$model;
+    }
+
+    protected static function message()
+    {
+        return self::$messageKeyBase;
+    }
+
     /**
      * get agency type base info
      * by id

@@ -15,8 +15,24 @@ use App\Containers\Common\Models\Contact;
 
 use Illuminate\Support\Facades\DB;
 
-class ContactHelper
+use App\Helpers\BaseHelper;
+
+class ContactHelper extends BaseHelper
 {
+    protected static string $messageKeyBase = 'CONTACT';
+    protected static string $modelName = 'Contact';
+    protected static string $model = Contact::class;
+
+    protected static function model()
+    {
+        return self::$model;
+    }
+
+    protected static function message()
+    {
+        return self::$messageKeyBase;
+    }
+
     /**
      * get [contact] by id
      * 
@@ -25,15 +41,13 @@ class ContactHelper
      */
     public static function id(int $id)
     {
-        $contact = Contact::find($id);
-
-        if($contact == null) {
-            throw new NotFoundException('CONTACT.CONTACT_EXCEPTION');
+        try {
+            $contact = parent::id($id);
+            $contact = $contact->load(['users', 'type']);
+            return $contact;
+        } catch (Exception $e) {
+            throw $e;
         }
-
-        $contact = $contact->load(['users', 'type']);
-
-        return $contact;
     }
 
     /**
