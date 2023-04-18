@@ -29,6 +29,11 @@ class RolesTableSeeder extends Seeder
                 'description' => 'Has access to permissions that the super admin assigns to him'
             ],
             [
+                'name' => 'Agency Admin',
+                'slug' => 'agency-admin',
+                'description' => 'Has access to permissions that the admins assigns to him concerning the editing of an agency\'s data'
+            ],
+            [
                 'name' => 'User',
                 'slug' => 'user',
                 'description' => 'Has access to permissions that the super admin or admin assigns to him'

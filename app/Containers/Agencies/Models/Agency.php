@@ -42,6 +42,11 @@ class Agency extends Model
         return $this->belongsTo(Image::class, 'logo_id');
     }
 
+    public function agencyAdmins()
+    {
+        return $this->belongsToMany(User::class, 'agency_admins');
+    }
+
     public function currentConversions()
     {
         return $this->hasMany(CurrencyConversion::class, 'agency_id');

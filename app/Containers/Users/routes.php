@@ -60,6 +60,12 @@ Route::group([
         // Users delete
         Route::get('deletedUsers', [UsersController::class, 'getDeletedUsers'])->name('users.get.deleted');
         Route::delete('deleteUsers', [UsersController::class, 'deleteUsers'])->name('users.delete');
+
+        Route::post('setUserAsAgencyAdmin/{userId}/{agencyId}', 
+        [UsersController::class, 'setUserAsAgencyAdmin'])->name('users.setUserAsAgencyAdmin');
+
+        Route::post('removeUserAsAgencyAdmin/{userId}/{agencyId}', 
+        [UsersController::class, 'removeUserAsAgencyAdmin'])->name('users.removeUserAsAgencyAdmin');
     });
 
 });

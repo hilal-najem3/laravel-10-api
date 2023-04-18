@@ -10,8 +10,8 @@ use Laravel\Passport\HasApiTokens;
 use App\Containers\Auth\Notifications\ResetPasswordEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Containers\Files\Models\Image;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Containers\Common\Models\Contact;
+use App\Containers\Agencies\Models\Agency;
 
 class User extends Authenticatable
 {
@@ -63,6 +63,11 @@ class User extends Authenticatable
     public function contact()
     {
         return $this->belongsToMany(Contact::class, 'contacts_users');
+    }
+
+    public function agencies()
+    {
+        return $this->belongsToMany(Agency::class, 'agency_admins');
     }
 
     public function sendPasswordResetNotification($token)

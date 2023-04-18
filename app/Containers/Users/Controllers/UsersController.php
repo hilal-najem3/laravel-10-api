@@ -16,10 +16,12 @@ use App\Containers\Users\Validators\UsersValidators;
 use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Requests\CreateUserRequest;
 use App\Containers\Users\Requests\UpdateUserRequest;
-use App\Containers\Users\Helpers\UserHelper;
 
+use App\Containers\Users\Helpers\UserHelper;
+use App\Containers\Users\Helpers\UserAgencyHelper;
 use App\Containers\Common\Helpers\ContactHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
+use App\Containers\Agencies\Helpers\AgencyHelper;
 
 use App\Exceptions\Common\NotAllowedException;
 use Exception;
@@ -496,5 +498,55 @@ class UsersController extends Controller
             return $this->errorResponse('USERS.GET_ERROR', $e);
         }
         return $this->errorResponse('USERS.GET_ERROR');
+    }
+
+    /**
+     * Set user as an admin to an agency
+     * 
+     * @param int $userId
+     * @param int $agencyId
+     * @return \Illuminate\Http\Response
+     */
+    public function setUserAsAgencyAdmin(int $userId, int $agencyId)
+    {
+        try {
+            $this->allowedAction(['write-user-agency-admin'], 'USER_AGENCY_ADMIN_NOT_ALLOWED');
+            $this->crossAuthorization([$userId]);
+
+            $agency = AgencyHelper::id($agencyId);
+            $user = UserHelper::id($userId);
+
+            UserAgencyHelper::addUserAsAnAgencyAdmin($user, $agency);
+
+            return $this->response('USER_AGENCY_ADMIN_SUCCESSFUL');
+        } catch (Exception $e) {
+            return $this->errorResponse('USER_AGENCY_ADMIN_FAIL', $e);
+        }
+        return $this->errorResponse('USER_AGENCY_ADMIN_FAIL');
+    }
+
+    /**
+     * Remove user from being an admin to an agency
+     * 
+     * @param int $userId
+     * @param int $agencyId
+     * @return \Illuminate\Http\Response
+     */
+    public function removeUserAsAgencyAdmin(int $userId, int $agencyId)
+    {
+        try {
+            $this->allowedAction(['write-user-agency-admin'], 'USER_AGENCY_ADMIN_NOT_ALLOWED');
+            $this->crossAuthorization([$userId]);
+
+            $agency = AgencyHelper::id($agencyId);
+            $user = UserHelper::id($userId);
+
+            UserAgencyHelper::revokeUserAsAnAgencyAdmin($user, $agency);
+
+            return $this->response('USER_AGENCY_ADMIN_SUCCESSFUL');
+        } catch (Exception $e) {
+            return $this->errorResponse('USER_AGENCY_ADMIN_FAIL', $e);
+        }
+        return $this->errorResponse('USER_AGENCY_ADMIN_FAIL');
     }
 }

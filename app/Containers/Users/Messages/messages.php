@@ -65,6 +65,12 @@ class Messages
                 'ATTACH_ROLES_FAILED_LEVEL' => 'You are not allowed to add or remove user role with a role that us equal or higher than yours',
                 'ATTACH_PERMISSION_FAILED_LEVEL' => 'You are not allowed to add or remove user permission with a permission that you don\'t have'
             ],
+            'USER_AGENCY_ADMIN_NOT_ALLOWED' => 'You are not allowed to add or remove user as an agency admin',
+            'USER_AGENCY_ADMIN_SUCCESSFUL' => 'User added as an admin to agency successfully',
+            'USER_AGENCY_ADMIN_FAIL' => 'User couldn\'t be added as an admin to agency',
+            'USER_AGENCY_ADMIN_DETACH_SUCCESSFUL' => 'User revoked from being an admin to agency successfully',
+            'USER_AGENCY_ADMIN_DETACH_FAIL' => 'User couldn\'t be revoked from being an admin to agency',
+            'USER_AGENCY_ADMIN_LOW_LEVEL_FAIL' => 'User should be at least in an agency-admin role to be allowed to edit this data',
             'EMAIL_EXISTS' => 'Email already exists'
         ];
     }

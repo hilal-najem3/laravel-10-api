@@ -25,7 +25,7 @@ class AgencyHelper extends BaseHelper
     protected static string $messageKeyBase = 'AGENCY';
     protected static string $modelName = 'Agency';
     protected static string $model = Agency::class;
-    protected static $allowed = ['id', 'all'];
+    protected static $allowed = ['id'];
 
     protected static function model()
     {
@@ -40,30 +40,6 @@ class AgencyHelper extends BaseHelper
     protected static function allowed()
     {
         return self::$allowed;
-    }
-
-    /**
-     * get agency type base info
-     * by id
-     * 
-     * @param int $id
-     * @return Agency $agency
-     */
-    public static function id(int $id)
-    {
-        try {
-            $agency = Agency::find($id);
-
-            if(!$agency) {
-                throw new NotFoundException('AGENCY.NOT_FOUND');
-            }
-
-            return $agency;
-        } catch (Exception $e) {
-            throw new NotFoundException('AGENCY.NOT_FOUND');
-        }
-
-        throw new NotFoundException('AGENCY.NOT_FOUND');
     }
 
     /**

@@ -24,9 +24,8 @@ class UsersTableSeeder extends Seeder
         try {
             $super_admin_role = Role::where('slug', 'super-admin')->first();
             $admin_role = Role::where('slug', 'admin')->first();
+            $agency_admin = Role::where('slug', 'agency-admin')->first();
             $user_role = Role::where('slug', 'user')->first();
-
-            $get_users = Permission::where('slug', 'get-users')->first();
 
             $admin = User::create([
                 'first_name' => 'Super',
@@ -45,6 +44,15 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]);
             $admin->roles()->attach($admin_role);
+
+            $admin = User::create([
+                'first_name' => 'Agency',
+                'last_name' => 'Admin',
+                'email' => 'agency-admin@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+            ]);
+            $admin->roles()->attach($agency_admin);
 
             $user = User::create([
                 'first_name' => 'User',

@@ -11,14 +11,32 @@ Route::group([
 {
     Route::group([
         'prefix' => 'agency',
-        'middleware' => ['roles:super-admin/admin']
     ], function ()
     {
         Route::get('get', [AgencyController::class, 'get'])->name('agency.get');
         Route::get('get/{id}', [AgencyController::class, 'get'])->name('agency.get');
-        Route::post('create', [AgencyController::class, 'create'])->name('agency.create');
-        Route::put('update/{id}', [AgencyController::class, 'update'])->name('agency.update');
-        Route::post('logo/{id}', [AgencyController::class, 'logo'])->name('agency.update.logo');
+
+        Route::group([
+            'middleware' => ['roles:super-admin/admin']
+        ], function ()
+        {
+            Route::post('create', [AgencyController::class, 'create'])->name('agency.create');
+            Route::put('update/{id}', [AgencyController::class, 'update'])->name('agency.update');
+            Route::post('logo/{id}', [AgencyController::class, 'logo'])->name('agency.update.logo');
+
+            // Route::post('agency-admin')
+        });
+
+        Route::group([
+            'middleware' => ['roles:super-admin/admin/agency-admin']
+        ], function ()
+        {
+            Route::group([
+                'prefix' => 'currencies',
+            ], function ()
+            {
+            });
+        });
     });
 
     Route::group([

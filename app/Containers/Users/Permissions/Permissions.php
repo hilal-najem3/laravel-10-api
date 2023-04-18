@@ -51,6 +51,11 @@ class Permissions
                 'name' => 'Get inactive users',
                 'slug' => 'get-inactive-users',
                 'description' => 'Get the list of inactive users'
+            ],
+            [
+                'name' => 'Add/Remove user agency admin',
+                'slug' => 'write-user-agency-admin',
+                'description' => 'Can add or remove user from being an agency admin'
             ]
         ];
     }
