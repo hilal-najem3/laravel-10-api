@@ -9,6 +9,6 @@ Route::group([
     'middleware' => ['auth:api']
 ], function ()
 {
-    Route::get('currencies', [CurrenciesController::class, 'get'])->name('currencies.get');
-    Route::get('currencies/{id}', [CurrenciesController::class, 'get'])->name('currencies.get.id');
+    Route::get('currencies/get', [CurrenciesController::class, 'get'])->name('currencies.get');
+    Route::get('currencies/get/{id}', [CurrenciesController::class, 'get'])->name('currencies.get.id');
 });

@@ -25,6 +25,7 @@ class AgencyHelper extends BaseHelper
     protected static string $messageKeyBase = 'AGENCY';
     protected static string $modelName = 'Agency';
     protected static string $model = Agency::class;
+    protected static $allowed = ['id', 'all'];
 
     protected static function model()
     {
@@ -34,6 +35,11 @@ class AgencyHelper extends BaseHelper
     protected static function message()
     {
         return self::$messageKeyBase;
+    }
+
+    protected static function allowed()
+    {
+        return self::$allowed;
     }
 
     /**

@@ -23,6 +23,7 @@ class ContactTypesHelper extends BaseHelper
     protected static string $messageKeyBase = 'CONTACT_TYPES';
     protected static string $modelName = 'ContactType';
     protected static string $model = ContactType::class;
+    protected static $allowed = ['id', 'all'];
 
     protected static function model()
     {
@@ -32,6 +33,11 @@ class ContactTypesHelper extends BaseHelper
     protected static function message()
     {
         return self::$messageKeyBase;
+    }
+
+    protected static function allowed()
+    {
+        return self::$allowed;
     }
 
     /**
