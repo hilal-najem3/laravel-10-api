@@ -45,6 +45,9 @@ class PermissionsHelper
         $permissions = self::getPermissions();
 
         foreach($permissions as $perm) {
+            if(isset($perm['roles'])) {
+                unset($perm['roles']);
+            }
             self::addPermission($perm);
         }
     }
@@ -54,7 +57,7 @@ class PermissionsHelper
      * 
      * @return array
      */
-    private static function getPermissions()
+    public static function getPermissions()
     {
         $permissions = array();
         

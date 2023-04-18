@@ -10,17 +10,20 @@ class Permissions
             [
                 'name' => 'Get Users',
                 'slug' => 'get-users',
-                'description' => 'Get all users'
+                'description' => 'Get all users',
+                'roles' => [2]
             ],
             [
                 'name' => 'Create Users',
                 'slug' => 'create-users',
-                'description' => 'Create a new user with full data'
+                'description' => 'Create a new user with full data',
+                'roles' => [2]
             ],
             [
                 'name' => 'Update Users',
                 'slug' => 'update-users',
-                'description' => 'Update users with full data'
+                'description' => 'Update users with full data',
+                'roles' => [2]
             ],
             [
                 'name' => 'Attach Roles',
@@ -40,22 +43,26 @@ class Permissions
             [
                 'name' => 'Delete User',
                 'slug' => 'delete-user',
-                'description' => 'Delete a user\'s account'
+                'description' => 'Delete a user\'s account',
+                'roles' => [2]
             ],
             [
                 'name' => 'Get deleted users',
                 'slug' => 'get-deleted-users',
-                'description' => 'Get the list of deleted users'
+                'description' => 'Get the list of deleted users',
+                'roles' => [2]
             ],
             [
                 'name' => 'Get inactive users',
                 'slug' => 'get-inactive-users',
-                'description' => 'Get the list of inactive users'
+                'description' => 'Get the list of inactive users',
+                'roles' => [2]
             ],
             [
                 'name' => 'Add/Remove user agency admin',
                 'slug' => 'write-user-agency-admin',
-                'description' => 'Can add or remove user from being an agency admin'
+                'description' => 'Can add or remove user from being an agency admin',
+                'roles' => [2]
             ]
         ];
     }

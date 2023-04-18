@@ -4,6 +4,8 @@ namespace App\Containers\Roles\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Containers\Permissions\Models\Permission;
+use App\Models\User;
 
 class Role extends Model
 {

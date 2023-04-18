@@ -10,7 +10,8 @@ class Permissions
             [
                 'name' => 'Write Contact type',
                 'slug' => 'write-contact_type',
-                'description' => 'Can create, update and delete contact types'
+                'description' => 'Can create, update and delete contact types',
+                'roles' => [2]
             ]
         ];
     }

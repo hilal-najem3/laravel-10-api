@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Containers\Agencies\Controllers\AgencyCurrenciesController;
 use App\Containers\Agencies\Controllers\AgencyTypesController;
 use App\Containers\Agencies\Controllers\AgencyController;
 
@@ -23,8 +24,6 @@ Route::group([
             Route::post('create', [AgencyController::class, 'create'])->name('agency.create');
             Route::put('update/{id}', [AgencyController::class, 'update'])->name('agency.update');
             Route::post('logo/{id}', [AgencyController::class, 'logo'])->name('agency.update.logo');
-
-            // Route::post('agency-admin')
         });
 
         Route::group([
@@ -35,6 +34,8 @@ Route::group([
                 'prefix' => 'currencies',
             ], function ()
             {
+                Route::post('default', [AgencyCurrenciesController::class, 'defaultCurrency'])
+                ->name('agency.currency.default');
             });
         });
     });
