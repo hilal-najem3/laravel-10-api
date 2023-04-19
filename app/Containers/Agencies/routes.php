@@ -18,6 +18,14 @@ Route::group([
         Route::get('get/{id}', [AgencyController::class, 'get'])->name('agency.get');
 
         Route::group([
+            'prefix' => 'currencies',
+        ], function ()
+        {
+            Route::get('default/get/{agencyId}', [AgencyCurrenciesController::class, 'getDefaultCurrency'])
+            ->name('agency.currency.default.get');
+        });
+
+        Route::group([
             'middleware' => ['roles:super-admin/admin']
         ], function ()
         {
@@ -34,8 +42,8 @@ Route::group([
                 'prefix' => 'currencies',
             ], function ()
             {
-                Route::post('default', [AgencyCurrenciesController::class, 'defaultCurrency'])
-                ->name('agency.currency.default');
+                Route::post('default/update', [AgencyCurrenciesController::class, 'updateDefaultCurrency'])
+                ->name('agency.currency.default.update');
             });
         });
     });

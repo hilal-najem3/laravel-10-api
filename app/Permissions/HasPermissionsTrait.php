@@ -48,9 +48,39 @@ trait HasPermissionsTrait
         return false;
     }
 
+    public function isGeneralAdmin()
+    {
+        $roles = $this->roles()->get();
+        foreach($roles as $role) {
+            if($role->slug == 'admin' || $role->slug == 'super-admin') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function isSuper()
     {
         if ($this->roles->contains('slug', 'super-admin')) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isAdmin()
+    {
+        $roles = $this->roles()->get();
+        foreach($roles as $role) {
+            if($role->slug == 'admin') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isAgencyAdmin()
+    {
+        if ($this->roles->contains('slug', 'agency-admin')) {
             return true;
         }
         return false;

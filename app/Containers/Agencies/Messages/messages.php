@@ -26,6 +26,17 @@ class Messages
                 'DUPLICATE_USERNAME' => 'There is another agency with the same username',
                 'LOGO' => 'Logo image uploaded successfully',
                 'LOGO_ERROR' => 'Agency logo image',
+            ],
+            'AGENCY_CURRENCY' => [
+                'DEFAULT_NAME' => 'Default currency for the agency',
+                'DEFAULT' => 'Default currency for the agency updated successfully',
+                'DEFAULT_FAILED' => 'Default currency for the agency update failed',
+                'DEFAULT_GET' => 'Default currency for the agency loaded successfully',
+                'DEFAULT_GET_FAILED' => 'Default currency for the agency not found',
+                'NOT_ALLOWED' => 'You are not allowed to change the default currency for an agency you are not an admin for it'
+            ],
+            'AGENCY_ADMIN' => [
+                'NOT_ALLOWED' => 'You are not allowed to change this information'
             ]
         ];
     }

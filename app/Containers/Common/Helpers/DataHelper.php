@@ -40,11 +40,33 @@ class DataHelper
      */
     public static function key(string $key)
     {
-        $data = Data::where('key', $key)->first();;
+        $data = Data::where('key', $key)->first();
         if(!$data) {
             throw new NotFoundException('DATA.DATA');
         }
         return $data;
+    }
+
+    /**
+     * get a data object by key
+     * 
+     * @param  string $key
+     * @return Data | null
+     */
+    public static function keyBase(string $key)
+    {
+        return Data::where('key', $key)->first();
+    }
+
+    /**
+     * get a data type by name
+     * 
+     * @param  string $slug
+     * @return DataType | null
+     */
+    public static function getDataTypeBySlug(string $slug)
+    {
+        return DataType::where('slug', $slug)->first();
     }
 
     /**
@@ -224,7 +246,7 @@ class DataHelper
      * and returns it
      * 
      * @param  Data $data
-     * @return $value
+     * @return mixed $value
      */
     public static function getValue(Data $data)
     {
