@@ -33,7 +33,15 @@ class Messages
                 'DEFAULT_FAILED' => 'Default currency for the agency update failed',
                 'DEFAULT_GET' => 'Default currency for the agency loaded successfully',
                 'DEFAULT_GET_FAILED' => 'Default currency for the agency not found',
-                'NOT_ALLOWED' => 'You are not allowed to change the default currency for an agency you are not an admin for it'
+                'DEFAULT_NOT_ALLOWED' => 'You are not allowed to change the default currency for an agency you are not an admin for it',
+                'CURRENCY_CONVERSION' => [
+                    'UPDATE_ACTIVE_SUCCESSFUL' => 'Active currency conversion updated successfully',
+                    'UPDATE_ACTIVE_FAIL' => 'Active currency conversion update failed',
+                    'UPDATE_NOT_ALLOWED' => 'You are not allowed to update the currency conversions for this agency',
+                    'WRONG_CURRENCIES' => 'Currencies not found',
+                    'SAME_CURRENCIES' => 'Currencies from and to are exactly the same',
+                    'INVALID_OPERATION' => 'Conversion operation can be "*" or "/" only',
+                ]
             ],
             'AGENCY_ADMIN' => [
                 'NOT_ALLOWED' => 'You are not allowed to change this information'

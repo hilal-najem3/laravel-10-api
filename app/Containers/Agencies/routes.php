@@ -44,6 +44,9 @@ Route::group([
             {
                 Route::post('default/update', [AgencyCurrenciesController::class, 'updateDefaultCurrency'])
                 ->name('agency.currency.default.update');
+
+                Route::post('conversion/set', [AgencyCurrenciesController::class, 'updateActiveCurrencyConversion'])
+                ->name('agency.currency.conversion.set');
             });
         });
     });

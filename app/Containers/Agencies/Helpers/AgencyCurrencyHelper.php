@@ -12,6 +12,10 @@ use App\Containers\Common\Helpers\DataHelper;
 
 use App\Containers\Agencies\Models\Agency;
 use App\Containers\Currencies\Models\Currency;
+use App\Containers\Currencies\Models\CurrencyConversion;
+use App\Containers\Currencies\Models\CurrencyConversionHistory;
+
+use Carbon\Carbon;
 
 class AgencyCurrencyHelper
 {
@@ -107,6 +111,61 @@ class AgencyCurrencyHelper
             DB::rollBack();
             print_r($e->getMessage());
             throw new UpdateFailedException('AGENCY_CURRENCY.DEFAULT_FAILED');
+        }
+    }
+
+    /**
+     * This function receives data for a currency conversions for it
+     * so it either create or updates an already existing currency conversion with
+     * the same agency_id, from and to data.
+     * And this function updates the conversions_history table with a new record automatically
+     * 
+     * @param array $data
+     * @return CurrencyConversion $conversion | UpdateFailedException
+     */
+    public static function updateActiveConversion(array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $from = Currency::find($data['from']);
+            $to = Currency::find($data['to']);
+
+            if(!$from || !$to) {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.WRONG_CURRENCIES');
+            }
+
+            if($from == $to) {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.SAME_CURRENCIES');
+            }
+
+            $op = $data['operation'];
+            if($op != '*' && $op != '/') {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.INVALID_OPERATION');
+            }
+
+            $conversion = CurrencyConversion::where([
+                ['agency_id', $data['agency_id']],
+                ['from', $from->id],
+                ['to', $to->id]
+            ])->get()->first();
+
+            if(!$conversion) {
+                $conversion = CurrencyConversion::create($data);
+            } else {
+                $conversion->operation = $data['operation'];
+                $conversion->ratio = $data['ratio'];
+                $conversion->date_time = new Carbon($data['date_time']);
+                $conversion->save();
+            }
+
+            CurrencyConversionHistory::create($data);
+            DB::commit();
+
+            return $conversion;
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            DB::rollBack();
+            throw $e;
         }
     }
 }

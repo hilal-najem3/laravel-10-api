@@ -9,6 +9,7 @@ use App\Containers\Currencies\Permissions\Permissions as CurrenciesPermissions;
 
 use Illuminate\Support\Facades\DB;
 use App\Containers\Permissions\Models\Permission;
+use App\Containers\Roles\Models\Role;
 
 use Exception;
 
@@ -21,14 +22,19 @@ class PermissionsHelper
      * creates it if it doesn't
      * 
      * @param $permissionData
-     * @return void
+     * @return Permission $permission
      */
-    public static function addPermission($permissionData): void
+    public static function addPermission($permissionData): Permission
     {
         DB::beginTransaction();
         try {
-            Permission::create($permissionData);
+            if(isset($permissionData['roles'])) {
+                unset($permissionData['roles']);
+            }
+            $permission = Permission::create($permissionData);
             DB::commit();
+
+            return $permission;
         } catch (Exception $e) {
             DB::rollback();
         }
@@ -45,9 +51,6 @@ class PermissionsHelper
         $permissions = self::getPermissions();
 
         foreach($permissions as $perm) {
-            if(isset($perm['roles'])) {
-                unset($perm['roles']);
-            }
             self::addPermission($perm);
         }
     }
@@ -96,7 +99,30 @@ class PermissionsHelper
                     }
                 }
                 if(Permission::where('slug', $permissionData['slug'])->count() == 0) {
-                    self::addPermission($permissionData);
+                    $perm = self::addPermission($permissionData);
+                    if(isset($permissionData['roles']) && count($permissionData['roles'])) {
+                        $admin_role = Role::where('slug', 'admin')->first();
+                        $agency_admin = Role::where('slug', 'agency-admin')->first();
+                        $admins = $admin_role->users()->get();
+                        $agency_admins = $agency_admin->users()->get();
+
+                        foreach($permissionData['roles'] as $roleId) {
+                            $permission = Permission::where('slug', $permissionData['slug'])->first();
+                            $permission->roles()->attach($roleId);
+        
+                            if($roleId == $admin_role->id) {
+                                foreach($admins as $admin) {
+                                    $admin->permissions()->attach($permission);
+                                }
+                            }
+        
+                            if($roleId == $agency_admin->id) {
+                                foreach($agency_admins as $admin) {
+                                    $admin->permissions()->attach($permission);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception $e) {

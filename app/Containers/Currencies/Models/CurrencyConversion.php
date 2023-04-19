@@ -4,10 +4,18 @@ namespace App\Containers\Currencies\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCompositePrimaryKeys;
 
 class CurrencyConversion extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasCompositePrimaryKeys;
+
+    public $incrementing = false;
+
+    /**
+     * Indicates model primary keys.
+     */
+    protected $primaryKey = ['agency_id', 'from', 'to'];
     
     /**
      * The attributes that are mass assignable.

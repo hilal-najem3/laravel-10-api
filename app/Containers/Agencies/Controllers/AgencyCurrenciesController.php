@@ -9,6 +9,7 @@ use App\Containers\Common\Traits\PermissionControllersTrait;
 use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Agencies\Requests\DefaultCurrencyRequest;
+use App\Containers\Agencies\Requests\UpdateActiveCurrencyConversion;
 
 use App\Containers\Agencies\Helpers\AgencyHelper;
 use App\Containers\Agencies\Helpers\AgencyCurrencyHelper;
@@ -54,10 +55,10 @@ class AgencyCurrenciesController extends Controller
     public function updateDefaultCurrency(DefaultCurrencyRequest $request)
     {
         try {
-            $this->allowedAction(['write-agency-currency'], 'AGENCY_CURRENCY.NOT_ALLOWED');
+            $this->allowedAction(['write-agency-currency'], 'AGENCY_CURRENCY.DEFAULT_NOT_ALLOWED');
 
             $agency = AgencyHelper::id($request->get('agency_id'));
-            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.NOT_ALLOWED');
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.DEFAULT_NOT_ALLOWED');
 
             $currency = CurrenciesHelper::id($request->get('currency_id'));
 
@@ -70,5 +71,34 @@ class AgencyCurrenciesController extends Controller
         }
 
         return $this->errorResponse('AGENCY_CURRENCY.DEFAULT_FAILED');
+    }
+
+    /**
+     * Add new currency conversion for an agency
+     * 
+     * @param UpdateActiveCurrencyConversion $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateActiveCurrencyConversion(UpdateActiveCurrencyConversion $request)
+    {
+        try {
+            $this->allowedAction(['write-agency-currency-conversion'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_NOT_ALLOWED');
+
+            $data = $request->all();
+            $agency = AgencyHelper::id($data['agency_id']);
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_NOT_ALLOWED');
+
+            $conversion = AgencyCurrencyHelper::updateActiveConversion($data);
+            
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_ACTIVE_SUCCESSFUL', [
+                'conversion' => $conversion    
+            ]);
+
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_ACTIVE_FAIL', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_ACTIVE_FAIL');
     }
 }
