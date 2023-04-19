@@ -109,9 +109,22 @@ class AgencyCurrencyHelper
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            print_r($e->getMessage());
             throw new UpdateFailedException('AGENCY_CURRENCY.DEFAULT_FAILED');
         }
+    }
+
+    /**
+     * 
+     * Get an Agency's currency conversions that are active
+     * 
+     * @param  Agency $agency
+     * @return CurrencyConversion[] $conversions
+     */
+    public static function getActiveConversion(Agency $agency)
+    {
+        $conversions = $agency->currentConversions()->get();
+
+        return $conversions;
     }
 
     /**
@@ -163,7 +176,6 @@ class AgencyCurrencyHelper
 
             return $conversion;
         } catch (Exception $e) {
-            print_r($e->getMessage());
             DB::rollBack();
             throw $e;
         }

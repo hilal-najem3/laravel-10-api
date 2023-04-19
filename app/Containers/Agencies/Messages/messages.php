@@ -35,12 +35,14 @@ class Messages
                 'DEFAULT_GET_FAILED' => 'Default currency for the agency not found',
                 'DEFAULT_NOT_ALLOWED' => 'You are not allowed to change the default currency for an agency you are not an admin for it',
                 'CURRENCY_CONVERSION' => [
+                    'GET' => 'Currency conversions loaded successfully',
+                    'GET_NOT_FOUND' => 'Currency conversions',
                     'UPDATE_ACTIVE_SUCCESSFUL' => 'Active currency conversion updated successfully',
                     'UPDATE_ACTIVE_FAIL' => 'Active currency conversion update failed',
                     'UPDATE_NOT_ALLOWED' => 'You are not allowed to update the currency conversions for this agency',
                     'WRONG_CURRENCIES' => 'Currencies not found',
                     'SAME_CURRENCIES' => 'Currencies from and to are exactly the same',
-                    'INVALID_OPERATION' => 'Conversion operation can be "*" or "/" only',
+                    'INVALID_OPERATION' => 'Conversion operation can be \'*\' or \'/\' only',
                 ]
             ],
             'AGENCY_ADMIN' => [

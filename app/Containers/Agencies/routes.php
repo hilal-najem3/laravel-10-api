@@ -23,6 +23,9 @@ Route::group([
         {
             Route::get('default/get/{agencyId}', [AgencyCurrenciesController::class, 'getDefaultCurrency'])
             ->name('agency.currency.default.get');
+
+            Route::get('conversions/get/{agencyId}', [AgencyCurrenciesController::class, 'getActiveCurrencyConversion'])
+            ->name('agency.currency.conversion.get');
         });
 
         Route::group([
@@ -45,7 +48,7 @@ Route::group([
                 Route::post('default/update', [AgencyCurrenciesController::class, 'updateDefaultCurrency'])
                 ->name('agency.currency.default.update');
 
-                Route::post('conversion/set', [AgencyCurrenciesController::class, 'updateActiveCurrencyConversion'])
+                Route::post('conversions/set', [AgencyCurrenciesController::class, 'updateActiveCurrencyConversion'])
                 ->name('agency.currency.conversion.set');
             });
         });

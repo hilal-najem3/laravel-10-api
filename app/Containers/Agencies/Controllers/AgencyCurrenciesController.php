@@ -74,6 +74,29 @@ class AgencyCurrenciesController extends Controller
     }
 
     /**
+     * Get default currency for agency
+     * 
+     * @param int $agencyId
+     * @return \Illuminate\Http\Response
+     */
+    public function getActiveCurrencyConversion(int $agencyId)
+    {
+        try {
+            $agency = AgencyHelper::id($agencyId);
+            $activeConversions = AgencyCurrencyHelper::getActiveConversion($agency);
+
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.GET', [
+                'active_conversions' => $activeConversions
+            ]);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.GET_NOT_FOUND', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.GET_NOT_FOUND');
+    }
+
+    /**
      * Add new currency conversion for an agency
      * 
      * @param UpdateActiveCurrencyConversion $request
@@ -95,7 +118,6 @@ class AgencyCurrenciesController extends Controller
             ]);
 
         } catch (Exception $e) {
-            print_r($e->getMessage());
             return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_ACTIVE_FAIL', $e);
         }
 
