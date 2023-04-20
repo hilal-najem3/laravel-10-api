@@ -320,7 +320,9 @@ class UsersController extends Controller
                     throw new NotAllowedException('', 'USERS.ATTACH_ROLES_FAILED_LEVEL');
                 }
                 UserHelper::attachRole($user, $roleId);
+                UserRolesHelper::addRolePermissionsToUser($user, $roleId);
             }
+
 
             return $this->response('USERS.ATTACH_ROLES');
         } catch (Exception $e) {
@@ -356,6 +358,7 @@ class UsersController extends Controller
                     throw new NotAllowedException('', 'USERS.ATTACH_ROLES_FAILED_LEVEL');
                 }
                 UserHelper::detachRole($user, $roleId);
+                UserRolesHelper::removeRolePermissionsToUser($user, $roleId);
             }
 
             return $this->response('USERS.DETACH_ROLES');
