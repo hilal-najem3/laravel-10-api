@@ -43,7 +43,7 @@ class Messages
                     'WRONG_CURRENCIES' => 'Currencies not found',
                     'SAME_CURRENCIES' => 'Currencies from and to are exactly the same',
                     'INVALID_OPERATION' => 'Conversion operation can be \'*\' or \'/\' only',
-                    'HISTORY_NOT_ALLOWED' => 'You are not allowed to access to edit info concerning conversion\'s history',
+                    'HISTORY_NOT_ALLOWED' => 'You are not allowed to access or edit info concerning this agency\'s conversion\'s history',
                     'HISTORY_GET' => 'Conversions history loaded successfully',
                     'HISTORY_FAIL' => 'Conversions history load failed',
                     'HISTORY_UPDATE' => 'Conversions history updated successfully',

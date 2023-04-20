@@ -212,12 +212,12 @@ class AgencyCurrenciesController extends Controller
             $conversion = $agency->conversionsHistory()->where('id', $id)->first();
             $conversion = AgencyCurrencyHelper::updateConversion($conversion, $data);
 
-            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE', ['conversion' => $conversion]);
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_UPDATE', ['conversion' => $conversion]);
         } catch (Exception $e) {
-            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL', $e);
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_UPDATE_FAIL', $e);
         }
 
-        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL');
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_UPDATE_FAIL');
     }
 
     /**
