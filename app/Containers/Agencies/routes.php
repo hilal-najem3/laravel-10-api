@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Containers\Agencies\Controllers\AgencyCurrenciesController as ACC;
 use App\Containers\Agencies\Controllers\AgencyTypesController as ATC;
-use App\Containers\Agencies\Controllers\AC as AC;
+use App\Containers\Agencies\Controllers\AgencyController as AC;
 
 Route::group([
     'prefix' => 'v1',
