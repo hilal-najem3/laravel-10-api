@@ -55,6 +55,12 @@ Route::group([
                 ->name('agency.currency.conversion.history.get');
                 Route::get('conversions/history/{agencyId}/{conversionId}', [ACC::class, 'getConversionsHistory'])
                 ->name('agency.currency.conversion.history.get');
+                Route::post('conversions/create', [ACC::class, 'addConversionsHistory'])
+                ->name('agency.currency.conversion.history.create');
+                Route::put('conversions/update/{id}', [ACC::class, 'updateConversionsHistory'])
+                ->name('agency.currency.conversion.history.update');
+                Route::delete('conversions/delete/{id}', [ACC::class, 'deleteConversionsHistory'])
+                ->name('agency.currency.conversion.history.delete');
             });
         });
     });

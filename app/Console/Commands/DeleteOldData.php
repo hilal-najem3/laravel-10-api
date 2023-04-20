@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Containers\Common\Models\Data;
 use App\Containers\Common\Models\Contact;
 use App\Containers\Files\Models\Image;
+use App\Containers\Currencies\Models\CurrencyConversionHistory;
 use App\Models\User;
 use Exception;
 
@@ -39,15 +40,20 @@ class DeleteOldData extends Command
         $dateBeforeOneMonth = $this->subtractDays(30);
         $dateBeforeTwoMonth = $this->subtractDays(60);
         $dateBeforeThreeMonth = $this->subtractDays(90);
+        $dateBeforeFourMonth = $this->subtractDays(120);
+        $dateBeforeFiveMonth = $this->subtractDays(150);
 
         $errorFlag = false;
 
         DB::beginTransaction();
         try {
-            $this->deleteSoftDeletedImages($dateBeforeOneMonth); // delete soft deleted images before one month
-            $this->deleteSoftDeletedUsers($dateBeforeTwoMonth); // delete soft deleted users before two months
-            $this->deleteSoftDeletedContacts($dateBeforeTwoMonth); // delete soft deleted contacts before two months
-            $this->deleteSoftDeletedData($dateBeforeThreeMonth); // delete soft deleted data before three months
+            
+            $this->deleteSoftDeletedModel(Image::class, $dateBeforeOneMonth); // delete soft deleted images before one month
+            $this->deleteSoftDeletedModel(User::class, $dateBeforeTwoMonth); // delete soft deleted users before two months
+            $this->deleteSoftDeletedModel(Contact::class, $dateBeforeTwoMonth); // delete soft deleted contacts before two months
+            $this->deleteSoftDeletedModel(Data::class, $dateBeforeThreeMonth); // delete soft deleted data before three months
+            $this->deleteSoftDeletedModel(CurrencyConversionHistory::class, $dateBeforeFiveMonth); // delete soft deleted conversions before 5 months
+            
             DB::commit();
         } catch (Exception $e) {
             $errorFlag = true;
@@ -80,47 +86,14 @@ class DeleteOldData extends Command
     }
 
     /**
-     * This function deletes soft deleted images before specific date
+     * This function deletes soft deleted Model before specific date
      * 
+     * @param Model
      * @param Carbon $date
      * @return void
      */
-    private function deleteSoftDeletedImages(Carbon $date): void
+    private function deleteSoftDeletedModel($model, Carbon $date): void
     {
-        Image::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
-    }
-
-    /**
-     * This function deletes soft deleted users before specific date
-     * 
-     * @param Carbon $date
-     * @return void
-     */
-    private function deleteSoftDeletedUsers(Carbon $date): void
-    {
-        User::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
-    }
-
-    /**
-     * This function deletes soft deleted data before specific date
-     * Model is: App\Containers\Common\Models\Data
-     * 
-     * @param Carbon $date
-     * @return void
-     */
-    private function deleteSoftDeletedData(Carbon $date): void
-    {
-        Data::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
-    }
-
-    /**
-     * This function deletes soft deleted contacts before specific date
-     * 
-     * @param Carbon $date
-     * @return void
-     */
-    private function deleteSoftDeletedContacts(Carbon $date): void
-    {
-        Contact::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
+        $model::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
     }
 }

@@ -5,6 +5,8 @@ namespace App\Containers\Agencies\Helpers;
 use Illuminate\Support\Facades\DB;
 
 use App\Exceptions\Common\UpdateFailedException;
+use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
@@ -176,7 +178,7 @@ class AgencyCurrencyHelper
             CurrencyConversionHistory::create($data);
             DB::commit();
 
-            return $conversion;
+            return CurrencyConversion::find($conversion->id);
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -197,5 +199,116 @@ class AgencyCurrencyHelper
         $conversions = CollectionsHelper::paginate($conversions, $paginationCount);
         $conversions = json_decode(json_encode($conversions)); // This will change its type to StdClass
         return $conversions;
+    }
+
+    /**
+     * Get an currency conversions history by id
+     * 
+     * @param int $id
+     * @return CurrencyConversionHistory $conversions | NotFoundException
+     */
+    public static function getConversionHistoryById(int $id): CurrencyConversionHistory
+    {
+        $conversion = CurrencyConversionHistory::find($id);
+
+        if(!$conversion){
+            throw new NotFoundException('CONVERSION_HISTORY.NAME');
+        }
+
+        return $conversion;
+    }
+
+    /**
+     * This function receives data for a currency conversions for it
+     * so it either create a conversion history record for an agency
+     * 
+     * @param array $data
+     * @return CurrencyConversionHistory $conversion | CreateFailedException
+     */
+    public static function createConversion(array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $from = Currency::find($data['from']);
+            $to = Currency::find($data['to']);
+            if(!$from || !$to) {
+                throw new CreateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.WRONG_CURRENCIES');
+            }
+            if($from == $to) {
+                throw new CreateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.SAME_CURRENCIES');
+            }
+            $op = $data['operation'];
+            if($op != '*' && $op != '/') {
+                throw new CreateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.INVALID_OPERATION');
+            }
+
+            $conversion = CurrencyConversionHistory::create($data);
+            DB::commit();
+
+            return CurrencyConversionHistory::find($conversion->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * This function receives data for a currency conversions for it
+     * so it either create a conversion history record for an agency
+     * 
+     * @param CurrencyConversionHistory $conversion
+     * @param array $data
+     * @return CurrencyConversionHistory $conversion | UpdateFailedException
+     */
+    public static function updateConversion(CurrencyConversionHistory $conversion, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $from = Currency::find($data['from']);
+            $to = Currency::find($data['to']);
+            if(!$from || !$to) {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.WRONG_CURRENCIES');
+            }
+            if($from == $to) {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.SAME_CURRENCIES');
+            }
+            $op = $data['operation'];
+            if($op != '*' && $op != '/') {
+                throw new UpdateFailedException('', 'AGENCY_CURRENCY.CURRENCY_CONVERSION.INVALID_OPERATION');
+            }
+
+            $conversion->from = $data['from'];
+            $conversion->to = $data['to'];
+            $conversion->ratio = $data['ratio'];
+            $conversion->operation = $data['operation'];
+            $conversion->date_time = new Carbon($data['date_time']);
+            $conversion->save();
+            DB::commit();
+
+            return CurrencyConversionHistory::find($conversion->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * This function receives data for a currency conversions for it
+     * so it either create a conversion history record for an agency
+     * 
+     * @param CurrencyConversionHistory $conversion
+     * @return boolean | DeleteFailedException
+     */
+    public static function deleteConversionHistory(CurrencyConversionHistory $conversion)
+    {
+        DB::beginTransaction();
+        try {
+            $conversion->delete();
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new DeleteFailedException('CONVERSION_HISTORY.NAME');
+        }
     }
 }

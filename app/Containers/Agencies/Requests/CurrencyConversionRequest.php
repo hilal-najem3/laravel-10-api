@@ -4,7 +4,7 @@ namespace App\Containers\Agencies\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateActiveCurrencyConversion extends FormRequest
+class CurrencyConversionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -46,6 +46,12 @@ class Messages
                     'HISTORY_NOT_ALLOWED' => 'You are not allowed to access to edit info concerning conversion\'s history',
                     'HISTORY_GET' => 'Conversions history loaded successfully',
                     'HISTORY_FAIL' => 'Conversions history load failed',
+                    'HISTORY_UPDATE' => 'Conversions history updated successfully',
+                    'HISTORY_UPDATE_FAIL' => 'Conversions history update failed',
+                    'HISTORY_CREATE' => 'Conversions history created successfully',
+                    'HISTORY_CREATE_FAIL' => 'Conversions history create failed',
+                    'HISTORY_DELETE' => 'Conversions history deleted successfully',
+                    'HISTORY_DELETE_FAIL' => 'Conversions history delete failed',
                 ]
             ],
             'AGENCY_ADMIN' => [

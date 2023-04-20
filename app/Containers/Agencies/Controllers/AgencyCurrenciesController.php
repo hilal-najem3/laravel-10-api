@@ -9,7 +9,7 @@ use App\Containers\Common\Traits\PermissionControllersTrait;
 use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Agencies\Requests\DefaultCurrencyRequest;
-use App\Containers\Agencies\Requests\UpdateActiveCurrencyConversion;
+use App\Containers\Agencies\Requests\CurrencyConversionRequest;
 use App\Requests\PaginationRequest;
 
 use App\Containers\Agencies\Helpers\AgencyHelper;
@@ -98,12 +98,12 @@ class AgencyCurrenciesController extends Controller
     }
 
     /**
-     * Add new currency conversion for an agency
+     * Add new active currency conversion for an agency
      * 
-     * @param UpdateActiveCurrencyConversion $request
+     * @param CurrencyConversionRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function updateActiveCurrencyConversion(UpdateActiveCurrencyConversion $request)
+    public function updateActiveCurrencyConversion(CurrencyConversionRequest $request)
     {
         try {
             $this->allowedAction(['write-agency-currency-conversion'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_NOT_ALLOWED');
@@ -162,5 +162,86 @@ class AgencyCurrenciesController extends Controller
         }
 
         return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_FAIL');
+    }
+
+    /**
+     * Add new currency conversion for an agency this can be old
+     * this uses the same request as active conversion but add the record
+     * in history table only
+     * 
+     * @param CurrencyConversionRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function addConversionsHistory(CurrencyConversionRequest $request)
+    {
+        try {
+            $this->allowedAction(['crud-agency-conversions-history'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $data = $request->all();
+            $agency = AgencyHelper::id($data['agency_id']);
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $conversion = AgencyCurrencyHelper::createConversion($data);
+
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE', ['conversion' => $conversion]);
+        } catch (Exception $e) {
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL');
+    }
+
+    /**
+     * Add new currency conversion for an agency this can be old
+     * this uses the same request as active conversion but add the record
+     * in history table only
+     * 
+     * @param CurrencyConversionRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateConversionsHistory(CurrencyConversionRequest $request, int $id)
+    {
+        try {
+            $this->allowedAction(['crud-agency-conversions-history'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $data = $request->all();
+            $agency = AgencyHelper::id($data['agency_id']);
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $conversion = $agency->conversionsHistory()->where('id', $id)->first();
+            $conversion = AgencyCurrencyHelper::updateConversion($conversion, $data);
+
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE', ['conversion' => $conversion]);
+        } catch (Exception $e) {
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_CREATE_FAIL');
+    }
+
+    /**
+     * Delete a currency conversion
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteConversionsHistory(int $id)
+    {
+        try {
+            $this->allowedAction(['crud-agency-conversions-history'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $conversion = AgencyCurrencyHelper::getConversionHistoryById($id);
+            $agency = AgencyHelper::id($conversion->agency_id);
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            AgencyCurrencyHelper::deleteConversionHistory($conversion);
+
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_DELETE');
+        } catch (Exception $e) {
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_DELETE_FAIL', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_DELETE_FAIL');
     }
 }
