@@ -10,12 +10,13 @@ use App\Helpers\Response\ResponseHelper;
 
 use App\Containers\Agencies\Requests\DefaultCurrencyRequest;
 use App\Containers\Agencies\Requests\UpdateActiveCurrencyConversion;
+use App\Requests\PaginationRequest;
 
 use App\Containers\Agencies\Helpers\AgencyHelper;
 use App\Containers\Agencies\Helpers\AgencyCurrencyHelper;
 use App\Containers\Currencies\Helpers\CurrenciesHelper;
 
-use App\Containers\Agencies\Models\Agency;
+use App\Exceptions\Common\NotFoundException;
 
 use Exception;
 
@@ -122,5 +123,44 @@ class AgencyCurrenciesController extends Controller
         }
 
         return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.UPDATE_ACTIVE_FAIL');
+    }
+
+    /**
+     * Get conversions history for agency
+     * 
+     * @param PaginationRequest $request
+     * @param int $agencyId
+     * @param int $conversionId
+     * @return \Illuminate\Http\Response
+     */
+    public function getConversionsHistory(PaginationRequest $request, int $agencyId, int $conversionId = null)
+    {
+        try {
+            $this->allowedAction(['crud-agency-conversions-history'], 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $agency = AgencyHelper::id($agencyId);
+            $this->allowAgencyUpdate($agency, 'AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_NOT_ALLOWED');
+
+            $info = [];
+            if($conversionId != null) {
+                $conversion = $agency->conversionsHistory()->where('id', $conversionId)->first();
+                $conversion != null ? 
+                $info = ['conversion' => $conversion] : 
+                throw new NotFoundException('CONVERSION_HISTORY.NAME');
+            } else {
+                $data = AgencyCurrencyHelper::getConversionHistory($agency, $request->get('pagination'));
+                $info = [
+                    'meta' => $this->metaData($data),
+                    'conversions' => $data->data
+                ];
+            }
+
+            return $this->response('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_GET', $info);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_FAIL', $e);
+        }
+
+        return $this->errorResponse('AGENCY_CURRENCY.CURRENCY_CONVERSION.HISTORY_FAIL');
     }
 }

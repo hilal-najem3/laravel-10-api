@@ -15,6 +15,9 @@ use App\Containers\Currencies\Models\Currency;
 use App\Containers\Currencies\Models\CurrencyConversion;
 use App\Containers\Currencies\Models\CurrencyConversionHistory;
 
+use App\Helpers\Response\CollectionsHelper;
+use App\Helpers\ConstantsHelper;
+
 use Carbon\Carbon;
 
 class AgencyCurrencyHelper
@@ -114,7 +117,6 @@ class AgencyCurrencyHelper
     }
 
     /**
-     * 
      * Get an Agency's currency conversions that are active
      * 
      * @param  Agency $agency
@@ -179,5 +181,21 @@ class AgencyCurrencyHelper
             DB::rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Get an Agency's currency conversions history
+     * 
+     * @param  Agency $agency
+     * @param int $paginationCount
+     * @return pagination of CurrencyConversionHistory[]
+     */
+    public static function getConversionHistory(Agency $agency, int $paginationCount = null)
+    {
+        $paginationCount = ConstantsHelper::getPagination($paginationCount);
+        $conversions = $agency->conversionsHistory()->orderBy('date_time', 'DESC')->get();
+        $conversions = CollectionsHelper::paginate($conversions, $paginationCount);
+        $conversions = json_decode(json_encode($conversions)); // This will change its type to StdClass
+        return $conversions;
     }
 }

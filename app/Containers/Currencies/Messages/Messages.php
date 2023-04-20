@@ -10,6 +10,9 @@ class Messages
             'CURRENCY' => [
                 'GET' => 'Currency data loaded succcessfully',
                 'NOT_FOUND' => 'Currency not found',
+            ],
+            'CONVERSION_HISTORY' => [
+                'NAME' => 'Conversion history'
             ]
         ];
     }

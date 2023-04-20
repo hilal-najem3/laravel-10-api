@@ -42,6 +42,12 @@ class Permissions
                 'slug' => 'write-agency-currency-conversion',
                 'description' => 'Can create, update and delete agency\'s currency conversions information',
                 'roles' => [2, 3]
+            ],
+            [
+                'name' => 'CRUD on agency conversions history info',
+                'slug' => 'crud-agency-conversions-history',
+                'description' => 'Can create, read, update and delete agency\'s currency conversions history information',
+                'roles' => [2, 3]
             ]
         ];
     }

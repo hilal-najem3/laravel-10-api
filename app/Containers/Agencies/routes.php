@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Containers\Agencies\Controllers\AgencyCurrenciesController;
-use App\Containers\Agencies\Controllers\AgencyTypesController;
-use App\Containers\Agencies\Controllers\AgencyController;
+use App\Containers\Agencies\Controllers\AgencyCurrenciesController as ACC;
+use App\Containers\Agencies\Controllers\AgencyTypesController as ATC;
+use App\Containers\Agencies\Controllers\AC as AC;
 
 Route::group([
     'prefix' => 'v1',
@@ -14,17 +14,17 @@ Route::group([
         'prefix' => 'agency',
     ], function ()
     {
-        Route::get('get', [AgencyController::class, 'get'])->name('agency.get');
-        Route::get('get/{id}', [AgencyController::class, 'get'])->name('agency.get');
+        Route::get('get', [AC::class, 'get'])->name('agency.get');
+        Route::get('get/{id}', [AC::class, 'get'])->name('agency.get');
 
         Route::group([
             'prefix' => 'currencies',
         ], function ()
         {
-            Route::get('default/get/{agencyId}', [AgencyCurrenciesController::class, 'getDefaultCurrency'])
+            Route::get('default/get/{agencyId}', [ACC::class, 'getDefaultCurrency'])
             ->name('agency.currency.default.get');
 
-            Route::get('conversions/get/{agencyId}', [AgencyCurrenciesController::class, 'getActiveCurrencyConversion'])
+            Route::get('conversions/get/{agencyId}', [ACC::class, 'getActiveCurrencyConversion'])
             ->name('agency.currency.conversion.get');
         });
 
@@ -32,9 +32,9 @@ Route::group([
             'middleware' => ['roles:super-admin/admin']
         ], function ()
         {
-            Route::post('create', [AgencyController::class, 'create'])->name('agency.create');
-            Route::put('update/{id}', [AgencyController::class, 'update'])->name('agency.update');
-            Route::post('logo/{id}', [AgencyController::class, 'logo'])->name('agency.update.logo');
+            Route::post('create', [AC::class, 'create'])->name('agency.create');
+            Route::put('update/{id}', [AC::class, 'update'])->name('agency.update');
+            Route::post('logo/{id}', [AC::class, 'logo'])->name('agency.update.logo');
         });
 
         Route::group([
@@ -45,11 +45,16 @@ Route::group([
                 'prefix' => 'currencies',
             ], function ()
             {
-                Route::post('default/update', [AgencyCurrenciesController::class, 'updateDefaultCurrency'])
+                Route::post('default/update', [ACC::class, 'updateDefaultCurrency'])
                 ->name('agency.currency.default.update');
 
-                Route::post('conversions/set', [AgencyCurrenciesController::class, 'updateActiveCurrencyConversion'])
+                Route::post('conversions/set', [ACC::class, 'updateActiveCurrencyConversion'])
                 ->name('agency.currency.conversion.set');
+
+                Route::get('conversions/history/{agencyId}', [ACC::class, 'getConversionsHistory'])
+                ->name('agency.currency.conversion.history.get');
+                Route::get('conversions/history/{agencyId}/{conversionId}', [ACC::class, 'getConversionsHistory'])
+                ->name('agency.currency.conversion.history.get');
             });
         });
     });
@@ -59,9 +64,9 @@ Route::group([
         'middleware' => ['roles:super-admin/admin']
     ], function ()
     {
-        Route::get('get', [AgencyTypesController::class, 'get'])->name('agency_type.get');
-        Route::get('get/{id}', [AgencyTypesController::class, 'get'])->name('agency_type.get');
-        Route::post('create', [AgencyTypesController::class, 'create'])->name('agency_type.create');
-        Route::put('update/{id}', [AgencyTypesController::class, 'update'])->name('agency_type.update');
+        Route::get('get', [ATC::class, 'get'])->name('agency_type.get');
+        Route::get('get/{id}', [ATC::class, 'get'])->name('agency_type.get');
+        Route::post('create', [ATC::class, 'create'])->name('agency_type.create');
+        Route::put('update/{id}', [ATC::class, 'update'])->name('agency_type.update');
     });
 });
