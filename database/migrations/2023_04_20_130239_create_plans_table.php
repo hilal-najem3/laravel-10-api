@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('abbreviation')->nullable();
+            $table->string('name')->unique();
+            $table->string('abbreviation')->unique()->nullable();
             $table->mediumText('description')->nullable();
             $table->decimal('price', 19, 6)->default(1);
             $table->unsignedBigInteger('currency_id');

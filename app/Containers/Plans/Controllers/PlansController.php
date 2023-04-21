@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Containers\Common\Traits\PermissionControllersTrait;
 use App\Helpers\Response\ResponseHelper;
 
+use App\Containers\Plans\Requests\CreatePlanRequest;
+use App\Containers\Plans\Requests\UpdatePlanRequest;
+
 use App\Containers\Plans\Helpers\PlansHelper as Helper;
 
 use Exception;
@@ -44,5 +47,56 @@ class PlansController extends Controller
         }
 
         return $this->errorResponse('PLANS.NOT_FOUND');
+    }
+
+    /**
+     * Create a new plan
+     * 
+     * @param CreatePlanRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function create(CreatePlanRequest $request)
+    {
+        try {
+            $this->allowedAction(['write-plans'], 'PLANS.CREATE_FAILED');
+
+            $data = $request->all();
+            $data = Helper::trim($data);
+            $plan = Helper::baseCreate($data);
+
+            return $this->response('PLANS.CREATE_SUCCESSFUL', ['plan' => $plan]);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('PLANS.CREATE_FAILED', $e);
+        }
+
+        return $this->errorResponse('PLANS.CREATE_FAILED');
+    }
+
+    /**
+     * Update a plan
+     * 
+     * @param UpdatePlanRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdatePlanRequest $request, int $id)
+    {
+        try {
+            $this->allowedAction(['write-plans'], 'PLANS.UPDATE_FAILED');
+
+            $data = $request->all();
+            $data = Helper::trim($data);
+            $plan = Helper::id($id);
+            Helper::checkUpdateData($plan, $data);
+            $plan = Helper::baseUpdate($plan, $data);
+
+            return $this->response('PLANS.UPDATE_SUCCESSFUL', ['plan' => $plan]);
+
+        } catch (Exception $e) {
+            return $this->errorResponse('PLANS.UPDATE_FAILED', $e);
+        }
+
+        return $this->errorResponse('PLANS.UPDATE_FAILED');
     }
 }

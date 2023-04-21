@@ -12,6 +12,12 @@ class Permissions
                 'slug' => 'get-plans',
                 'description' => 'Can get payment plans for agencies',
                 'roles' => [2]
+            ],
+            [
+                'name' => 'Write plans',
+                'slug' => 'write-plans',
+                'description' => 'Can get create, update and delete plans for agencies',
+                'roles' => [2]
             ]
         ];
     }

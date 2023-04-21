@@ -106,10 +106,11 @@ abstract class BaseHelper
         }
         DB::beginTransaction();
         try {
-            $model = static::model()::update($data);
+            $id = $model->id;
+            $model = $model->update($data);
             DB::commit();
 
-            return self::id($model->id);
+            return self::id($id);
         } catch (Exception $e) {
             DB::rollBack();
             throw new UpdateFailedException(static::message() . '.NAME');
