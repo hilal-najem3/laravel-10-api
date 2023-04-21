@@ -2,7 +2,11 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Exceptions\Common\NotFoundException;
+use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\UpdateFailedException;
 use Exception;
 
 use Illuminate\Database\Eloquent\Model;
@@ -62,6 +66,55 @@ abstract class BaseHelper
         }
 
         throw new NotFoundException(static::message() . '.NOT_FOUND');
+    }
+
+    /**
+     * Create an instance of a model from an array of data
+     * 
+     * @param array $data
+     * @return Model $model
+     */
+    public static function baseCreate(array $data): Model
+    {
+        if(!self::checkAllowed('create')) {
+            throw new CreateFailedException(static::message() . '.NAME');
+        }
+        DB::beginTransaction();
+        try {
+            $model = static::model()::create($data);
+            DB::commit();
+
+            return self::id($model->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new CreateFailedException(static::message() . '.NAME');
+        }
+        throw new CreateFailedException(static::message() . '.NAME');
+    }
+
+    /**
+     * Update an instance of a model using an array of data
+     * 
+     * @param Model $model
+     * @param array $data
+     * @return Model $model
+     */
+    public static function baseUpdate(Model $model, array $data): Model
+    {
+        if(!self::checkAllowed('update')) {
+            throw new UpdateFailedException(static::message() . '.NAME');
+        }
+        DB::beginTransaction();
+        try {
+            $model = static::model()::update($data);
+            DB::commit();
+
+            return self::id($model->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UpdateFailedException(static::message() . '.NAME');
+        }
+        throw new UpdateFailedException(static::message() . '.NAME');
     }
 
     /**

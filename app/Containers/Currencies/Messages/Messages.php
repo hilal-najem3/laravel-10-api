@@ -8,7 +8,7 @@ class Messages
     {
         return [
             'CURRENCY' => [
-                'GET' => 'Currency data loaded succcessfully',
+                'GET' => 'Currency data loaded successfully',
                 'NOT_FOUND' => 'Currency not found',
             ],
             'CONVERSION_HISTORY' => [

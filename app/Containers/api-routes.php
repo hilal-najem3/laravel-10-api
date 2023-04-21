@@ -19,3 +19,4 @@ require __DIR__ . '/Currencies/routes.php';
 require __DIR__ . '/Roles/routes.php';
 require __DIR__ . '/Permissions/routes.php';
 require __DIR__ . '/Users/routes.php';
+require __DIR__ . '/Plans/routes.php';

@@ -6,6 +6,7 @@ use App\Containers\Users\Permissions\Permissions as UserPermissions;
 use App\Containers\Agencies\Permissions\Permissions as AgenciesPermissions;
 use App\Containers\Common\Permissions\Permissions as CommonPermissions;
 use App\Containers\Currencies\Permissions\Permissions as CurrenciesPermissions;
+use App\Containers\Plans\Permissions\Permissions as PlansPermissions;
 
 use Illuminate\Support\Facades\DB;
 use App\Containers\Permissions\Models\Permission;
@@ -68,11 +69,13 @@ class PermissionsHelper
         $agenciesPermissions = AgenciesPermissions::permissions();
         $commonPermissions = CommonPermissions::permissions();
         $currenciesPermissions = CurrenciesPermissions::permissions();
+        $plansPermissions = PlansPermissions::permissions();
 
         $permissions = array_merge($permissions, $userPermissions);
         $permissions = array_merge($permissions, $agenciesPermissions);
         $permissions = array_merge($permissions, $commonPermissions);
         $permissions = array_merge($permissions, $currenciesPermissions);
+        $permissions = array_merge($permissions, $plansPermissions);
 
         return $permissions;
     }
