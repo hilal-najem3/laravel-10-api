@@ -17,6 +17,9 @@
         <testsuite name="Currencies">
             <directory suffix="Test.php">./app/Containers/Currencies/Tests</directory>
         </testsuite>
+        <testsuite name="Plans">
+            <directory suffix="Test.php">./app/Containers/Plans/Tests</directory>
+        </testsuite>
         <testsuite name="Agencies">
             <directory suffix="Test.php">./app/Containers/Agencies/Tests</directory>
         </testsuite>
