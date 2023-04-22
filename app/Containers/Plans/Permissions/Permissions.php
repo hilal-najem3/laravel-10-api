@@ -18,6 +18,18 @@ class Permissions
                 'slug' => 'write-plans',
                 'description' => 'Can get create, update and delete plans for agencies',
                 'roles' => [2]
+            ],
+            [
+                'name' => 'Get agency plans',
+                'slug' => 'get-agency-plans',
+                'description' => 'Can get payment plans connected with an agency',
+                'roles' => [2]
+            ],
+            [
+                'name' => 'Write agency plans',
+                'slug' => 'write-agency-plans',
+                'description' => 'Can get create, update and delete plans connected with an agency',
+                'roles' => [2]
             ]
         ];
     }

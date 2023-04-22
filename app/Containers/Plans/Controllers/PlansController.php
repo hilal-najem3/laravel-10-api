@@ -19,7 +19,7 @@ class PlansController extends Controller
     use ResponseHelper, PermissionControllersTrait;
 
     /**
-     * Get all agency types
+     * Get all plans
      * 
      * @param int $id
      * @return \Illuminate\Http\Response

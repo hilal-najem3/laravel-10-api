@@ -10,11 +10,15 @@ class CreateFailedException extends ApplicationException
 {
     protected $message = '';
 
-    public function __construct($name = '')
+    public function __construct($name = '', $customKey = null)
     {
-        $message = MessagesHelper::processMessageKey($name);
-        $exceptionMessage = MessagesHelper::processMessageKey('CREATE_FAILED');
-        $this->message = $message . ' ' . $exceptionMessage;
+        if($customKey != null) {
+            $this->message = MessagesHelper::processMessageKey($customKey);
+        } else {
+            $message = MessagesHelper::processMessageKey($name);
+            $exceptionMessage = MessagesHelper::processMessageKey('CREATE_FAILED');
+            $this->message = $message . ' ' . $exceptionMessage;
+        }
     }
 
     public function status(): int
