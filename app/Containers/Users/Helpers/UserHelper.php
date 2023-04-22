@@ -522,9 +522,7 @@ class UserHelper
         $contactType = ContactTypesHelper::id($contactData['type_id']);
         $count = Contact::where('value', trim($contactData['value']))->count();
         $userDataCountValue = $user->contact()->where('value', trim($contactData['value']))->count(); // This the count of the contact data of this user having the same value that is submitted
-        if($userDataCountValue) {
-            throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
-        }
+        
         if($contactModel != null && $contactModel->id != null) {
             $exists = $user->contact()->where('id', $contactModel->id)->count();
             if(!$exists) {
@@ -533,7 +531,13 @@ class UserHelper
             if(!$contactType->allow_duplicates && $contactData['value'] != $contactModel->value && $count) {
                 throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
             }
+            if($contactData['value'] != $contactModel->value && $userDataCountValue > 1) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
+            }
         } else {
+            if($userDataCountValue) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
+            }
             if(!$contactType->allow_duplicates && $count) {
                 throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
             }

@@ -183,6 +183,8 @@ class UsersController extends Controller
                     'value' => trim($contactData['value']),
                 ];
 
+                isset($contactData['hidden']) ? $data['hidden'] = $contactData['hidden'] : $data['hidden'] = false;
+
                 if(isset($contactData['id'])) {
                     // update the contact
                     $contact = ContactHelper::id($contactData['id']);
