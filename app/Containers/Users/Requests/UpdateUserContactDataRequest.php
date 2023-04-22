@@ -27,7 +27,8 @@ class UpdateUserContactDataRequest extends FormRequest
             'contact' => 'required',
             'contact.*.id' => 'nullable|integer|exists:contacts,id',
             'contact.*.type_id' => 'required|integer|exists:contact_types,id',
-            'contact.*.value' => 'required|string'
+            'contact.*.value' => 'required|string',
+            'contact.*.hidden' => 'nullable|boolean',
         ];
     }
 }

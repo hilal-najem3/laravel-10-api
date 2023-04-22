@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('value');
             $table->unsignedBigInteger('type_id');
+            $table->boolean('hidden')->default(true);
             $table->softDeletes();
             $table->timestamps();
 

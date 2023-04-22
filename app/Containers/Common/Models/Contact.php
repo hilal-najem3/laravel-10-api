@@ -17,7 +17,8 @@ class Contact extends Model
      */
     protected $fillable = [
         'value',
-        'type_id'
+        'type_id',
+        'hidden'
     ];
 
     public function type()

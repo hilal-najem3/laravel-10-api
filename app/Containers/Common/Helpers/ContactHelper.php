@@ -143,6 +143,7 @@ class ContactHelper extends BaseHelper
             
             $contact->value = $data['value'];
             $contact->type_id = $data['type_id'];
+            isset($data['hidden']) ? $contact->hidden = $data['hidden'] : $contact->hidden = false;
             $contact->save();
 
             $contact->users()->detach();
