@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('agency_admins', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id');
+            $table->uuid('user_id');
             $table->unsignedBigInteger('agency_id');
 
             //FOREIGN KEY

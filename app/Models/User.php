@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Containers\Files\Models\Image;
 use App\Containers\Common\Models\Contact;
 use App\Containers\Agencies\Models\Agency;
+use App\Traits\UUID;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasPermissionsTrait, SoftDeletes;
+    use HasApiTokens, Notifiable, HasPermissionsTrait, SoftDeletes, UUID;
 
     /**
      * The attributes that are mass assignable.

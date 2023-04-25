@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users_permissions', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id');
+            $table->uuid('user_id');
             $table->unsignedBigInteger('permission_id');
 
             //FOREIGN KEY
