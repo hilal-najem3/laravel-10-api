@@ -2,7 +2,7 @@
 
 namespace App\Containers\Users\Helpers;
 
-
+#region
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -41,9 +41,14 @@ use App\Models\User;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Auth;
+#endregion
 
 class UserHelper
 {
+    /**
+     * Get functions
+     */
+    #region
     /**
      * get user base info (only from users table)
      * by id
@@ -151,61 +156,6 @@ class UserHelper
     }
 
     /**
-     * This function set the active filed for a user profile to false
-     * which will prevent him from exercising login an all his activities
-     * on this api
-     * 
-     * @param User $user
-     * @return boolean | UpdateFailedException
-     */
-    public static function inActivate(User $user)
-    {
-        DB::beginTransaction();
-        try {
-            $user->active = false;
-            $user->save();
-
-            // revoke all this user's tokens
-            UserTokenHelper::revoke_all($user);
-
-            Log::info('User profile inactivated');
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw new UpdateFailedException('PROFILE.EXCEPTION');
-        }
-
-        throw new UpdateFailedException('PROFILE.EXCEPTION');
-    }
-
-     /**
-     * This function set the active filed for a user profile to true
-     * which will allow him to exercise login an all his allowed activities
-     * on this api
-     * 
-     * @param User $user
-     * @return boolean | UpdateFailedException
-     */
-    public static function activate(User $user)
-    {
-        DB::beginTransaction();
-        try {
-            $user->active = true;
-            $user->save();
-
-            Log::info('User profile is now activated');
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw new UpdateFailedException('PROFILE.EXCEPTION');
-        }
-
-        throw new UpdateFailedException('PROFILE.EXCEPTION');
-    }
-
-    /**
      * get all users
      * 
      * @param int $paginationCount
@@ -309,7 +259,72 @@ class UserHelper
 
         return [];
     }
+    #endregion
 
+    /**
+     * Active and in active functions
+     */
+    #region
+    /**
+     * This function set the active filed for a user profile to false
+     * which will prevent him from exercising login an all his activities
+     * on this api
+     * 
+     * @param User $user
+     * @return boolean | UpdateFailedException
+     */
+    public static function inActivate(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->active = false;
+            $user->save();
+
+            // revoke all this user's tokens
+            UserTokenHelper::revoke_all($user);
+
+            Log::info('User profile inactivated');
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UpdateFailedException('PROFILE.EXCEPTION');
+        }
+
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
+    }
+
+     /**
+     * This function set the active filed for a user profile to true
+     * which will allow him to exercise login an all his allowed activities
+     * on this api
+     * 
+     * @param User $user
+     * @return boolean | UpdateFailedException
+     */
+    public static function activate(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->active = true;
+            $user->save();
+
+            Log::info('User profile is now activated');
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UpdateFailedException('PROFILE.EXCEPTION');
+        }
+
+        throw new UpdateFailedException('PROFILE.EXCEPTION');
+    }
+    #endregion
+
+    /**
+     * CUD functions
+     */
+    #region
     /**
      * create user
      * 
@@ -353,12 +368,8 @@ class UserHelper
         DB::beginTransaction();
         $activeException = '';
         try {
+            $userId = $user->id;
             $data = UserHelper::trimUserData($data);
-            if(isset($data['dob']) && $data['dob'] != '') {
-                $data['dob'] = new Carbon($data['dob']);
-            }
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
 
             if($user->email != $data['email']) {
                 $emailCount = User::where('email',  $data['email'])->count();
@@ -367,14 +378,13 @@ class UserHelper
                     // New Email exists
                     throw new DuplicateEmailException();
                 }
-
-                $user->email = $data['email'];
             }
+            isset($data['dob']) ? $data['dob'] = new Carbon($data['dob']) : $data['dob'] = null;
 
-            $user->save();
+            $user = $user->update($data);
             DB::commit();
             Log::info('User data updated successfully');
-            $user = self::id($user->id);
+            $user = self::id($userId);
             return $user;
         } catch (Exception $e) {
             Log::error('User data updated failed - UserHelper::update()');
@@ -510,176 +520,9 @@ class UserHelper
     }
 
     /**
-     * This function checks if this user's contact data is allowed to be created or updated.
-     * that is it checks for the existence of duplicates
-     * and if the contact id supplied is for the same user
-     * 
-     * @param User $user
-     * @param array $contactData this should have id, type_id and value
-     * @param Contact $contactModel
-     * @return boolean | NotAllowedException
+     * Delete and restore functions
      */
-    public static function canSubmitContact(User $user, array $contactData, Contact $contactModel = null)
-    {
-        $contactType = ContactTypesHelper::id($contactData['type_id']);
-        $count = Contact::where('value', trim($contactData['value']))->count();
-        $userDataCountValue = $user->contact()->where('value', trim($contactData['value']))->count(); // This the count of the contact data of this user having the same value that is submitted
-        
-        if($contactModel != null && $contactModel->id != null) {
-            $exists = $user->contact()->where('id', $contactModel->id)->count();
-            if(!$exists) {
-                throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
-            }
-            if(!$contactType->allow_duplicates && $contactData['value'] != $contactModel->value && $count) {
-                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
-            }
-            if($contactData['value'] != $contactModel->value && $userDataCountValue > 1) {
-                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
-            }
-        } else {
-            if($userDataCountValue) {
-                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
-            }
-            if(!$contactType->allow_duplicates && $count) {
-                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * update user by attach permission
-     * 
-     * @param  User $user
-     * @param  int $permissionId
-     * @return boolean
-     */
-    public static function attachPermission(User $user, int $permissionId)
-    {
-        DB::beginTransaction();
-
-        try {
-            $permission = Permission::find($permissionId);
-
-            if(!$permission) {
-                throw new NotFoundException('PERMISSION');
-            }
-
-            $user->permissions()->attach($permission);
-
-            DB::commit();
-
-            Log::info('Permission attached successfully');
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Permission attach failed - UserHelper::attachPermission');
-            DB::rollback();
-            return false;
-        }
-
-        DB::rollback();
-        return false;
-    }
-
-    /**
-     * update user by detach permission
-     * 
-     * @param  User $user
-     * @param  int $permissionId
-     * @return boolean
-     */
-    public static function detachPermission(User $user, int $permissionId)
-    {
-        DB::beginTransaction();
-
-        try {
-            $permission = Permission::find($permissionId);
-
-            if(!$permission) {
-                throw new NotFoundException('PERMISSION');
-            }
-
-            $user->permissions()->detach($permission);
-
-            DB::commit();
-            Log::info('Permission detached successfully');
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Permission detach failed - UserHelper::detachPermission');
-            DB::rollback();
-            return false;
-        }
-
-        DB::rollback();
-        return false;
-    }
-
-    /**
-     * update user by attach role
-     * 
-     * @param  User $user
-     * @param  int $roleId
-     * @return boolean
-     */
-    public static function attachRole(User $user, int $roleId)
-    {
-        DB::beginTransaction();
-        try {
-            $role = Role::find($roleId);
-
-            if(!$role) {
-                throw new NotFoundException('ROLE');
-            }
-
-            $user->roles()->attach($role);
-
-            DB::commit();
-            Log::info('Role attached successfully');
-            return true;
-        } catch (Exception $e) {
-            Log::info('Role attach failed - UserHelper::attachRole');
-            DB::rollback();
-            return false;
-        }
-
-        DB::rollback();
-        return false;
-    }
-
-    /**
-     * update user by detach role
-     * 
-     * @param  User $user
-     * @param  int $roleId
-     * @return boolean
-     */
-    public static function detachRole(User $user, int $roleId)
-    {
-        DB::beginTransaction();
-
-        try {
-            $role = Role::find($roleId);
-
-            if(!$role) {
-                throw new NotFoundException('ROLE');
-            }
-
-            $user->roles()->detach($role);
-
-            DB::commit();
-            Log::info('Role detached successfully');
-            return true;
-        } catch (Exception $e) {
-            Log::info('Role detach failed - UserHelper::detachRole');
-            DB::rollback();
-            return false;
-        }
-
-        DB::rollback();
-        return false;
-    }
-
+    #region
     /**
      * Delete user from database
      * and all his related data if light delete is false
@@ -765,61 +608,12 @@ class UserHelper
         }
         throw new UpdateFailedException('USERS.USER');
     }
+    #endregion
 
-    public static function trimUserData(array $data)
-    {
-        if(isset($data['first_name']) && $data['first_name'] != '') {
-            $data['first_name'] = trim($data['first_name']);
-        }
-        if(isset($data['last_name']) && $data['last_name'] != '') {
-            $data['last_name'] = trim($data['last_name']);
-        }
-        if(isset($data['email']) && $data['email'] != '') {
-            $data['email'] = trim($data['email']);
-        }
-        if(isset($data['password']) && $data['password'] != '') {
-            $data['password'] = trim($data['password']);
-        }
-        return $data;
-    }
-
-    public static function trimPasswords(array $data)
-    {
-        if(isset($data['old_password']) && $data['old_password'] != '') {
-            $data['old_password'] = trim($data['old_password']);
-        }
-        if(isset($data['password']) && $data['password'] != '') {
-            $data['password'] = trim($data['password']);
-        }
-        return $data;
-    }
-    
     /**
-     * Add address to user profile
-     * 
-     * @param User $user
-     * @param array $addressData
-     * @return Address $address
+     * Publish functions
      */
-    public static function addAddress(User $user, array $addressData)
-    {
-        DB::beginTransaction();
-        try {
-            if(isset($addressData['state'])) {
-                $region = Region::find($addressData['state']);
-                $addressData['country_id'] = $region->region_id;
-            }
-            $address = AddressHelper::baseCreate($addressData);
-            $user->addresses()->attach($address);
-
-            DB::commit();
-            return $address;
-        } catch (Exception $e) {
-            DB::rollback();
-            return false;
-        }
-    }
-
+    #region
     public static function publishUser(array $data)
     {
         DB::beginTransaction();
@@ -911,4 +705,276 @@ class UserHelper
             throw $e;
         }
     }
+    #endregion
+
+    #endregion
+    
+    /**
+     * Contact functions
+     */
+    #region
+    /**
+     * This function checks if this user's contact data is allowed to be created or updated.
+     * that is it checks for the existence of duplicates
+     * and if the contact id supplied is for the same user
+     * 
+     * @param User $user
+     * @param array $contactData this should have id, type_id and value
+     * @param Contact $contactModel
+     * @return boolean | NotAllowedException
+     */
+    public static function canSubmitContact(User $user, array $contactData, Contact $contactModel = null)
+    {
+        $contactType = ContactTypesHelper::id($contactData['type_id']);
+        $count = Contact::where('value', trim($contactData['value']))->count();
+        $userDataCountValue = $user->contact()->where('value', trim($contactData['value']))->count(); // This the count of the contact data of this user having the same value that is submitted
+        
+        if($contactModel != null && $contactModel->id != null) {
+            $exists = $user->contact()->where('id', $contactModel->id)->count();
+            if(!$exists) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_ID_IS_DIFFERENT');
+            }
+            if(!$contactType->allow_duplicates && $contactData['value'] != $contactModel->value && $count) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
+            }
+            if($contactData['value'] != $contactModel->value && $userDataCountValue > 1) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
+            }
+        } else {
+            if($userDataCountValue) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_SELF_DUPLICATE');
+            }
+            if(!$contactType->allow_duplicates && $count) {
+                throw new NotAllowedException('', 'USERS.USER_CONTACT_VALUE_IS_USED');
+            }
+        }
+
+        return true;
+    }
+    #endregion
+
+    /**
+     * Permissions functions
+     */
+    #region
+    /**
+     * update user by attach permission
+     * 
+     * @param  User $user
+     * @param  int $permissionId
+     * @return boolean
+     */
+    public static function attachPermission(User $user, int $permissionId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $permission = Permission::find($permissionId);
+
+            if(!$permission) {
+                throw new NotFoundException('PERMISSION');
+            }
+
+            $user->permissions()->attach($permission);
+
+            DB::commit();
+
+            Log::info('Permission attached successfully');
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Permission attach failed - UserHelper::attachPermission');
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+
+    /**
+     * update user by detach permission
+     * 
+     * @param  User $user
+     * @param  int $permissionId
+     * @return boolean
+     */
+    public static function detachPermission(User $user, int $permissionId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $permission = Permission::find($permissionId);
+
+            if(!$permission) {
+                throw new NotFoundException('PERMISSION');
+            }
+
+            $user->permissions()->detach($permission);
+
+            DB::commit();
+            Log::info('Permission detached successfully');
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Permission detach failed - UserHelper::detachPermission');
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+    #endregion
+    
+    /**
+     * Roles functions
+     */
+    #region
+    /**
+     * update user by attach role
+     * 
+     * @param  User $user
+     * @param  int $roleId
+     * @return boolean
+     */
+    public static function attachRole(User $user, int $roleId)
+    {
+        DB::beginTransaction();
+        try {
+            $role = Role::find($roleId);
+
+            if(!$role) {
+                throw new NotFoundException('ROLE');
+            }
+
+            $user->roles()->attach($role);
+
+            DB::commit();
+            Log::info('Role attached successfully');
+            return true;
+        } catch (Exception $e) {
+            Log::info('Role attach failed - UserHelper::attachRole');
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+
+    /**
+     * update user by detach role
+     * 
+     * @param  User $user
+     * @param  int $roleId
+     * @return boolean
+     */
+    public static function detachRole(User $user, int $roleId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $role = Role::find($roleId);
+
+            if(!$role) {
+                throw new NotFoundException('ROLE');
+            }
+
+            $user->roles()->detach($role);
+
+            DB::commit();
+            Log::info('Role detached successfully');
+            return true;
+        } catch (Exception $e) {
+            Log::info('Role detach failed - UserHelper::detachRole');
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+    #endregion
+    
+    /**
+     * Address functions
+     */
+    #region
+    /**
+     * Add address to user profile
+     * 
+     * @param User $user
+     * @param array $addressData
+     * @return Address $address
+     */
+    public static function addAddress(User $user, array $addressData)
+    {
+        DB::beginTransaction();
+        try {
+            if(isset($addressData['state'])) {
+                $region = Region::find($addressData['state']);
+                $addressData['country_id'] = $region->region_id;
+            }
+            $address = AddressHelper::baseCreate($addressData);
+            $user->addresses()->attach($address);
+
+            DB::commit();
+            return $address;
+        } catch (Exception $e) {
+            DB::rollback();
+            return false;
+        }
+    }
+    #endregion
+
+    /**
+     * Trim functions
+     */
+    #region
+    public static function trimUserData(array $data)
+    {
+        if(isset($data['first_name']) && $data['first_name'] != '') {
+            $data['first_name'] = trim($data['first_name']);
+        }
+        if(isset($data['last_name']) && $data['last_name'] != '') {
+            $data['last_name'] = trim($data['last_name']);
+        }
+        if(isset($data['email']) && $data['email'] != '') {
+            $data['email'] = trim($data['email']);
+        }
+        if(isset($data['password']) && $data['password'] != '') {
+            $data['password'] = trim($data['password']);
+        }
+        if(isset($data['phone']) && $data['phone'] != '') {
+            $data['phone'] = trim($data['phone']);
+        }
+        if(isset($data['address']) && $data['address'] != '') {
+            $data['address'] = trim($data['address']);
+        }
+        return $data;
+    }
+
+    public static function trimPasswords(array $data)
+    {
+        if(isset($data['old_password']) && $data['old_password'] != '') {
+            $data['old_password'] = trim($data['old_password']);
+        }
+        if(isset($data['password']) && $data['password'] != '') {
+            $data['password'] = trim($data['password']);
+        }
+        return $data;
+    }
+    #endregion
+
+    /**
+     * Map functions
+     */
+    #region
+    public static function mapUser(User $user)
+    {
+        if(isset($user->roles)) {
+            $user->role_id = $user->roles->first()->id;
+        }
+        return $user;
+    }
+    #endregion
 }

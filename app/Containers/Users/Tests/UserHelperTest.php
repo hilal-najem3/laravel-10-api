@@ -37,6 +37,24 @@ class UserHelperTest extends TestCase
     }
 
     /**
+     * Test successful map.
+     *
+     * @return void
+     */
+    public function test_map_successful()
+    {
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        $user->roles()->attach(2);
+        $userId = $user->id;
+
+        $user = User::find($userId);
+        $result = UserHelper::mapUser($user);
+
+        $this->assertEquals($result->role_id, 2);
+    }
+
+    /**
      * Test successful id.
      *
      * @return void

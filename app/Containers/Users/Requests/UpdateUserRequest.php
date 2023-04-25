@@ -28,6 +28,8 @@ class UpdateUserRequest extends FormRequest
             'last_name' => 'required|string|min:2',
             'email' => 'required|string|min:4|email',
             'dob' => 'nullable|date',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
         ];
     }
 }

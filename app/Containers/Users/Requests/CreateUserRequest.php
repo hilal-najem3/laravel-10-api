@@ -34,6 +34,8 @@ class CreateUserRequest extends FormRequest
                 'confirmed'
             ],
             'dob' => 'nullable|date',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
         ];
     }
 }
