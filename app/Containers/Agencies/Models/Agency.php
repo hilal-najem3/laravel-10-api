@@ -8,6 +8,8 @@ use App\Containers\Files\Models\Image;
 use App\Containers\Currencies\Models\CurrencyConversion;
 use App\Containers\Currencies\Models\CurrencyConversionHistory;
 use App\Containers\Plans\Models\AgencyPlan;
+use App\Containers\Addresses\Models\Address;
+
 class Agency extends Model
 {
     use SoftDeletes;
@@ -61,5 +63,10 @@ class Agency extends Model
     public function plans()
     {
         return $this->hasMany(AgencyPlan::class, 'agency_id');
+    }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(Address::class, 'agencies_addresses');
     }
 }

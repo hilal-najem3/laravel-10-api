@@ -13,6 +13,7 @@ use App\Containers\Files\Models\Image;
 use App\Containers\Common\Models\Contact;
 use App\Containers\Agencies\Models\Agency;
 use App\Traits\UUID;
+use App\Containers\Addresses\Models\Address;
 
 class User extends Authenticatable
 {
@@ -69,6 +70,11 @@ class User extends Authenticatable
     public function agencies()
     {
         return $this->belongsToMany(Agency::class, 'agency_admins');
+    }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(Address::class, 'users_addresses');
     }
 
     public function sendPasswordResetNotification($token)

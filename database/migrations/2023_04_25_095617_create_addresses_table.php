@@ -25,6 +25,9 @@ return new class extends Migration
             $table->mediumText('location')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('country_id')->references('id')->on('regions')->onDelete('cascade');
+            $table->foreign('state_id')->references('id')->on('regions')->onDelete('cascade');
         });
     }
 
@@ -35,6 +38,9 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->dropForeign(['country_id', 'state_id']);
+        });
         Schema::dropIfExists('addresses');
     }
 };
