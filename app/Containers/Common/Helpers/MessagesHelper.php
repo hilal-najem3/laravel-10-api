@@ -11,6 +11,7 @@ use App\Containers\Auth\Messages\Messages as AuthMessages;
 use App\Containers\Agencies\Messages\Messages as AgencyMessages;
 use App\Containers\Currencies\Messages\Messages as CurrencyMessages;
 use App\Containers\Plans\Messages\Messages as PlansMessages;
+use App\Containers\Addresses\Messages\Messages as AddressesMessages;
 
 class MessagesHelper
 {
@@ -24,6 +25,7 @@ class MessagesHelper
         $agencyMessages = AgencyMessages::messages();
         $permissionsMessages = PermissionsMessages::messages();
         $currencyMessages = CurrencyMessages::messages();
+        $addressesMessages = AddressesMessages::messages();
         $plansMessages = PlansMessages::messages();
 
         $messages = array_merge($commonMessages, $usersMessages);
@@ -34,6 +36,7 @@ class MessagesHelper
         $messages = array_merge($messages, $authMessages);
         $messages = array_merge($messages, $currencyMessages);
         $messages = array_merge($messages, $plansMessages);
+        $messages = array_merge($messages, $addressesMessages);
 
         $messages = array_merge($messages, [
             'NOT_FOUND' => 'is not found',
