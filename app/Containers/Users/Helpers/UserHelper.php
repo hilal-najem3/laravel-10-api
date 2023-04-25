@@ -865,4 +865,50 @@ class UserHelper
             throw $e;
         }
     }
+
+    public static function publishUpdateUser(User $user, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            // $user = UserHelper::create($data);
+
+            // if(isset($data['phone'])) {
+            //     $contactData = [
+            //         'type_id' => 2, // phone number type
+            //         'value' => trim($data['phone']),
+            //     ];
+
+            //     isset($data['phone_hidden']) ? 
+            //     $contactData['hidden'] = $data['phone_hidden'] :
+            //     $contactData['hidden'] = true;
+
+            //     UserHelper::canSubmitContact($user, $contactData); // this will throw exception if submit is not allowed
+            //     // create a new contact
+            //     ContactHelper::create($contactData, 'users', $user->id);
+            // }
+
+            // if(isset($data['role_id'])) {
+            //     UserHelper::attachRole($user, $data['role_id']);
+            //     UserRolesHelper::addRolePermissionsToUser($user, $data['role_id']);
+            // }
+
+            // if(isset($data['address']) && !isset($data['full_address'])) {
+            //     $addressData = [
+            //         'details' => trim($data['address'])
+            //     ];
+            //     UserHelper::addAddress($user, $addressData);
+            // }
+
+            // if(isset($data['full_address'])) {
+            //     UserHelper::addAddress($user, $data['full_address']);
+            // }
+
+            DB::commit();
+
+            return self::full($user->id);
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+    }
 }

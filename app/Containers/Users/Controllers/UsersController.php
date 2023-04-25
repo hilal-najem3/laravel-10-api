@@ -12,6 +12,7 @@ use App\Requests\PaginationRequest;
 
 
 use App\Containers\Users\Requests\PublishUserRequest;
+use App\Containers\Users\Requests\PublishUpdateUserRequest;
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
 use App\Containers\Users\Validators\UsersValidators;
@@ -158,6 +159,32 @@ class UsersController extends Controller
         }
 
         return $this->errorResponse('USERS.CREATE_USER_FAILED');
+    }
+
+    /**
+     * Create a new user with full data
+     * like contact, addresses, role, ...
+     * 
+     * @param PublishUpdateUserRequest $request
+     * @param string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function publishUpdate(PublishUpdateUserRequest $request, string $id)
+    {
+        try {
+            $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
+
+            $data = $request->all();
+
+            $user = UserHelper::id($id);
+            $user = UserHelper::publishUpdateUser($user, $data);
+
+            return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
+        } catch (Exception $e) {
+            return $this->errorResponse('USERS.UPDATE_USER_FAILED', $e);
+        }
+
+        return $this->errorResponse('USERS.UPDATE_USER_FAILED');
     }
 
     /**
