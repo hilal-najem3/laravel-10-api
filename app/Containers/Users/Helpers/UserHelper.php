@@ -52,7 +52,7 @@ class UserHelper
     public static function id(string $id)
     {
         try {
-            $user = User::find($id);
+            $user = User::where('id', $id)->first();
 
             if(!$user) {
                 throw new NotFoundException('PROFILE.EXCEPTION');

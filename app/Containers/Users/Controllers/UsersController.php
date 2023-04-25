@@ -34,10 +34,10 @@ class UsersController extends Controller
     /**
      * Checks if user exists by id
      * 
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function exists(int $id)
+    public function exists(string $id)
     {
         try {
             UserHelper::id($id);
@@ -107,10 +107,10 @@ class UsersController extends Controller
 
             return $this->response('USERS.GET_ID', $info);
         } catch (Exception $e) {
-            return $this->errorResponse('USERS.GET_ID_ERROR', $e);
+            return $this->errorResponse('USERS.GET_ERROR', $e);
         }
 
-        return $this->errorResponse('USERS.GET_ID_ERROR');
+        return $this->errorResponse('USERS.GET_ERROR');
     }
 
     /**
