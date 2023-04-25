@@ -206,8 +206,9 @@ class UserHelperTest extends TestCase
         $userData = $this->getUserData();
 
         $user = UserHelper::create($userData);
-
-        $dbUser = User::orderBy('id', 'desc')->first();
+        $this->assertEquals($user->id, !null);
+        
+        $dbUser = UserHelper::id($user->id);
 
         $userMapped = [
             'id' => $user->id,

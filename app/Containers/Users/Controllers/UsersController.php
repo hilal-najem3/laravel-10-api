@@ -92,10 +92,10 @@ class UsersController extends Controller
     /**
      * Get User By Id
      * 
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function id(int $id)
+    public function id(string $id)
     {
         try {
             $this->allowedAction(['get-users'], 'USERS.GET_ALLOWED_ERROR');

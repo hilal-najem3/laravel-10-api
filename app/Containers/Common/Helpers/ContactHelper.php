@@ -61,10 +61,10 @@ class ContactHelper extends BaseHelper
      * 
      * @param  array $data
      * @param string $targetTag
-     * @param int $targetId
+     * @param mixed $targetId
      * @return Contact | CreateFailedException
      */
-    public static function create(array $data, string $targetTag, int $targetId)
+    public static function create(array $data, string $targetTag, mixed $targetId)
     {
         DB::beginTransaction();
         try {
@@ -117,10 +117,10 @@ class ContactHelper extends BaseHelper
      * @param Contact $contact
      * @param  array $data
      * @param string $targetTag
-     * @param int $targetId
+     * @param mixed $targetId
      * @return Contact | UpdateFailedException
      */
-    public static function update(Contact $contact, array $data, string $targetTag, int $targetId)
+    public static function update(Contact $contact, array $data, string $targetTag, mixed $targetId)
     {
         DB::beginTransaction();
         try {

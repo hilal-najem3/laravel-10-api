@@ -46,10 +46,10 @@ class UserHelper
      * get user base info (only from users table)
      * by id
      * 
-     * @param int $id
+     * @param string $id
      * @return User $user
      */
-    public static function id(int $id)
+    public static function id(string $id)
     {
         try {
             $user = User::find($id);
@@ -123,10 +123,10 @@ class UserHelper
     /**
      * get user full info by id
      * 
-     * @param int $id
+     * @param string $id
      * @return User $user
      */
-    public static function full(int $id)
+    public static function full(string $id)
     {
         try {
             $user = User::with(['roles', 'permissions', 'profileImage', 'contact'])->where('id', $id)->first();
