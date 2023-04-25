@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('bio')->nullable();
             $table->boolean('active')->default(true);
-            $table->boolean('is_branch')->default(false);
+            $table->boolean('is_main')->default(true);
             $table->unsignedBigInteger('type_id');
             $table->unsignedBigInteger('logo_id')->nullable();
             $table->unsignedBigInteger('agency_id')->nullable();

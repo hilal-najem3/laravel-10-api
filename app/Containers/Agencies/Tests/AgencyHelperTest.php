@@ -110,6 +110,7 @@ class AgencyHelperTest extends TestCase
         $this->assertEquals(isset($result->id), true);
         $id = Agency::find($result->id)->id;
         $agency = Helper::id($id);
+        $this->assertEquals($agency->is_main, true);
         $this->assertEquals($result, $agency);
 
         $data = $this->createData();
@@ -119,7 +120,7 @@ class AgencyHelperTest extends TestCase
         $agency = Helper::id($newAgency->id);
         $this->assertEquals($newAgency, $agency);
         $this->assertEquals($newAgency->agency_id, $agency->agency_id);
-        $this->assertEquals($newAgency->is_branch, true);
+        $this->assertEquals($newAgency->is_main, false);
     }
 
     /**

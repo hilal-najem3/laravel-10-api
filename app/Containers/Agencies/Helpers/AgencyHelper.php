@@ -110,7 +110,7 @@ class AgencyHelper extends BaseHelper
         try {
             $data = self::trim($data);
             if(isset($data['agency_id'])) {
-                $data['is_branch'] = true;
+                $data['is_main'] = false;
             }
             if($data['username']) {
                 $agencyNameCount = Agency::where('username', $data['username'])->count();
@@ -167,10 +167,10 @@ class AgencyHelper extends BaseHelper
 
             if(isset($data['agency_id'])) {
                 $agency->agency_id = $data['agency_id'];
-                $agency->is_branch = true;
+                $agency->is_main = false;
             } else {
                 $agency->agency_id = null;
-                $agency->is_branch = false;
+                $agency->is_main = true;
             }
 
             isset($data['active']) ? $agency->active = $data['active'] : $agency->active = false;

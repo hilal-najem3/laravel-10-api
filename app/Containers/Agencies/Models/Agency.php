@@ -22,7 +22,7 @@ class Agency extends Model
         'username',
         'bio',
         'active',
-        'is_branch',
+        'is_main',
         'type_id',
         'logo_id',
         'agency_id'
