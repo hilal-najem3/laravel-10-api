@@ -28,12 +28,14 @@ use App\Containers\Files\Helpers\ImagesHelper;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Common\Helpers\ContactHelper;
 use App\Containers\Common\Helpers\ContactTypesHelper;
+use App\Containers\Addresses\Helpers\AddressHelper;
 
 use App\Containers\Permissions\Models\Permission;
 use App\Containers\Files\Models\Image;
 use App\Containers\Common\Models\ContactUser;
 use App\Containers\Common\Models\Contact;
 use App\Containers\Roles\Models\Role;
+use App\Containers\Common\Models\Region;
 use App\Models\User;
 
 use Carbon\Carbon;
@@ -105,7 +107,7 @@ class UserHelper
                 throw new NotFoundException('USERS.USER');
             }
 
-            $user = $user->load(['roles', 'profileImage', 'contact']);
+            $user = $user->load(['roles', 'profileImage', 'contact', 'addresses']);
 
             if(isset($user->profileImage)) {
                 $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
@@ -129,7 +131,7 @@ class UserHelper
     public static function full(string $id)
     {
         try {
-            $user = User::with(['roles', 'permissions', 'profileImage', 'contact'])->where('id', $id)->first();
+            $user = User::with(['roles', 'permissions', 'profileImage', 'contact', 'addresses'])->where('id', $id)->first();
 
             if(!$user) {
                 throw new NotFoundException('PROFILE.EXCEPTION');
@@ -623,7 +625,6 @@ class UserHelper
     public static function attachRole(User $user, int $roleId)
     {
         DB::beginTransaction();
-
         try {
             $role = Role::find($roleId);
 
@@ -791,5 +792,77 @@ class UserHelper
             $data['password'] = trim($data['password']);
         }
         return $data;
+    }
+    
+    /**
+     * Add address to user profile
+     * 
+     * @param User $user
+     * @param array $addressData
+     * @return Address $address
+     */
+    public static function addAddress(User $user, array $addressData)
+    {
+        DB::beginTransaction();
+        try {
+            if(isset($addressData['state'])) {
+                $region = Region::find($addressData['state']);
+                $addressData['country_id'] = $region->region_id;
+            }
+            $address = AddressHelper::baseCreate($addressData);
+            $user->addresses()->attach($address);
+
+            DB::commit();
+            return $address;
+        } catch (Exception $e) {
+            DB::rollback();
+            return false;
+        }
+    }
+
+    public static function publishUser(array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $user = UserHelper::create($data);
+
+            if(isset($data['phone'])) {
+                $contactData = [
+                    'type_id' => 2, // phone number type
+                    'value' => trim($data['phone']),
+                ];
+
+                isset($data['phone_hidden']) ? 
+                $contactData['hidden'] = $data['phone_hidden'] :
+                $contactData['hidden'] = true;
+
+                UserHelper::canSubmitContact($user, $contactData); // this will throw exception if submit is not allowed
+                // create a new contact
+                ContactHelper::create($contactData, 'users', $user->id);
+            }
+
+            if(isset($data['role_id'])) {
+                UserHelper::attachRole($user, $data['role_id']);
+                UserRolesHelper::addRolePermissionsToUser($user, $data['role_id']);
+            }
+
+            if(isset($data['address']) && !isset($data['full_address'])) {
+                $addressData = [
+                    'details' => trim($data['address'])
+                ];
+                UserHelper::addAddress($user, $addressData);
+            }
+
+            if(isset($data['full_address'])) {
+                UserHelper::addAddress($user, $data['full_address']);
+            }
+
+            DB::commit();
+
+            return self::full($user->id);
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 }

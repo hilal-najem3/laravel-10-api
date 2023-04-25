@@ -2536,7 +2536,7 @@ class RegionTypesAndRegionsTablesSeeder extends Seeder
                   "country":"Lebanon",
                   "alpha2Code":"LB",
                   "alpha3Code":"LBN",
-                  "numberCode":"422",
+                  "numberCode":"961",
                   "states":[
                      "Akkar",
                      "Baalbeck-Hermel",

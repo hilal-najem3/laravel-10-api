@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
 
+
+use App\Containers\Users\Requests\PublishUserRequest;
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
 use App\Containers\Users\Validators\UsersValidators;
@@ -135,13 +137,37 @@ class UsersController extends Controller
     }
 
     /**
+     * Create a new user with full data
+     * like contact, addresses, role, ...
+     * 
+     * @param PublishUserRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function publish(PublishUserRequest $request)
+    {
+        try {
+            $this->allowedAction(['create-users'], 'USERS.CREATE_USER_NOT_ALLOWED');
+
+            $data = $request->all();
+
+            $user = UserHelper::publishUser($data);
+
+            return $this->response('USERS.CREATE_USER_SUCCESS', ['user' => $user]);
+        } catch (Exception $e) {
+            return $this->errorResponse('USERS.CREATE_USER_FAILED', $e);
+        }
+
+        return $this->errorResponse('USERS.CREATE_USER_FAILED');
+    }
+
+    /**
      * Update a user
      * 
      * @param UpdateUserRequest $request
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, int $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
         try {
             $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
@@ -164,10 +190,10 @@ class UsersController extends Controller
      * Update a user contact data
      * 
      * @param UpdateUserContactDataRequest $request
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function updateContactData(UpdateUserContactDataRequest $request, int $id)
+    public function updateContactData(UpdateUserContactDataRequest $request, string $id)
     {
         try {
             $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
@@ -209,10 +235,10 @@ class UsersController extends Controller
      * Update a user contact data
      * 
      * @param DeleteUserContactDataRequest $request
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function deleteContactData(DeleteUserContactDataRequest $request, int $id)
+    public function deleteContactData(DeleteUserContactDataRequest $request, string $id)
     {
         try {
             $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');

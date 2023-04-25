@@ -2,7 +2,7 @@
 
 namespace App\Containers\Addresses\Helpers;
 
-use App\Containers\Addresses\Model\Address;
+use App\Containers\Addresses\Models\Address;
 
 use App\Helpers\BaseHelper;
 
