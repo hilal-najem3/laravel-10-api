@@ -2,6 +2,7 @@
 
 namespace App\Containers\Users\Controllers;
 
+#region
 use App\Containers\Common\Traits\PermissionControllersTrait;
 
 use App\Http\Controllers\Controller;
@@ -10,9 +11,6 @@ use Illuminate\Http\Request;
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
 
-
-use App\Containers\Users\Requests\PublishUserRequest;
-use App\Containers\Users\Requests\PublishUpdateUserRequest;
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
 use App\Containers\Users\Validators\UsersValidators;
@@ -28,11 +26,16 @@ use App\Containers\Agencies\Helpers\AgencyHelper;
 
 use App\Exceptions\Common\NotAllowedException;
 use Exception;
-
+#endregion
 
 class UsersController extends Controller
 {
     use ResponseHelper, UsersValidators, PermissionControllersTrait;
+
+    /**
+     * Exists
+     */
+    #region
 
     /**
      * Checks if user exists by id
@@ -68,6 +71,13 @@ class UsersController extends Controller
         return $this->errorResponse('USERS.NOT_EXISTS');
     }
 
+    #endregion
+
+    /**
+     * Get
+     */
+    #region
+
     /**
      * Get all users
      * 
@@ -79,7 +89,12 @@ class UsersController extends Controller
         try {
             $this->allowedAction(['get-users'], 'USERS.GET_ALLOWED_ERROR');
 
-            $data = UserHelper::getAll($request->get('pagination'));
+            $permissions = false;
+            if($request->get('permissions') !== null) {
+                $permissions = (bool)$request->get('permissions');
+            }
+
+            $data = UserHelper::getAll($request->get('pagination'), $permissions);
             $info = [
                 'meta' => $this->metaData($data),
                 'users' => $data->data
@@ -116,6 +131,13 @@ class UsersController extends Controller
         return $this->errorResponse('USERS.GET_ERROR');
     }
 
+    #endregion
+
+    /**
+     * CU
+     */
+    #region
+
     /**
      * Create a new user
      * 
@@ -128,6 +150,7 @@ class UsersController extends Controller
             $this->allowedAction(['create-users'], 'USERS.CREATE_USER_NOT_ALLOWED');
             $data = $request->all();
             $user = UserHelper::create($data);
+            $user = UserHelper::full($user->id);
 
             return $this->response('USERS.CREATE_USER_SUCCESS', ['user' => $user]);
         } catch (Exception $e) {
@@ -135,56 +158,6 @@ class UsersController extends Controller
         }
 
         return $this->errorResponse('USERS.CREATE_USER_FAILED');
-    }
-
-    /**
-     * Create a new user with full data
-     * like contact, addresses, role, ...
-     * 
-     * @param PublishUserRequest $request
-     * @return \Illuminate\Http\Response
-     */
-    public function publish(PublishUserRequest $request)
-    {
-        try {
-            $this->allowedAction(['create-users'], 'USERS.CREATE_USER_NOT_ALLOWED');
-
-            $data = $request->all();
-
-            $user = UserHelper::publishUser($data);
-
-            return $this->response('USERS.CREATE_USER_SUCCESS', ['user' => $user]);
-        } catch (Exception $e) {
-            return $this->errorResponse('USERS.CREATE_USER_FAILED', $e);
-        }
-
-        return $this->errorResponse('USERS.CREATE_USER_FAILED');
-    }
-
-    /**
-     * Create a new user with full data
-     * like contact, addresses, role, ...
-     * 
-     * @param PublishUpdateUserRequest $request
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
-    public function publishUpdate(PublishUpdateUserRequest $request, string $id)
-    {
-        try {
-            $this->allowedAction(['update-users'], 'USERS.UPDATE_USER_NOT_ALLOWED');
-
-            $data = $request->all();
-
-            $user = UserHelper::id($id);
-            $user = UserHelper::publishUpdateUser($user, $data);
-
-            return $this->response('USERS.UPDATE_USER_SUCCESS', ['user' => $user]);
-        } catch (Exception $e) {
-            return $this->errorResponse('USERS.UPDATE_USER_FAILED', $e);
-        }
-
-        return $this->errorResponse('USERS.UPDATE_USER_FAILED');
     }
 
     /**
@@ -288,6 +261,13 @@ class UsersController extends Controller
         return $this->errorResponse('USERS.USER_CONTACT_DATA_DELETE_FAILED');
     }
 
+    #endregion
+
+    /**
+     * Permissions
+     */
+    #region
+
     /**
      * Add Permissions
      * This function adds permissions to users
@@ -347,6 +327,13 @@ class UsersController extends Controller
         }
         return $this->errorResponse('USERS.DETACH_PERMISSIONS_FAILED');
     }
+
+    #endregion
+
+    /**
+     * Roles
+     */
+    #region
 
     /**
      * Add Roles
@@ -422,6 +409,13 @@ class UsersController extends Controller
         }
         return $this->errorResponse('USERS.DETACH_ROLES_FAILED');
     }
+
+    #endregion
+
+    /**
+     * Activate/Deactivate delete with their get functions
+     */
+    #region
 
     /**
      * Deactivate Users
@@ -558,6 +552,13 @@ class UsersController extends Controller
         return $this->errorResponse('USERS.GET_ERROR');
     }
 
+    #endregion
+
+    /**
+     * Agency Admin
+     */
+    #region
+
     /**
      * Set user as an admin to an agency
      * 
@@ -607,4 +608,6 @@ class UsersController extends Controller
         }
         return $this->errorResponse('USER_AGENCY_ADMIN_FAIL');
     }
+
+    #endregion
 }

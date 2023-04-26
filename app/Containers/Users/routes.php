@@ -33,8 +33,6 @@ Route::group([
         Route::get('get/', [UsersController::class, 'get'])->name('users.get');
         Route::get('get/{id}', [UsersController::class, 'id'])->name('users.get.id');
         Route::post('create/', [UsersController::class, 'create'])->name('users.create');
-        Route::post('publish/', [UsersController::class, 'publish'])->name('users.publish');
-        Route::put('publish/{id}', [UsersController::class, 'publishUpdate'])->name('users.publish.update');
         Route::put('update/{id}', [UsersController::class, 'update'])->name('users.update.id');
         Route::put('contacts/{id}', [UsersController::class, 'updateContactData'])->name('users.update.contact');
         Route::delete('contacts/{id}', [UsersController::class, 'deleteContactData'])->name('users.delete.contacts');

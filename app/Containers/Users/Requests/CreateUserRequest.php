@@ -36,6 +36,7 @@ class CreateUserRequest extends FormRequest
             'dob' => 'nullable|date',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
+            'role_id' => 'nullable|integer|exists:roles,id'
         ];
     }
 }

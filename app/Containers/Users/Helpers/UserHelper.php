@@ -112,11 +112,9 @@ class UserHelper
                 throw new NotFoundException('USERS.USER');
             }
 
-            $user = $user->load(['roles', 'profileImage', 'contact', 'addresses']);
+            $user = $user->load(['profileImage', 'contact', 'addresses']);
 
-            if(isset($user->profileImage)) {
-                $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-            }
+            $user = self::mapUser($user);
     
             Log::info('User profile returned');
     
@@ -136,15 +134,14 @@ class UserHelper
     public static function full(string $id)
     {
         try {
-            $user = User::with(['roles', 'permissions', 'profileImage', 'contact', 'addresses'])->where('id', $id)->first();
+            $user = User::with(['roles', 'permissions', 'profileImage', 'contact', 'addresses'])
+            ->where('id', $id)->first();
 
             if(!$user) {
                 throw new NotFoundException('PROFILE.EXCEPTION');
             }
 
-            if($user->profileImage) {
-                $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-            }
+            $user = self::mapUser($user);
 
             return $user;
         } catch (Exception $e) {
@@ -159,18 +156,21 @@ class UserHelper
      * get all users
      * 
      * @param int $paginationCount
+     * @param bool $getPermissions
      * @return pagination of users
      */
-    public static function getAll(int $paginationCount = null)
+    public static function getAll(int $paginationCount = null, bool $getPermissions = false)
     {
         try {
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
-            $users = User::with(['roles', 'permissions', 'profileImage'])
+            $withArray = ['roles', 'profileImage'];
+            $getPermissions ? array_push($withArray, 'permissions') : $withArray = $withArray;
+
+            $users = User::with($withArray)
             ->get()->each(function (User $user) {
-                if($user->profileImage) {
-                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-                }
+                $user = self::mapUser($user);
+                return $user;
             });
 
             $users = CollectionsHelper::paginate($users, $paginationCount);
@@ -202,9 +202,8 @@ class UserHelper
 
             $users = User::onlyTrashed()->with(['roles', 'permissions', 'profileImage'])
             ->get()->each(function (User $user) {
-                if($user->profileImage) {
-                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-                }
+                $user = self::mapUser($user);
+                return $user;
             });
 
             $users = CollectionsHelper::paginate($users, $paginationCount);
@@ -240,9 +239,8 @@ class UserHelper
                 'contact'
                 ])
             ->get()->each(function (User $user) {
-                if($user->profileImage) {
-                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-                }
+                $user = self::mapUser($user);
+                return $user;
             });
 
             $users = CollectionsHelper::paginate($users, $paginationCount);
@@ -342,8 +340,13 @@ class UserHelper
             }
 
             $user = User::create($data);
-            DB::commit();
 
+            if(isset($data['role_id'])) {
+                UserHelper::attachRole($user, $data['role_id']);
+                UserRolesHelper::addRolePermissionsToUser($user, $data['role_id']);
+            }
+
+            DB::commit();
             Log::info('User created successfully');
             return self::id($user->id);
         } catch (Exception $e) {
@@ -609,102 +612,7 @@ class UserHelper
         throw new UpdateFailedException('USERS.USER');
     }
     #endregion
-
-    /**
-     * Publish functions
-     */
-    #region
-    public static function publishUser(array $data)
-    {
-        DB::beginTransaction();
-        try {
-            $user = UserHelper::create($data);
-
-            if(isset($data['phone'])) {
-                $contactData = [
-                    'type_id' => 2, // phone number type
-                    'value' => trim($data['phone']),
-                ];
-
-                isset($data['phone_hidden']) ? 
-                $contactData['hidden'] = $data['phone_hidden'] :
-                $contactData['hidden'] = true;
-
-                UserHelper::canSubmitContact($user, $contactData); // this will throw exception if submit is not allowed
-                // create a new contact
-                ContactHelper::create($contactData, 'users', $user->id);
-            }
-
-            if(isset($data['role_id'])) {
-                UserHelper::attachRole($user, $data['role_id']);
-                UserRolesHelper::addRolePermissionsToUser($user, $data['role_id']);
-            }
-
-            if(isset($data['address']) && !isset($data['full_address'])) {
-                $addressData = [
-                    'details' => trim($data['address'])
-                ];
-                UserHelper::addAddress($user, $addressData);
-            }
-
-            if(isset($data['full_address'])) {
-                UserHelper::addAddress($user, $data['full_address']);
-            }
-
-            DB::commit();
-
-            return self::full($user->id);
-        } catch (Exception $e) {
-            DB::rollback();
-            throw $e;
-        }
-    }
-
-    public static function publishUpdateUser(User $user, array $data)
-    {
-        DB::beginTransaction();
-        try {
-            // $user = UserHelper::create($data);
-
-            // if(isset($data['phone'])) {
-            //     $contactData = [
-            //         'type_id' => 2, // phone number type
-            //         'value' => trim($data['phone']),
-            //     ];
-
-            //     isset($data['phone_hidden']) ? 
-            //     $contactData['hidden'] = $data['phone_hidden'] :
-            //     $contactData['hidden'] = true;
-
-            //     UserHelper::canSubmitContact($user, $contactData); // this will throw exception if submit is not allowed
-            //     // create a new contact
-            //     ContactHelper::create($contactData, 'users', $user->id);
-            // }
-
-            // if(isset($data['role_id'])) {
-            //     UserHelper::attachRole($user, $data['role_id']);
-            //     UserRolesHelper::addRolePermissionsToUser($user, $data['role_id']);
-            // }
-
-            // if(isset($data['address']) && !isset($data['full_address'])) {
-            //     $addressData = [
-            //         'details' => trim($data['address'])
-            //     ];
-            //     UserHelper::addAddress($user, $addressData);
-            // }
-
-            // if(isset($data['full_address'])) {
-            //     UserHelper::addAddress($user, $data['full_address']);
-            // }
-
-            DB::commit();
-
-            return self::full($user->id);
-        } catch (Exception $e) {
-            DB::rollback();
-            throw $e;
-        }
-    }
+    
     #endregion
 
     #endregion
@@ -969,10 +877,22 @@ class UserHelper
      * Map functions
      */
     #region
+    /**
+     * maps user data
+     * 
+     * @param User $user
+     * @return User $user
+     */
     public static function mapUser(User $user)
     {
+        if(isset($user->profileImage)) {
+            $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+        }
         if(isset($user->roles)) {
-            $user->role_id = $user->roles->first()->id;
+            if(count($user->roles)) {
+                $user->role_id = $user->roles->first()->id;
+            }
+            unset($user->roles);
         }
         return $user;
     }
