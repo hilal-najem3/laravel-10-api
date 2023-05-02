@@ -4,7 +4,7 @@ namespace App\Containers\Users\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserArraysRequest extends FormRequest
+class UserRolesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,9 @@ class UserArraysRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'nullable|exists:users,id',
-            'user_ids' => 'nullable',
-            'user_ids.*' => 'exists:users,id',
+            'user_id' => 'required|exists:users,id',
+            'roles' => 'required',
+            'roles.*' => 'required|exists:roles,id',
         ];
     }
 }

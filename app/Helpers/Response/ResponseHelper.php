@@ -5,20 +5,23 @@ namespace App\Helpers\Response;
 use App\Containers\Common\Helpers\MessagesHelper;
 use App\Helpers\Response\ResponseJsonErrorReturn;
 use Exception;
+use Illuminate\Http\Response;
 
 trait ResponseHelper
 {
-    public int $success = 200;
+    public int $success = Response::HTTP_OK;
 
-    public int $bad_request = 400;
+    public int $bad_request = Response::HTTP_BAD_REQUEST;
 
-    public int $unauthorized = 401;
+    public int $unauthorized = Response::HTTP_UNAUTHORIZED;
 
-    public int $forbidden = 403;
+    public int $forbidden = Response::HTTP_FORBIDDEN;
 
-    public int $not_found = 404;
+    public int $not_found = Response::HTTP_NOT_FOUND;
 
-    public int $not_allowed = 405;
+    public int $not_allowed = Response::HTTP_METHOD_NOT_ALLOWED;
+
+    public int $unprocessable = Response::HTTP_UNPROCESSABLE_ENTITY;
 
     /**
      * This function fills the response that should be sent to the user

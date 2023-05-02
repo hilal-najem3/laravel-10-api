@@ -890,7 +890,9 @@ class UserHelper
         }
         if(isset($user->roles)) {
             if(count($user->roles)) {
-                $user->role_id = $user->roles->first()->id;
+                $role =  $user->roles->first();
+                $user->role_id = $role->id;
+                $user->slug = $role->slug;
             }
             unset($user->roles);
         }

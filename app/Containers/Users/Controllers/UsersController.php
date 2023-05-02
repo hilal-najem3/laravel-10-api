@@ -6,17 +6,17 @@ namespace App\Containers\Users\Controllers;
 use App\Containers\Common\Traits\PermissionControllersTrait;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 use App\Helpers\Response\ResponseHelper;
 use App\Requests\PaginationRequest;
 
 use App\Containers\Users\Requests\UpdateUserContactDataRequest;
 use App\Containers\Users\Requests\DeleteUserContactDataRequest;
-use App\Containers\Users\Validators\UsersValidators;
 use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Requests\CreateUserRequest;
 use App\Containers\Users\Requests\UpdateUserRequest;
+use App\Containers\Users\Requests\UserRolesRequest;
+use App\Containers\Users\Requests\UserPermissionsRequest;
 
 use App\Containers\Users\Helpers\UserHelper;
 use App\Containers\Users\Helpers\UserAgencyHelper;
@@ -24,13 +24,14 @@ use App\Containers\Common\Helpers\ContactHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Containers\Agencies\Helpers\AgencyHelper;
 
+use App\Exceptions\Common\NotFoundException;
 use App\Exceptions\Common\NotAllowedException;
 use Exception;
 #endregion
 
 class UsersController extends Controller
 {
-    use ResponseHelper, UsersValidators, PermissionControllersTrait;
+    use ResponseHelper, PermissionControllersTrait;
 
     /**
      * Exists
@@ -272,16 +273,15 @@ class UsersController extends Controller
      * Add Permissions
      * This function adds permissions to users
      * 
-     * @param Request $request
+     * @param UserPermissionsRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function addPermissionsToUser(Request $request)
+    public function addPermissionsToUser(UserPermissionsRequest $request)
     {
         try {
             $this->allowedAction(['attach-permissions'], 'USERS.ATTACH_PERMISSIONS_NOT_ALLOWED');
 
             $data = $request->all();
-            $this->permissions_user($data)->validate();
             $user = UserHelper::id($data['user_id']);
 
             $this->crossAuthorization([$data['user_id']]);
@@ -302,16 +302,15 @@ class UsersController extends Controller
      * Remove Permissions
      * This function removes permissions to users
      * 
-     * @param Request $request
+     * @param UserPermissionsRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function removePermissionsToUser(Request $request)
+    public function removePermissionsToUser(UserPermissionsRequest $request)
     {
         try {
             $this->allowedAction(['attach-permissions'], 'USERS.ATTACH_PERMISSIONS_NOT_ALLOWED');
 
             $data = $request->all();
-            $this->permissions_user($data)->validate();
             $user = UserHelper::id($data['user_id']);
 
             $this->crossAuthorization([$data['user_id']]);
@@ -339,16 +338,15 @@ class UsersController extends Controller
      * Add Roles
      * This function adds roles to users
      * 
-     * @param Request $request
+     * @param UserRolesRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function addRolesToUser(Request $request)
+    public function addRolesToUser(UserRolesRequest $request)
     {
         try {
             $this->allowedAction(['attach-roles'], 'USERS.ATTACH_ROLES_NOT_ALLOWED');
 
             $data = $request->all();
-            $this->roles_user($data)->validate();
             $user = UserHelper::id($data['user_id']);
 
             $this->crossAuthorization([$data['user_id']]);
@@ -377,16 +375,15 @@ class UsersController extends Controller
      * Remove Roles
      * This function removes roles to users
      * 
-     * @param Request $request
+     * @param UserRolesRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function removeRolesToUser(Request $request)
+    public function removeRolesToUser(UserRolesRequest $request)
     {
         try {
             $this->allowedAction(['attach-roles'], 'USERS.ATTACH_ROLES_NOT_ALLOWED');
 
             $data = $request->all();
-            $this->roles_user($data)->validate();
             $user = UserHelper::id($data['user_id']);
 
             $this->crossAuthorization([$data['user_id']]);
@@ -430,7 +427,22 @@ class UsersController extends Controller
     {
         try {
             $this->allowedAction(['activate-user'], 'USERS.ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED');
-            $ids = $request->get('user_ids');
+            $data = $request->all();
+            $ids = null;
+            $id = null;
+    
+            if(isset($data['user_id'])) {
+                $id = $data['user_id'];
+                $ids = [$data['user_id']];
+            }
+    
+            if($id == null && isset($data['user_ids'])) {
+                $ids = $data['user_ids'];
+            }
+
+            if($ids == null) {
+                throw new NotFoundException('USERS.NOT_EXISTS');
+            }
             
             $this->crossAuthorization($ids);
 
@@ -457,7 +469,22 @@ class UsersController extends Controller
     {
         try {
             $this->allowedAction(['activate-user'], 'USERS.ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED');
-            $ids = $request->get('user_ids');
+            $data = $request->all();
+            $ids = null;
+            $id = null;
+    
+            if(isset($data['user_id'])) {
+                $id = $data['user_id'];
+                $ids = [$data['user_id']];
+            }
+    
+            if($id == null && isset($data['user_ids'])) {
+                $ids = $data['user_ids'];
+            }
+
+            if($ids == null) {
+                throw new NotFoundException('USERS.NOT_EXISTS');
+            }
             
             $this->crossAuthorization($ids);
 
@@ -488,8 +515,24 @@ class UsersController extends Controller
     {
         try {
             $this->allowedAction(['delete-user'], 'USERS.DELETE_USER_NOT_ALLOWED');
-            $ids = $request->get('user_ids');
-            
+
+            $data = $request->all();
+            $ids = null;
+            $id = null;
+    
+            if(isset($data['user_id'])) {
+                $id = $data['user_id'];
+                $ids = [$data['user_id']];
+            }
+    
+            if($id == null && isset($data['user_ids'])) {
+                $ids = $data['user_ids'];
+            }
+
+            if($ids == null) {
+                throw new NotFoundException('USERS.NOT_EXISTS');
+            }
+
             $this->crossAuthorization($ids);
 
             foreach($ids as $id) {
